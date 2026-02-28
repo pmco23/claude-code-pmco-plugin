@@ -66,19 +66,19 @@ case "$SKILL" in
     exit 0
     ;;
   "design")
-    [ -f "$PIPELINE_DIR/brief.md" ] || block "No brief found. Run /arm first to crystallize requirements into a brief."
+    [ -f "$PIPELINE_DIR/brief.md" ] || block "No brief found. Run /brief first to crystallize requirements into a brief."
     ;;
-  "ar")
+  "review")
     [ -f "$PIPELINE_DIR/design.md" ] || block "No design doc found. Run /design first."
     ;;
   "plan")
-    [ -f "$PIPELINE_DIR/design.approved" ] || block "Design not approved. Run /ar and iterate until all findings resolve."
+    [ -f "$PIPELINE_DIR/design.approved" ] || block "Design not approved. Run /review and iterate until all findings resolve."
     ;;
-  "build"|"pmatch")
+  "build"|"drift-check")
     [ -f "$PIPELINE_DIR/plan.md" ] || block "No execution plan found. Run /plan first."
     ;;
-  "denoise"|"qf"|"qb"|"qd"|"security-review"|"qa")
-    [ -f "$PIPELINE_DIR/build.complete" ] || block "Build not complete. Run /build first, then ensure /pmatch passes."
+  "cleanup"|"frontend-audit"|"backend-audit"|"doc-audit"|"security-review"|"qa")
+    [ -f "$PIPELINE_DIR/build.complete" ] || block "Build not complete. Run /build first, then ensure /drift-check passes."
     ;;
 esac
 
