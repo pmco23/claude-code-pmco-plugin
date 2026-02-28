@@ -48,18 +48,18 @@ HAS_APPROVED=$(mktemp -d) && mkdir -p "$HAS_APPROVED/.pipeline" && touch "$HAS_A
 HAS_PLAN=$(mktemp -d)     && mkdir -p "$HAS_PLAN/.pipeline"     && touch "$HAS_PLAN/.pipeline/plan.md"
 HAS_BUILD=$(mktemp -d)    && mkdir -p "$HAS_BUILD/.pipeline"    && touch "$HAS_BUILD/.pipeline/build.complete"
 
-# /arm — always allowed
-expect_allow "arm" "$NO_PIPELINE" "/arm with no .pipeline: allow"
-expect_allow "arm" "$HAS_BRIEF"   "/arm with brief: allow"
+# /brief — always allowed
+expect_allow "brief" "$NO_PIPELINE" "/brief with no .pipeline: allow"
+expect_allow "brief" "$HAS_BRIEF"   "/brief with brief: allow"
 
 # /design gate
 expect_block "design" "$NO_PIPELINE" "/design with no .pipeline: block"
 expect_allow "design" "$HAS_BRIEF"   "/design with brief: allow"
 
-# /ar gate
-expect_block "ar" "$NO_PIPELINE" "/ar with no .pipeline: block"
-expect_block "ar" "$HAS_BRIEF"   "/ar with only brief: block"
-expect_allow "ar" "$HAS_DESIGN"  "/ar with design.md: allow"
+# /review gate
+expect_block "review" "$NO_PIPELINE" "/review with no .pipeline: block"
+expect_block "review" "$HAS_BRIEF"   "/review with only brief: block"
+expect_allow "review" "$HAS_DESIGN"  "/review with design.md: allow"
 
 # /plan gate
 expect_block "plan" "$NO_PIPELINE"  "/plan with no .pipeline: block"
@@ -71,12 +71,12 @@ expect_block "build" "$NO_PIPELINE" "/build with no .pipeline: block"
 expect_block "build" "$HAS_APPROVED" "/build without plan: block"
 expect_allow "build" "$HAS_PLAN"    "/build with plan.md: allow"
 
-# /pmatch gate
-expect_block "pmatch" "$NO_PIPELINE" "/pmatch without plan: block"
-expect_allow "pmatch" "$HAS_PLAN"    "/pmatch with plan.md: allow"
+# /drift-check gate
+expect_block "drift-check" "$NO_PIPELINE" "/drift-check without plan: block"
+expect_allow "drift-check" "$HAS_PLAN"    "/drift-check with plan.md: allow"
 
 # QA skills gate
-for skill in qa denoise qf qb qd security-review; do
+for skill in qa cleanup frontend-audit backend-audit doc-audit security-review; do
   expect_block "$skill" "$NO_PIPELINE" "/$skill without build.complete: block"
   expect_block "$skill" "$HAS_PLAN"    "/$skill with only plan (no build): block"
   expect_allow "$skill" "$HAS_BUILD"   "/$skill with build.complete: allow"
