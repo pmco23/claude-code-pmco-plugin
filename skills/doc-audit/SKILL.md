@@ -1,5 +1,5 @@
 ---
-name: qd
+name: doc-audit
 description: Use after build is complete to validate documentation freshness. Checks that README, API docs, inline comments, and changelogs reflect the current implementation. Requires .pipeline/build.complete.
 ---
 
@@ -62,4 +62,4 @@ If no findings: "Documentation audit complete — all docs reflect current imple
 
 Report to user. No file written to `.pipeline/`.
 
-After reviewing findings, use `/quick` to update stale documentation or add CHANGELOG entries. Re-run `/qd` after fixing to confirm.
+After reviewing findings, use `/quick` to update stale documentation or add CHANGELOG entries. Re-run `/doc-audit` after fixing to confirm.
