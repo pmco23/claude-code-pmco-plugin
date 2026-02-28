@@ -87,3 +87,5 @@ If no findings: "Security review complete — no OWASP Top 10 vulnerabilities fo
 ## Output
 
 Report to user. No file written to `.pipeline/`.
+
+After reviewing findings, use `/quick` to address individual items. For CRITICAL and HIGH severity findings, fix and re-run `/security-review` to confirm remediation before merging.
