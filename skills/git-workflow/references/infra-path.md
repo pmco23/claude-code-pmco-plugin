@@ -1,5 +1,9 @@
 # Infra Path (Three-Environment)
 
+**Sources:**
+- Commit format: https://www.conventionalcommits.org/en/v1.0.0/
+- Branch naming: https://conventional-branch.github.io/
+
 This guide establishes workflows for infrastructure repositories using promoted environments.
 
 ## Branch Naming

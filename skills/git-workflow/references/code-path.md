@@ -1,5 +1,9 @@
 # Code Path (Trunk-Based)
 
+**Sources:**
+- Commit format: https://www.conventionalcommits.org/en/v1.0.0/
+- Branch naming: https://conventional-branch.github.io/
+
 This guide establishes standards for trunk-based development workflows using `main` as the primary branch.
 
 ## Branch Naming

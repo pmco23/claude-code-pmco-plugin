@@ -38,9 +38,10 @@ Load only one reference per operation. Apply it as the rule source for naming, c
 
 Verify all of the following before proceeding:
 
-- [ ] **Branch name** matches the selected path convention
-- [ ] **Commit message** matches the selected path convention
+- [ ] **Branch name** matches the selected path convention (spec: https://conventional-branch.github.io/)
+- [ ] **Commit message** matches the selected path convention (spec: https://www.conventionalcommits.org/en/v1.0.0/)
   - If not: rewrite the message to conform before proceeding. Do not commit with a non-conforming message.
+  - When explaining why a branch name or commit message fails validation, cite the relevant spec URL so the user knows the source of the rule.
 - [ ] **Operation is not destructive** (force-push, reset --hard, branch -D, rebase on published commits)
   - If destructive: stop and ask the user for explicit confirmation before proceeding.
   - If the user requests force-push to a protected branch repeatedly: escalate — do not comply silently.
