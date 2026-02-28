@@ -1,5 +1,5 @@
 ---
-name: pmatch
+name: drift-check
 description: Use to detect drift between a source-of-truth document and a target document or implementation. Dispatches Sonnet and Codex in parallel for independent claim extraction and verification. Requires .pipeline/plan.md. Used internally by /build and available standalone.
 ---
 
@@ -79,9 +79,9 @@ Once both agents return:
 
 ### Step 4: Mitigate if called from /build
 
-If /pmatch is running as part of the /build post-build check:
+If /drift-check is running as part of the /build post-build check:
 - MISSING or CONTRADICTED findings → build does NOT complete; report to lead, lead unblocks or flags for re-build
 - PARTIAL findings → lead judgment call: acceptable or must fix
 
-If /pmatch is running standalone:
+If /drift-check is running standalone:
 - Present report to user for judgment.
