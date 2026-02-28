@@ -82,6 +82,42 @@ for skill in qa denoise qf qb qd security-review; do
   expect_allow "$skill" "$HAS_BUILD"   "/$skill with build.complete: allow"
 done
 
+# /quick — always allowed, but emits warning when pipeline is active
+expect_allow "quick" "$NO_PIPELINE" "/quick with no pipeline: allow (no warning)"
+expect_allow "quick" "$HAS_BRIEF"   "/quick at brief phase: allow (warn)"
+expect_allow "quick" "$HAS_DESIGN"  "/quick at design phase: allow (warn)"
+expect_allow "quick" "$HAS_APPROVED" "/quick at planning phase: allow (warn)"
+expect_allow "quick" "$HAS_PLAN"    "/quick with build in progress: allow (warn)"
+expect_allow "quick" "$HAS_BUILD"   "/quick at QA phase: allow (warn)"
+
+# Verify /quick warning content
+run_gate_output() {
+  local skill="$1"
+  local test_dir="$2"
+  echo "{\"tool_input\":{\"skill\":\"$skill\"}}" | PIPELINE_TEST_DIR="$test_dir" bash "$GATE" 2>/dev/null
+}
+
+check_warning() {
+  local test_dir="$1"
+  local expected_fragment="$2"
+  local desc="$3"
+  local output
+  output=$(run_gate_output "quick" "$test_dir")
+  if echo "$output" | grep -q "$expected_fragment"; then
+    echo "PASS: $desc"
+    PASS=$((PASS+1))
+  else
+    echo "FAIL: $desc — expected '$expected_fragment' in output, got: '$output'"
+    FAIL=$((FAIL+1))
+  fi
+}
+
+check_warning "$HAS_PLAN"    "Build in progress"  "/quick warns about active build"
+check_warning "$HAS_BUILD"   "QA phase"           "/quick warns at QA phase"
+check_warning "$HAS_APPROVED" "planning phase"    "/quick warns at planning phase"
+check_warning "$HAS_DESIGN"  "design/review"      "/quick warns at design/review phase"
+check_warning "$HAS_BRIEF"   "brief phase"        "/quick warns at brief phase"
+
 # Cleanup
 rm -rf "$NO_PIPELINE" "$HAS_BRIEF" "$HAS_DESIGN" "$HAS_APPROVED" "$HAS_PLAN" "$HAS_BUILD"
 

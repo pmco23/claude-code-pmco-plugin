@@ -50,6 +50,21 @@ block() {
 }
 
 case "$SKILL" in
+  "quick")
+    # Pipeline-aware but never blocked — warn if a pipeline is active
+    if [ -f "$PIPELINE_DIR/build.complete" ]; then
+      echo "Pipeline at QA phase — /quick will not affect pipeline artifacts."
+    elif [ -f "$PIPELINE_DIR/plan.md" ]; then
+      echo "⚠ Build in progress — /quick may conflict with active builders if touching the same files."
+    elif [ -f "$PIPELINE_DIR/design.approved" ]; then
+      echo "Pipeline at planning phase — no active build in progress."
+    elif [ -f "$PIPELINE_DIR/design.md" ]; then
+      echo "Pipeline at design/review phase — no code has been written yet."
+    elif [ -f "$PIPELINE_DIR/brief.md" ]; then
+      echo "Pipeline at brief phase — no code has been written yet."
+    fi
+    exit 0
+    ;;
   "design")
     [ -f "$PIPELINE_DIR/brief.md" ] || block "No brief found. Run /arm first to crystallize requirements into a brief."
     ;;
