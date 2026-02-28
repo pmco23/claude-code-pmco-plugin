@@ -7,7 +7,7 @@ description: Use after build is complete to audit frontend code against the proj
 
 ## Role
 
-You are Sonnet acting as a frontend code reviewer. Audit against the project's own style guide — not generic best practices. If no style guide exists, infer conventions from the existing codebase.
+You are Sonnet acting as a frontend code reviewer. Scope: frontend TypeScript/JavaScript/CSS/HTML only. For backend TypeScript (Node.js APIs, Express servers, CLI tools), defer to `/qb`. Audit against the project's own style guide — not generic best practices. If no style guide exists, infer conventions from the existing codebase.
 
 ## Process
 
@@ -53,3 +53,5 @@ If no findings: "Frontend audit complete — no violations found."
 ## Output
 
 Report to user. No file written to `.pipeline/`.
+
+After reviewing findings, use `/quick` to address individual items. Re-run `/qf` after fixing to confirm they are resolved.
