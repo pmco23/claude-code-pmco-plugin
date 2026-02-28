@@ -11,6 +11,7 @@ idea
  ├─ /quick [--deep]          # fast track — no pipeline, no artifacts
  ├─ /git-workflow             # git discipline — always available, standalone or via /build and /quick
  ├─ /init                    # project boilerplate — README, CHANGELOG, CONTRIBUTING, PR template
+ ├─ /status                  # inspect current pipeline phase — always available
  │
  └─ /arm        → .pipeline/brief.md
      └─ /design → .pipeline/design.md
@@ -324,6 +325,34 @@ Also referenced in `/build` (builders invoke it before committing) and `/quick` 
 - Non-conforming branch names or commit messages (rewrites message before proceeding)
 - Destructive operations (force-push, reset --hard, branch -D)
 - Direct push to protected branches (main, master, development, preproduction)
+
+---
+
+### /status — Pipeline State Check
+
+**Gate:** None (always available)
+**Writes:** nothing
+**Model:** inherits from calling context
+
+Reports the current pipeline phase based on which `.pipeline/` artifacts exist. Run `/status` at any point to know where you are and what to run next.
+
+```
+/status
+```
+
+Example output:
+
+```
+Pipeline status: Plan ready / build in progress
+
+  brief.md         ✓ exists
+  design.md        ✓ exists
+  design.approved  ✓ exists
+  plan.md          ✓ exists
+  build.complete   ✗ missing
+
+Next: Run /build
+```
 
 ---
 
