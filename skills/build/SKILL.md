@@ -1,6 +1,6 @@
 ---
 name: build
-description: Use after /plan to execute the build. Opus leads and coordinates; Sonnets implement. Supports --parallel (independent agent per task group, own context) or --sequential (one task group at a time in current session). Runs /pmatch post-build. Writes .pipeline/build.complete on pass.
+description: Use after /plan to execute the build. Opus leads and coordinates; Sonnets implement. Supports --parallel (independent agent per task group, own context) or --sequential (one task group at a time in current session). Runs /drift-check post-build. Writes .pipeline/build.complete on pass.
 ---
 
 # BUILD — Parallel Build
@@ -94,30 +94,30 @@ For each task group in dependency order:
 
 ### Step 3: Post-build verification
 
-After all task groups complete, run /pmatch:
+After all task groups complete, run /drift-check:
 
 Source of truth: `.pipeline/plan.md`
 Target: current working directory
 
-Invoke /pmatch by dispatching a subagent via the Task tool with this prompt:
+Invoke /drift-check by dispatching a subagent via the Task tool with this prompt:
 ```
-Invoke the `pmatch` skill to verify implementation drift.
+Invoke the `drift-check` skill to verify implementation drift.
 Source of truth: `.pipeline/plan.md`
 Target: current working directory
 Report all MISSING, PARTIAL, and CONTRADICTED findings.
 ```
 
-### Step 4: Evaluate /pmatch result
+### Step 4: Evaluate /drift-check result
 
-If /pmatch finds MISSING or CONTRADICTED claims:
+If /drift-check finds MISSING or CONTRADICTED claims:
 - Identify which task group is responsible
 - Re-dispatch that task group's Sonnet agent with specific remediation instructions
-- Re-run /pmatch after remediation
-- Repeat until /pmatch passes
+- Re-run /drift-check after remediation
+- Repeat until /drift-check passes
 
 ### Step 5: Write build.complete
 
-When /pmatch passes with no unresolved MISSING or CONTRADICTED findings:
+When /drift-check passes with no unresolved MISSING or CONTRADICTED findings:
 
 ```bash
 mkdir -p .pipeline

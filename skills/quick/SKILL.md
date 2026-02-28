@@ -1,6 +1,6 @@
 ---
 name: quick
-description: Use when implementing small features, bug fixes, typo corrections, config tweaks, or any well-understood change that does not require the full pipeline. Completely independent of the arm/design/ar/plan/build/qa flow. Supports --deep flag to escalate from Sonnet to Opus for trickier problems.
+description: Use when implementing small features, bug fixes, typo corrections, config tweaks, or any well-understood change that does not require the full pipeline. Completely independent of the brief/design/review/plan/build/qa flow. Supports --deep flag to escalate from Sonnet to Opus for trickier problems.
 ---
 
 # QUICK — Fast Implementation
@@ -83,7 +83,7 @@ Run lightweight checks on touched files only — not the full QA pipeline:
 ## Rules
 
 - No `.pipeline/` artifacts written — ever
-- No full QA skills invoked (`/qf`, `/qb`, `/qd`, `/security-review`)
+- No full QA skills invoked (`/frontend-audit`, `/backend-audit`, `/doc-audit`, `/security-review`)
 - Touch only the files required for the task
 - One clarifying question maximum — if still unclear after one answer, make a reasonable assumption and note it
 - Self-review is not optional — always do Step 5

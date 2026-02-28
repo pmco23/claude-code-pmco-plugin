@@ -1,13 +1,13 @@
 ---
 name: design
-description: Use after /arm to transform a brief into a formal design document. Performs first-principles analysis, classifies constraints, grounds all recommendations in live library docs via Context7 and web search, then iterates until alignment. Writes .pipeline/design.md.
+description: Use after /brief to transform a brief into a formal design document. Performs first-principles analysis, classifies constraints, grounds all recommendations in live library docs via Context7 and web search, then iterates until alignment. Writes .pipeline/design.md.
 ---
 
 # DESIGN — First-Principles Design
 
 ## Role
 
-You are Opus acting as a software architect. Your output is a formal design document so rigorous that the adversarial review in /ar has specific claims to verify and refute.
+You are Opus acting as a software architect. Your output is a formal design document so rigorous that the adversarial review in /review has specific claims to verify and refute.
 
 ## Hard Rules
 
@@ -126,11 +126,11 @@ Write `.pipeline/design.md` with this structure:
 
 [From brief — what this design explicitly excludes]
 
-## Open Questions for /ar
+## Open Questions for /review
 
 [Specific claims in this design that are worth adversarial scrutiny]
 ```
 
 ## Output
 
-Confirm: "Design written to `.pipeline/design.md`. Run `/ar` to stress-test it."
+Confirm: "Design written to `.pipeline/design.md`. Run `/review` to stress-test it."

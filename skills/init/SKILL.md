@@ -229,7 +229,7 @@ Placeholders to fill in: [list any [PLACEHOLDER] fields remaining]
 
 Run /git-workflow before committing these files.
 
-To start developing a new feature on this project, run /arm to crystallize requirements into a pipeline brief.
+To start developing a new feature on this project, run /brief to crystallize requirements into a pipeline brief.
 ```
 
 ## Output

@@ -21,9 +21,9 @@ For each artifact, check whether it exists:
 
 | Artifact | Skill that writes it |
 |----------|---------------------|
-| `.pipeline/brief.md` | `/arm` |
+| `.pipeline/brief.md` | `/brief` |
 | `.pipeline/design.md` | `/design` |
-| `.pipeline/design.approved` | `/ar` |
+| `.pipeline/design.approved` | `/review` |
 | `.pipeline/plan.md` | `/plan` |
 | `.pipeline/build.complete` | `/build` |
 
@@ -31,9 +31,9 @@ For each artifact, check whether it exists:
 
 | Condition | Phase | Next step |
 |-----------|-------|-----------|
-| No artifacts | Not started | Run `/arm` |
+| No artifacts | Not started | Run `/brief` |
 | Only `brief.md` | Requirements crystallized | Run `/design` |
-| `brief.md` + `design.md`, no `design.approved` | Design written, pending review | Run `/ar` |
+| `brief.md` + `design.md`, no `design.approved` | Design written, pending review | Run `/review` |
 | `design.approved`, no `plan.md` | Design approved | Run `/plan` |
 | `plan.md`, no `build.complete` | Plan ready / build in progress | Run `/build` |
 | `build.complete` | Build complete | Run `/qa` |
