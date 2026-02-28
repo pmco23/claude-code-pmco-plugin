@@ -1,5 +1,5 @@
 ---
-name: qf
+name: frontend-audit
 description: Use after build is complete to audit frontend code against the project style guide. Checks TypeScript/JavaScript/CSS/HTML conventions, naming, component patterns, and accessibility basics. Requires .pipeline/build.complete.
 ---
 
@@ -7,7 +7,7 @@ description: Use after build is complete to audit frontend code against the proj
 
 ## Role
 
-You are Sonnet acting as a frontend code reviewer. Scope: frontend TypeScript/JavaScript/CSS/HTML only. For backend TypeScript (Node.js APIs, Express servers, CLI tools), defer to `/qb`. Audit against the project's own style guide — not generic best practices. If no style guide exists, infer conventions from the existing codebase.
+You are Sonnet acting as a frontend code reviewer. Scope: frontend TypeScript/JavaScript/CSS/HTML only. For backend TypeScript (Node.js APIs, Express servers, CLI tools), defer to `/backend-audit`. Audit against the project's own style guide — not generic best practices. If no style guide exists, infer conventions from the existing codebase.
 
 ## Process
 
@@ -54,4 +54,4 @@ If no findings: "Frontend audit complete — no violations found."
 
 Report to user. No file written to `.pipeline/`.
 
-After reviewing findings, use `/quick` to address individual items. Re-run `/qf` after fixing to confirm they are resolved.
+After reviewing findings, use `/quick` to address individual items. Re-run `/frontend-audit` after fixing to confirm they are resolved.
