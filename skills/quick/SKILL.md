@@ -49,6 +49,8 @@ Before handing back, review your own diff:
 
 If you catch an issue, fix it silently. If you are genuinely uncertain about something, flag it.
 
+Before committing, invoke git-workflow to verify branch naming, commit message format, and safety checks.
+
 ### Step 6: Report and offer audit
 
 Report what was done:

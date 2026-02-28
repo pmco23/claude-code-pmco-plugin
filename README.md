@@ -9,6 +9,7 @@ A quality-gated development pipeline for Claude Code. Every transition between p
 ```
 idea
  ├─ /quick [--deep]          # fast track — no pipeline, no artifacts
+ ├─ /git-workflow             # git discipline — always available, standalone or via /build and /quick
  │
  └─ /arm        → .pipeline/brief.md
      └─ /design → .pipeline/design.md
@@ -267,6 +268,36 @@ After implementing, offers an optional lightweight audit on touched files only: 
 | Build in progress | `⚠ Build in progress — /quick may conflict with active builders if touching the same files.` |
 | QA phase | `Pipeline at QA phase — /quick will not affect pipeline artifacts.` |
 | Planning/design phases | Informational note, no risk |
+
+---
+
+### /git-workflow — Git Discipline
+
+**Gate:** None (always available)
+**Writes:** nothing
+**Model:** inherits from calling context
+
+Enforces correct branching, commit message format, and safety checks before any significant git operation. Detects whether the project is code (trunk-based) or infrastructure (three-environment) and loads the appropriate workflow reference.
+
+```
+/git-workflow     # standalone — run before branch creation, first push, PR open/merge,
+                  # or any destructive operation (force-push, reset --hard, branch -D)
+```
+
+Also referenced in `/build` (builders invoke it before committing) and `/quick` (invoked during self-review before committing).
+
+**Project type detection:**
+
+| Signal | Workflow |
+|--------|---------|
+| `*.tf`, `*.tfvars`, `Chart.yaml`, `helm/`, `terraform/` | Three-environment: development → preproduction → main |
+| `*.ts`, `*.js`, `*.py`, `*.go`, `*.rs`, `*.java`, `*.cs` | Trunk-based: feature branch → main |
+| Ambiguous | Asks you to confirm |
+
+**Safety gate — blocks or asks confirmation for:**
+- Non-conforming branch names or commit messages (rewrites message before proceeding)
+- Destructive operations (force-push, reset --hard, branch -D)
+- Direct push to protected branches (main, master, development, preproduction)
 
 ---
 

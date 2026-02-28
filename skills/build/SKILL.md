@@ -49,6 +49,7 @@ Your constraints:
 - Follow the exact patterns shown in the code examples
 - Implement all named test cases with the specified assertions
 - Do not modify files from other task groups
+- Before committing your work, invoke git-workflow to verify branch naming, commit message format, and safety checks
 
 When complete, report:
 - Files created/modified
