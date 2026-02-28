@@ -1,0 +1,9 @@
+{
+  "name": "local-dev",
+  "plugins": [
+    {
+      "name": "claude-agents-custom",
+      "source": "./"
+    }
+  ]
+}
