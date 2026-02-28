@@ -29,7 +29,7 @@ Use the Task tool to launch two agents simultaneously:
 
 **Agent 1 — Opus Strategic Critic**
 
-Dispatch a subagent with this prompt:
+Dispatch a subagent via the Task tool with `model: opus` and this prompt:
 ```
 You are reviewing a software design document for strategic flaws.
 
@@ -126,7 +126,7 @@ Once both agents return:
 
 Present the report. Ask: "Update the design to address these findings, or override any? (update design / override / approve)"
 
-- **update design:** wait for the user to modify `.pipeline/design.md`, then run the next round (return to Step 2)
+- **update design:** Based on the findings that require action, draft the specific changes to `.pipeline/design.md`. Present each proposed change as a diff (old text → new text). Wait for the user to confirm each change, then apply them to `.pipeline/design.md`. Return to Step 2 for the next review round.
 - **override:** user explicitly accepts a finding without fixing — remove it from the must-fix list and re-evaluate
 - **approve:** all MUST FIX resolved, no outstanding SHOULD FIX — proceed to Step 5
 
