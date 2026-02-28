@@ -1,5 +1,5 @@
 ---
-name: denoise
+name: cleanup
 description: Use after build is complete to strip dead code, unused imports, unreachable branches, and commented-out code. Requires .pipeline/build.complete. Safe to run standalone or as part of /qa pipeline.
 ---
 
@@ -28,7 +28,7 @@ Read `.pipeline/brief.md` to find the primary language. Check which LSP tools ar
 - Find imports with no usages in the file
 - Identify functions/methods with no callers (search for their name across codebase)
 
-**Note:** If running as part of `/qa --parallel`, `/qb` also checks unused imports for Go and TypeScript. Overlapping findings on that category are expected — both reports are correct.
+**Note:** If running as part of `/qa --parallel`, `/backend-audit` also checks unused imports for Go and TypeScript. Overlapping findings on that category are expected — both reports are correct.
 
 ### Step 3: Confirm before removing
 
@@ -58,4 +58,4 @@ After removal, confirm no tests are broken:
 
 Report: "Removed [N] dead code items across [M] files."
 
-If items were skipped (user chose "review each"), use `/quick` to address them individually. Re-run `/denoise` to confirm.
+If items were skipped (user chose "review each"), use `/quick` to address them individually. Re-run `/cleanup` to confirm.
