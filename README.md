@@ -13,16 +13,16 @@ idea
  ├─ /init                    # project boilerplate — README, CHANGELOG, CONTRIBUTING, PR template
  ├─ /status                  # inspect current pipeline phase — always available
  │
- └─ /arm        → .pipeline/brief.md
+ └─ /brief      → .pipeline/brief.md
      └─ /design → .pipeline/design.md
-         └─ /ar → .pipeline/design.approved
+         └─ /review → .pipeline/design.approved
              └─ /plan   → .pipeline/plan.md
                  └─ /build  → .pipeline/build.complete
                      └─ /qa [--parallel|--sequential]
-                         ├─ /denoise
-                         ├─ /qf
-                         ├─ /qb
-                         ├─ /qd
+                         ├─ /cleanup
+                         ├─ /frontend-audit
+                         ├─ /backend-audit
+                         ├─ /doc-audit
                          └─ /security-review
 ```
 
@@ -92,10 +92,10 @@ Quit and reopen. The skills will appear in the skill list and the gate hook will
 
 ```bash
 # In a Claude Code session:
-/arm
+/brief
 ```
 
-You should see the arm skill start a Q&A session. If the gate hook is active, trying `/design` before running `/arm` will show a block message.
+You should see the brief skill start a Q&A session. If the gate hook is active, trying `/design` before running `/brief` will show a block message.
 
 ## The .pipeline/ State Directory
 
@@ -103,11 +103,11 @@ Each pipeline phase writes a state artifact to `.pipeline/` in your project root
 
 ```
 .pipeline/
-├── brief.md          # written by /arm
+├── brief.md          # written by /brief
 ├── design.md         # written by /design
-├── design.approved   # written by /ar when review loop resolves
+├── design.approved   # written by /review when review loop resolves
 ├── plan.md           # written by /plan
-└── build.complete    # written by /build after /pmatch passes
+└── build.complete    # written by /build after /drift-check passes
 ```
 
 **The `.pipeline/` directory is not committed to git by default.** Add it to `.gitignore`:
@@ -121,19 +121,19 @@ Or commit it if you want a paper trail of your pipeline state.
 **To reset the pipeline** (start over from a specific phase):
 
 ```bash
-# Reset everything — start fresh from /arm
+# Reset everything — start fresh from /brief
 rm -rf .pipeline/
 
 # Re-open from design phase (keep brief, redo design forward)
 rm .pipeline/design.md .pipeline/design.approved .pipeline/plan.md .pipeline/build.complete
 
-# Re-open from review phase (keep design, redo /ar forward)
+# Re-open from review phase (keep design, redo /review forward)
 rm .pipeline/design.approved .pipeline/plan.md .pipeline/build.complete
 ```
 
 ## Command Reference
 
-### /arm — Requirements Crystallization
+### /brief — Requirements Crystallization
 
 **Gate:** None (always available)
 **Writes:** `.pipeline/brief.md`
@@ -142,7 +142,7 @@ rm .pipeline/design.approved .pipeline/plan.md .pipeline/build.complete
 Extracts requirements, constraints, non-goals, style preferences, and key concepts from fuzzy input through conversational Q&A. Detects your project language and available LSP tools. Ends with a forced-choice checkpoint to resolve remaining ambiguities before writing the brief.
 
 ```
-/arm
+/brief
 ```
 
 ---
@@ -162,7 +162,7 @@ Reads the brief and performs first-principles analysis. Classifies every constra
 
 ---
 
-### /ar — Adversarial Review
+### /review — Adversarial Review
 
 **Gate:** `.pipeline/design.md` must exist
 **Writes:** `.pipeline/design.approved` (on loop exit)
@@ -172,7 +172,7 @@ Reads the brief and performs first-principles analysis. Classifies every constra
 Dispatches Opus and Codex in parallel. Each critiques the design from a different angle. Lead Opus deduplicates findings, fact-checks each against the actual codebase, runs cost/benefit analysis, and outputs a structured report. Loop continues until no remaining findings warrant mitigation.
 
 ```
-/ar
+/review
 ```
 
 ---
@@ -191,7 +191,7 @@ Transforms the approved design into an execution document precise enough that bu
 
 ---
 
-### /pmatch — Drift Detection
+### /drift-check — Drift Detection
 
 **Gate:** `.pipeline/plan.md` must exist
 **Writes:** nothing (report only)
@@ -200,7 +200,7 @@ Transforms the approved design into an execution document precise enough that bu
 Two agents independently extract claims from a source-of-truth document and verify each against a target. Lead reconciles conflicts and mitigates drift.
 
 ```
-/pmatch
+/drift-check
 ```
 
 ---
@@ -208,7 +208,7 @@ Two agents independently extract claims from a source-of-truth document and veri
 ### /build — Parallel Build
 
 **Gate:** `.pipeline/plan.md` must exist
-**Writes:** `.pipeline/build.complete` (after /pmatch passes)
+**Writes:** `.pipeline/build.complete` (after /drift-check passes)
 **Models:** Opus (lead) + Sonnet (builders)
 **Flags:** `--parallel` | `--sequential`
 
@@ -218,7 +218,7 @@ Two agents independently extract claims from a source-of-truth document and veri
 /build                # Prompts you to choose
 ```
 
-Lead Opus coordinates and unblocks. Never writes implementation code. Runs /pmatch post-build. Writes `build.complete` only when /pmatch passes.
+Lead Opus coordinates and unblocks. Never writes implementation code. Runs /drift-check post-build. Writes `build.complete` only when /drift-check passes.
 
 ---
 
@@ -229,7 +229,7 @@ Lead Opus coordinates and unblocks. Never writes implementation code. Runs /pmat
 
 ```
 /qa --parallel    # All QA skills dispatched simultaneously
-/qa --sequential  # denoise → qf → qb → qd → security-review in order
+/qa --sequential  # cleanup → frontend-audit → backend-audit → doc-audit → security-review in order
 /qa               # Prompts you to choose
 ```
 
@@ -237,10 +237,10 @@ Individual skills are also available standalone (each requires `build.complete`)
 
 | Skill | What it does |
 |-------|-------------|
-| `/denoise` | Strips dead code, unused imports, unreachable branches |
-| `/qf` | Frontend style audit (TypeScript/JS/CSS) |
-| `/qb` | Backend style audit (Go/Python/C#/TS) |
-| `/qd` | Documentation freshness — docs vs. implementation drift |
+| `/cleanup` | Strips dead code, unused imports, unreachable branches |
+| `/frontend-audit` | Frontend style audit (TypeScript/JS/CSS) |
+| `/backend-audit` | Backend style audit (Go/Python/C#/TS) |
+| `/doc-audit` | Documentation freshness — docs vs. implementation drift |
 | `/security-review` | OWASP Top 10 vulnerability scan |
 
 ---
@@ -251,7 +251,7 @@ Individual skills are also available standalone (each requires `build.complete`)
 **Writes:** nothing
 **Model:** Sonnet (default) | Opus with `--deep`
 
-Implements small features, bug fixes, typo corrections, config tweaks, or any well-understood change that does not require the full pipeline. Completely independent of the arm → design → ar → plan → build → qa flow.
+Implements small features, bug fixes, typo corrections, config tweaks, or any well-understood change that does not require the full pipeline. Completely independent of the brief → design → review → plan → build → qa flow.
 
 If a pipeline is active in the current project, a warning is shown before proceeding — you decide whether to continue.
 
@@ -360,7 +360,7 @@ Next: Run /build
 
 What each optional LSP adds per skill:
 
-| LSP | /denoise | /qf | /qb | /ar | /build | /security-review |
+| LSP | /cleanup | /frontend-audit | /backend-audit | /review | /build | /security-review |
 |-----|---------|-----|-----|-----|--------|-----------------|
 | TypeScript | Definitive unused symbols | Type-aware audit | Type errors | Type-grounded critique | Accurate refactoring | Taint analysis |
 | Go | Definitive unused symbols | — | Unused imports, diagnostics | Code-grounded critique | Accurate refactoring | Taint analysis |
@@ -379,7 +379,7 @@ cd ~/my-project
 claude
 
 # 2. Crystallize your idea
-/arm
+/brief
 # Opus asks: What does this endpoint do? → answer
 # Opus asks: What's the input/output shape? → answer
 # ... Q&A continues ...
@@ -393,7 +393,7 @@ claude
 # Design written to .pipeline/design.md
 
 # 4. Stress-test the design
-/ar
+/review
 # Opus and Codex critique in parallel
 # Lead deduplicates, runs cost/benefit on each finding
 # You review the report, iterate until resolved
@@ -407,7 +407,7 @@ claude
 # 6. Build it
 /build --parallel
 # Sonnets build in parallel, Opus coordinates
-# /pmatch runs post-build
+# /drift-check runs post-build
 # .pipeline/build.complete written
 
 # 7. Clean and audit
@@ -442,13 +442,13 @@ Use `/qa --sequential` when:
 
 ## Troubleshooting
 
-### "No brief found. Run /arm first"
+### "No brief found. Run /brief first"
 
-You tried to run `/design` without a brief. Run `/arm` first.
+You tried to run `/design` without a brief. Run `/brief` first.
 
-### "Design not approved. Run /ar and iterate until all findings resolve."
+### "Design not approved. Run /review and iterate until all findings resolve."
 
-You tried to run `/plan` without going through `/ar`. Run `/ar` and iterate until the review loop resolves.
+You tried to run `/plan` without going through `/review`. Run `/review` and iterate until the review loop resolves.
 
 ### Gate is not firing (hook not active)
 
