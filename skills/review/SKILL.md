@@ -1,6 +1,6 @@
 ---
 name: review
-description: Use after /design to adversarially review the design document. Dispatches Opus and Codex in parallel — Opus for strategic critique grounded in Context7, Codex for code-grounded critique via OpenAI MCP. Lead deduplicates, runs cost/benefit analysis, loops until no findings warrant mitigation. Writes .pipeline/design.approved on loop exit.
+description: Use after /design to adversarially review the design document. Dispatches Opus and Codex in parallel — Opus for strategic critique grounded in Context7, Codex for code-grounded critique via Codex MCP. Lead deduplicates, runs cost/benefit analysis, loops until no findings warrant mitigation. Writes .pipeline/design.approved on loop exit.
 ---
 
 # AR — Adversarial Review
@@ -58,7 +58,10 @@ Return a structured list of findings with: id, category, finding, impact, mitiga
 
 **Agent 2 — Codex Code-Grounded Critic**
 
-Dispatch a subagent that uses the OpenAI MCP Codex tool with this prompt:
+Call `mcp__codex__codex` directly (do not dispatch a subagent) with:
+- `prompt`: the prompt below
+- `approval_policy`: `"never"`
+
 ```
 You are reviewing a software design document for code-grounded issues.
 
