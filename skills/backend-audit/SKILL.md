@@ -1,5 +1,5 @@
 ---
-name: qb
+name: backend-audit
 description: Use after build is complete to audit backend code against the project style guide. Supports Go, Python, TypeScript, and C# backends. Checks naming, error handling patterns, package structure, and API conventions. Requires .pipeline/build.complete.
 ---
 
@@ -7,7 +7,7 @@ description: Use after build is complete to audit backend code against the proje
 
 ## Role
 
-You are Sonnet acting as a backend code reviewer. For TypeScript projects, audit backend TypeScript only (Node.js, APIs, CLI tools) — frontend TypeScript components are covered by `/qf`. Audit against the project's own style guide and language idioms — not generic linting rules. Match what the codebase already does.
+You are Sonnet acting as a backend code reviewer. For TypeScript projects, audit backend TypeScript only (Node.js, APIs, CLI tools) — frontend TypeScript components are covered by `/frontend-audit`. Audit against the project's own style guide and language idioms — not generic linting rules. Match what the codebase already does.
 
 ## Process
 
@@ -67,4 +67,4 @@ Group by severity: Errors, Warnings, Style.
 
 Report to user. No file written to `.pipeline/`.
 
-After reviewing findings, use `/quick` to address individual items. Re-run `/qb` after fixing to confirm they are resolved.
+After reviewing findings, use `/quick` to address individual items. Re-run `/backend-audit` after fixing to confirm they are resolved.
