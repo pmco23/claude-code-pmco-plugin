@@ -26,12 +26,22 @@ Which mode? (parallel / sequential)
 
 Dispatch all five QA skills simultaneously via the Task tool. Each agent receives only the context for its specific audit.
 
-Launch 5 subagents at once:
-- Agent 1: runs the denoise skill instructions
-- Agent 2: runs the qf skill instructions
-- Agent 3: runs the qb skill instructions
-- Agent 4: runs the qd skill instructions
-- Agent 5: runs the security-review skill instructions
+Use the Task tool to launch 5 subagents at once. Prompt for each:
+
+**Agent 1 — Dead Code Removal**
+Prompt: `Invoke the denoise skill to audit this codebase for dead code. .pipeline/build.complete exists. Report all findings.`
+
+**Agent 2 — Frontend Audit**
+Prompt: `Invoke the qf skill to audit frontend code quality. .pipeline/build.complete exists. Report all findings.`
+
+**Agent 3 — Backend Audit**
+Prompt: `Invoke the qb skill to audit backend code quality. .pipeline/build.complete exists. Report all findings.`
+
+**Agent 4 — Documentation Freshness**
+Prompt: `Invoke the qd skill to check documentation freshness. .pipeline/build.complete exists. Report all findings.`
+
+**Agent 5 — Security Review**
+Prompt: `Invoke the security-review skill to scan for OWASP Top 10 vulnerabilities. .pipeline/build.complete exists. Report all findings.`
 
 Wait for all five to complete, then present a consolidated report:
 
@@ -58,11 +68,11 @@ Wait for all five to complete, then present a consolidated report:
 
 Run in order, presenting each result before proceeding:
 
-1. Run denoise skill instructions — present findings — ask "Continue to /qf? (yes / fix first)"
-2. Run qf skill instructions — present findings — ask "Continue to /qb? (yes / fix first)"
-3. Run qb skill instructions — present findings — ask "Continue to /qd? (yes / fix first)"
-4. Run qd skill instructions — present findings — ask "Continue to /security-review? (yes / fix first)"
-5. Run security-review skill instructions — present final findings
+1. Invoke the `denoise` skill — present findings — ask "Continue to /qf? (yes / fix first)"
+2. Invoke the `qf` skill — present findings — ask "Continue to /qb? (yes / fix first)"
+3. Invoke the `qb` skill — present findings — ask "Continue to /qd? (yes / fix first)"
+4. Invoke the `qd` skill — present findings — ask "Continue to /security-review? (yes / fix first)"
+5. Invoke the `security-review` skill — present final findings
 
 ## Output
 
