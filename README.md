@@ -53,31 +53,13 @@ LSP tools degrade gracefully — absent means reduced precision, not failure.
 
 ## Codex MCP Setup
 
-Install the Codex CLI and register it as an MCP server so Claude can call it directly.
+MCP registration is handled automatically by the plugin. You only need to install the binary.
 
-**1. Install Codex CLI**
+**Install Codex CLI**
 
 ```bash
 npm install -g @openai/codex
 ```
-
-**2. Register the MCP server (user scope — available across all projects)**
-
-```bash
-claude mcp add --scope user codex -- codex mcp-server
-```
-
-This writes to `~/.claude.json`. Restart Claude Code to pick up the new server.
-
-**3. Verify**
-
-Start a Claude Code session. At startup, Claude Code logs which MCP servers connected successfully — look for a line confirming the `codex` server. Then run:
-
-```
-/review
-```
-
-If the Codex MCP is connected, `/review` will dispatch Agent 2 via `mcp__codex__codex`. If it is not connected, `/review` will fall back to a second Opus subagent and note "Codex MCP unavailable" in the report.
 
 **Troubleshooting — server not connecting**
 
@@ -87,7 +69,8 @@ If Codex was installed via nvm, the `codex` binary may not be on PATH in non-int
 # Find the path
 which codex
 
-# Edit ~/.claude.json — replace "command": "codex" with the absolute path
+# Edit ~/.claude/settings.json — replace "command": "codex" with the absolute path
+# under the mcpServers entry for your plugin installation path
 ```
 
 ## Repomix MCP Setup
