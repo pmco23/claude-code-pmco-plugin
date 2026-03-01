@@ -64,6 +64,26 @@ Wait for all five to complete, then present a consolidated report:
 [findings or "no OWASP Top 10 vulnerabilities found"]
 ```
 
+After presenting the consolidated report, append an Overall QA Verdict:
+
+```markdown
+## Overall QA Verdict
+
+| Audit | Result |
+|-------|--------|
+| /cleanup | [PASS — no dead code found / FAIL — N items found] |
+| /frontend-audit | [PASS / FAIL — N violations] |
+| /backend-audit | [PASS / FAIL — N violations] |
+| /doc-audit | [PASS / FAIL — N stale or missing entries] |
+| /security-review | [PASS / FAIL — N findings (X CRITICAL, Y HIGH)] |
+
+**Overall: PASS** *(all audits clean)*
+— or —
+**Overall: FAIL** *([N] audits have findings requiring action)*
+```
+
+**PASS criteria:** zero findings in /cleanup, /frontend-audit, /backend-audit, /doc-audit, AND zero CRITICAL or HIGH findings in /security-review. MEDIUM and LOW security findings do not block PASS.
+
 ### Sequential Mode
 
 Run in order, presenting each result before proceeding:
@@ -73,6 +93,10 @@ Run in order, presenting each result before proceeding:
 3. Invoke the `backend-audit` skill — present findings — ask "Continue to /doc-audit? (yes / fix first)"
 4. Invoke the `doc-audit` skill — present findings — ask "Continue to /security-review? (yes / fix first)"
 5. Invoke the `security-review` skill — present final findings
+
+After /security-review completes, present the Overall QA Verdict table (same format as parallel mode above), summarising results from all five audits.
+
+**PASS criteria:** zero findings in /cleanup, /frontend-audit, /backend-audit, /doc-audit, AND zero CRITICAL or HIGH findings in /security-review. MEDIUM and LOW security findings do not block PASS.
 
 ## Output
 
