@@ -26,6 +26,15 @@ Record:
 - **LSP tools available**: check which of these are present as tools — `typescript_lsp`, `go_lsp`, `python_lsp`, `csharp_lsp`
 - **Existing patterns**: note dominant architectural patterns visible in the codebase
 
+If the project already contains code (non-empty source directories detected above), call `mcp__repomix__pack_codebase` on the current working directory to get a structured codebase overview. Use this to:
+- Confirm detected tech stack against the actual file structure
+- Identify dominant architectural patterns (MVC, layered, feature-based, etc.)
+- Inform what questions to ask in Step 2 (what already exists, what's missing, where new code would live)
+
+If the call fails, proceed with the information gathered from reading README.md and config files.
+
+> The outputId is not stored — this is a one-off read for brief context only.
+
 ### Step 2: Extract signal through Q&A
 
 Ask ONE question at a time. Wait for the answer before asking the next. Prefer multiple-choice when possible.
