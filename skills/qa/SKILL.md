@@ -5,6 +5,16 @@ description: Use after /build to run the full post-build QA pipeline. Supports -
 
 # QA — Post-Build QA Pipeline
 
+## Repomix Preamble
+
+Before dispatching any agents, acquire a Repomix outputId for the codebase:
+
+1. Check if `.pipeline/repomix-pack.json` exists
+2. If it exists, read `packedAt` — if less than 1 hour old, use the stored `outputId`
+3. If missing or stale, call `mcp__repomix__pack_codebase` on the current working directory with `compress: true` and update `.pipeline/repomix-pack.json` with the new outputId and current timestamp
+
+Store the outputId for use in agent prompts below.
+
 ## Mode Selection
 
 Check the invocation arguments:
@@ -29,19 +39,19 @@ Dispatch all five QA skills simultaneously via the Task tool. Each agent receive
 Use the Task tool to launch 5 subagents at once. Prompt for each:
 
 **Agent 1 — Dead Code Removal**
-Prompt: `Invoke the cleanup skill to audit this codebase for dead code. .pipeline/build.complete exists. Report all findings.`
+Prompt: `Invoke the cleanup skill to audit this codebase for dead code. .pipeline/build.complete exists. Repomix outputId: <outputId> — use mcp__repomix__grep_repomix_output for file discovery and mcp__repomix__read_repomix_output for file contents. Report all findings.`
 
 **Agent 2 — Frontend Audit**
-Prompt: `Invoke the frontend-audit skill to audit frontend code quality. .pipeline/build.complete exists. Report all findings.`
+Prompt: `Invoke the frontend-audit skill to audit frontend code quality. .pipeline/build.complete exists. Repomix outputId: <outputId> — use mcp__repomix__grep_repomix_output for file discovery and mcp__repomix__read_repomix_output for file contents. Report all findings.`
 
 **Agent 3 — Backend Audit**
-Prompt: `Invoke the backend-audit skill to audit backend code quality. .pipeline/build.complete exists. Report all findings.`
+Prompt: `Invoke the backend-audit skill to audit backend code quality. .pipeline/build.complete exists. Repomix outputId: <outputId> — use mcp__repomix__grep_repomix_output for file discovery and mcp__repomix__read_repomix_output for file contents. Report all findings.`
 
 **Agent 4 — Documentation Freshness**
-Prompt: `Invoke the doc-audit skill to check documentation freshness. .pipeline/build.complete exists. Report all findings.`
+Prompt: `Invoke the doc-audit skill to check documentation freshness. .pipeline/build.complete exists. Repomix outputId: <outputId> — use mcp__repomix__grep_repomix_output for file discovery and mcp__repomix__read_repomix_output for file contents. Report all findings.`
 
 **Agent 5 — Security Review**
-Prompt: `Invoke the security-review skill to scan for OWASP Top 10 vulnerabilities. .pipeline/build.complete exists. Report all findings.`
+Prompt: `Invoke the security-review skill to scan for OWASP Top 10 vulnerabilities. .pipeline/build.complete exists. Repomix outputId: <outputId> — use mcp__repomix__grep_repomix_output for file discovery and mcp__repomix__read_repomix_output for file contents. Report all findings.`
 
 Wait for all five to complete, then present a consolidated report:
 
