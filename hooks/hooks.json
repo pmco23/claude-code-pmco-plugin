@@ -13,16 +13,7 @@
     ],
     "PostToolUse": [
       {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/context-monitor.sh\""
-          }
-        ]
-      },
-      {
-        "matcher": "Agent",
+        "matcher": "Bash|Agent|Task",
         "hooks": [
           {
             "type": "command",
