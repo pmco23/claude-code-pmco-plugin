@@ -23,7 +23,7 @@ Call `mcp__repomix__pack_codebase` with:
 
 ### Step 3: Write state file
 
-Write `.pipeline/repomix-pack.json`:
+Ensure `.pipeline/` exists (create it if not). Then write `.pipeline/repomix-pack.json`:
 
 ```json
 {
@@ -45,7 +45,11 @@ Pack complete.
   outputId:  <id>
   Files:     <count>
   Tokens:    <before> → <after> (<N>% reduction)
-  Top files: [top 5 largest from pack response]
+  Top files: [top 5 from pack response topFiles list, or "not available" if absent]
 
 Run /qa to use this pack across all audits.
 ```
+
+## Output
+
+`.pipeline/repomix-pack.json` written with outputId, file count, and token stats. Run `/qa` to use this pack across all five audit agents.
