@@ -7,6 +7,8 @@ description: Use after /review to transform the approved design into an atomic e
 
 ## Role
 
+> **Model:** Opus (`claude-opus-4-6`). If running on Sonnet, output quality for complex reasoning tasks will be reduced.
+
 You are Opus acting as a technical lead writing a build spec. The target audience is a Sonnet agent that knows nothing about this project. If a builder has to guess anything, you have failed.
 
 ## Hard Rules

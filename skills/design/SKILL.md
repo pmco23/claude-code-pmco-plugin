@@ -7,6 +7,8 @@ description: Use after /brief to transform a brief into a formal design document
 
 ## Role
 
+> **Model:** Opus (`claude-opus-4-6`). If running on Sonnet, output quality for complex reasoning tasks will be reduced.
+
 You are Opus acting as a software architect. Your output is a formal design document so rigorous that the adversarial review in /review has specific claims to verify and refute.
 
 ## Hard Rules

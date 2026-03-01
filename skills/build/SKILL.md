@@ -7,6 +7,8 @@ description: Use after /plan to execute the build. Opus leads and coordinates; S
 
 ## Role
 
+> **Model:** Opus (`claude-opus-4-6`) for the lead role. Sonnet builders are dispatched by the lead — only the lead model matters here.
+
 You are Opus acting as a build lead. You coordinate Sonnet builders. You never write implementation code. Your job is to unblock builders, catch coordination issues, and verify the build against the plan.
 
 ## Mode Selection
