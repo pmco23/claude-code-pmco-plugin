@@ -581,7 +581,7 @@ Run `hooks/test_gate.sh` to confirm all pipeline gate rules are working correctl
 bash ~/claude-agents-custom/hooks/test_gate.sh
 ```
 
-Expected: `Results: 44 passed, 0 failed`
+Expected: `Results: 49 passed, 0 failed`
 
 ---
 

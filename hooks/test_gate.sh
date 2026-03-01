@@ -118,6 +118,15 @@ check_warning "$HAS_APPROVED" "planning phase"    "/quick warns at planning phas
 check_warning "$HAS_DESIGN"  "design/review"      "/quick warns at design/review phase"
 check_warning "$HAS_BRIEF"   "brief phase"        "/quick warns at brief phase"
 
+# /pack — always allowed (no gate; Repomix MCP required at runtime but not enforced by gate)
+expect_allow "pack" "$NO_PIPELINE" "/pack with no pipeline: allow"
+expect_allow "pack" "$HAS_BRIEF"   "/pack at brief phase: allow"
+expect_allow "pack" "$HAS_BUILD"   "/pack at QA phase: allow"
+
+# /plugin-architecture — always allowed (meta-skill, no pipeline dependency)
+expect_allow "plugin-architecture" "$NO_PIPELINE" "/plugin-architecture with no pipeline: allow"
+expect_allow "plugin-architecture" "$HAS_BUILD"   "/plugin-architecture at QA phase: allow"
+
 # Cleanup
 rm -rf "$NO_PIPELINE" "$HAS_BRIEF" "$HAS_DESIGN" "$HAS_APPROVED" "$HAS_PLAN" "$HAS_BUILD"
 
