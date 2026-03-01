@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-03-01
+
+### Added
+
+- Model reference blocks (`> **Model:** ...`) added to all 19 skills — Opus for complex reasoning (`/review`), Sonnet for medium complexity (`/qa`, `/quick`, `/init`, `/backend-audit`, `/frontend-audit`, `/doc-audit`, `/security-review`, `/git-workflow`, `/grafana`, `/plugin-architecture`), Haiku for mechanical tasks (`/status`, `/pack`, `/cleanup`)
+- `## Role` sections added to `/qa` and `/plugin-architecture` (previously missing)
+
+### Changed
+
+- `docs/skills/` model fields updated from `"inherits from calling context"` to explicit model IDs for all 19 skills
+
 ## [1.4.0] - 2026-03-01
 
 ### Added
