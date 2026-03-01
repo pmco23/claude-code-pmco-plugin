@@ -11,9 +11,10 @@ Before dispatching any agents, acquire a Repomix outputId for the codebase:
 
 1. Check if `.pipeline/repomix-pack.json` exists
 2. If it exists, read `packedAt` — if less than 1 hour old, use the stored `outputId`
-3. If missing or stale, call `mcp__repomix__pack_codebase` on the current working directory with `compress: true` and update `.pipeline/repomix-pack.json` with the new outputId and current timestamp
+3. If missing or stale, call `mcp__repomix__pack_codebase` on the current working directory with `compress: true` and write the full `.pipeline/repomix-pack.json` schema (same fields as the `/pack` skill: outputId, source, packedAt, fileCount, tokensBefore, tokensAfter)
+4. If `mcp__repomix__pack_codebase` is unavailable or fails, proceed without an outputId — omit the Repomix instruction from agent prompts and agents will fall back to native Glob/Read/Grep
 
-Store the outputId for use in agent prompts below.
+Hold the outputId in context for use in the agent prompts below.
 
 ## Mode Selection
 
@@ -96,7 +97,7 @@ After presenting the consolidated report, append an Overall QA Verdict:
 
 ### Sequential Mode
 
-Run in order, presenting each result before proceeding:
+Run in order, presenting each result before proceeding. When invoking each skill, share the Repomix outputId acquired in the preamble as context so each skill can use Repomix for file discovery:
 
 1. Invoke the `cleanup` skill — present findings — ask "Continue to /frontend-audit? (yes / fix first)"
 2. Invoke the `frontend-audit` skill — present findings — ask "Continue to /backend-audit? (yes / fix first)"
