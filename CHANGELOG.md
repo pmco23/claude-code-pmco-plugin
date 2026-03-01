@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.3.0] - 2026-03-01
 
 ### Added
+
 - `/pack` skill — Repomix codebase snapshot with `.pipeline/repomix-pack.json` state
 - `/plugin-architecture` skill — agents vs skills decision guide
 - `docs/guides/agents-vs-skills.md` — full evaluation table and composition patterns
@@ -19,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `.gitignore`
 
 ### Fixed
+
 - PostToolUse hook matcher narrowed from `"*"` to `"Bash|Agent|Task"` (was firing on every tool call)
 - Codex MCP verification step in README corrected (`/status` does not list tools)
 - `/quick` LSP diagnostics wording fixed — cannot distinguish new from pre-existing issues
@@ -31,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2026-02-28
 
 ### Added
+
 - Initial release: quality-gated development pipeline (`/brief` → `/design` → `/review` → `/plan` → `/build` → `/qa`)
 - `pipeline_gate.sh` PreToolUse hook enforcing phase progression with `.pipeline/` walk-up search
 - `statusline.js` showing model, task, pipeline phase, directory, and context usage
