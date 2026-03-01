@@ -7,8 +7,11 @@ set -euo pipefail
 
 INPUT=$(cat)
 
-# Extract skill name from JSON payload
-SKILL=$(echo "$INPUT" | python3 -c "
+# Extract skill name — prefer jq, fall back to python3
+if command -v jq >/dev/null 2>&1; then
+  SKILL=$(echo "$INPUT" | jq -r '.tool_input.skill // empty' 2>/dev/null || echo "")
+elif command -v python3 >/dev/null 2>&1; then
+  SKILL=$(echo "$INPUT" | python3 -c "
 import sys, json
 try:
     d = json.load(sys.stdin)
@@ -17,6 +20,11 @@ try:
 except Exception:
     print('')
 " 2>/dev/null || echo "")
+else
+  # Neither jq nor python3 available — fail open with warning
+  echo "pipeline_gate: jq and python3 unavailable, gate disabled" >&2
+  exit 0
+fi
 
 # Not a skill invocation or parse failed — allow
 if [ -z "$SKILL" ]; then
