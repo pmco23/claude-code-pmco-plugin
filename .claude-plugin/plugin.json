@@ -6,6 +6,18 @@
     "name": "pemcoliveira"
   },
   "keywords": ["pipeline", "quality-gates", "tdd", "adversarial-review"],
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session_start_check.sh"
+          }
+        ]
+      }
+    ]
+  },
   "mcpServers": {
     "codex": {
       "command": "codex",
