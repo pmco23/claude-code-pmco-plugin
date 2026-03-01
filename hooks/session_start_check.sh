@@ -9,6 +9,7 @@ command -v jq      >/dev/null 2>&1 || MISSING+=("jq      — JSON parsing in hoo
 command -v python3 >/dev/null 2>&1 || MISSING+=("python3 — JSON parsing fallback in hooks")
 command -v repomix >/dev/null 2>&1 || MISSING+=("repomix — required for /pack and /qa codebase snapshots")
 command -v codex   >/dev/null 2>&1 || MISSING+=("codex   — required for Codex MCP server")
+command -v uvx     >/dev/null 2>&1 || MISSING+=("uvx     — required to run mcp-grafana (install via: pip install uv or brew install uv)")
 
 if [ ${#MISSING[@]} -gt 0 ]; then
   echo "⚠ claude-agents-custom: missing tools detected:" >&2
