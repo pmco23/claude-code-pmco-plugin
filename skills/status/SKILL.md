@@ -27,7 +27,7 @@ For each of the 5 pipeline artifacts, check whether it exists and, if so, read i
 | `.pipeline/plan.md` | `/plan` |
 | `.pipeline/build.complete` | `/build` |
 
-Also check `.pipeline/repomix-pack.json`. If it exists, read the `packedAt` field (ISO timestamp) to compute age from now.
+Also check `.pipeline/repomix-pack.json`. If it exists, read the `packedAt` field (ISO timestamp) to compute age from now. Use `packedAt` rather than the file's mtime — `/pack` and `/qa` both write this field explicitly, so it reliably reflects when the pack was created regardless of filesystem timestamps.
 
 **Age format:**
 
@@ -58,7 +58,7 @@ Pipeline status: [phase name]
   design.approved  [✓ <age> | ✗ missing]
   plan.md          [✓ <age> | ✗ missing]
   build.complete   [✓ <age> | ✗ missing]
-  repomix-pack     [see rules below]
+  repomix-pack     [✓ <age> — <N> files, <N> tokens | ⚠ <age> — <N> files, <N> tokens (stale) | ✗ missing]
 
 Next: [next step]
 ```
@@ -67,6 +67,8 @@ Next: [next step]
 - Age < 1 hour: `✓ <age> — <fileCount> files, <tokensAfter> tokens`
 - Age ≥ 1 hour: `⚠ <age> — <fileCount> files, <tokensAfter> tokens (stale — run /pack to refresh)`
 - File absent: `✗ missing`
+- If `packedAt` is absent or not a valid ISO timestamp: treat as stale and display `⚠ age unknown — run /pack to refresh`
+- If `fileCount` or `tokensAfter` are absent from the JSON: omit that field from the row (e.g. `✓ 23m old — 142 files` if only `tokensAfter` is missing)
 
 ## Output
 
