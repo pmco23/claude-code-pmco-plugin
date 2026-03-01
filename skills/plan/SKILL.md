@@ -23,7 +23,21 @@ You are Opus acting as a technical lead writing a build spec. The target audienc
 
 Read `.pipeline/design.md` and `.pipeline/brief.md` in full.
 
-### Step 2: Decompose into task groups
+### Step 2: Ground file paths in the actual project structure
+
+Before writing any task group, scan the real project layout so the plan's file paths match reality.
+
+1. List the root directory contents (one level)
+2. List source directories one level deep — look for common roots: `src/`, `app/`, `lib/`, `pkg/`, `cmd/`, `internal/`, `frontend/`, `backend/`
+3. If not already read in Step 1, read the primary language config file (`package.json`, `go.mod`, `requirements.txt`, `*.csproj`) to confirm module name and structure
+4. Note actual directory names and naming conventions (kebab-case vs snake_case, flat vs nested)
+
+Use this scan to:
+- Correct any file paths in the design that don't match the real layout
+- Ensure new files are placed in existing directories where possible
+- Flag in the task group if a new directory needs to be created first
+
+### Step 3: Decompose into task groups
 
 Group the work into independent task groups. A task group is a set of tasks that:
 - Can be assigned to one agent with one coherent context
@@ -32,7 +46,7 @@ Group the work into independent task groups. A task group is a set of tasks that
 
 Aim for ~5 tasks per group. More than 8 tasks in a group is a smell — split it.
 
-### Step 3: Order and dependency mapping
+### Step 4: Order and dependency mapping
 
 For each task group:
 - Which groups must complete before this one can start?
@@ -45,7 +59,7 @@ Group B ──┘
 Group D (independent, can run with A and B)
 ```
 
-### Step 4: Write the plan
+### Step 5: Write the plan
 
 Write `.pipeline/plan.md` with this structure:
 
@@ -98,7 +112,7 @@ Named test cases:
 - [ ] [specific criterion from design]
 ```
 
-### Step 5: Cross-check for conflicts
+### Step 6: Cross-check for conflicts
 
 Before finalizing: verify no two parallel task groups modify the same file. If they do, either make them sequential or split the shared file modification into its own task group that runs first.
 
