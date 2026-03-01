@@ -19,7 +19,7 @@ Ask the user (or receive from /build context):
 
 ### Step 2: Dispatch parallel verifiers
 
-Use the Task tool to launch two agents simultaneously:
+Issue both calls simultaneously in the same response turn — Agent 1 via the Task tool, Agent 2 via direct `mcp__codex__codex` call:
 
 **Agent 1 — Sonnet Verifier**
 
@@ -42,13 +42,17 @@ Step 2: For each claim, check whether the target satisfies it:
 Return a structured list: claim_id, claim, status (EXISTS/MISSING/PARTIAL/CONTRADICTED), evidence.
 ```
 
-**Agent 2 — Codex Verifier (via OpenAI MCP)**
+**Agent 2 — Codex Verifier (via Codex MCP)**
 
-Dispatch a subagent using the OpenAI MCP Codex tool with the same prompt as Agent 1. Codex operates independently to surface any claims the Sonnet agent misses.
+Call `mcp__codex__codex` directly (do not dispatch a subagent) with:
+- `prompt`: the verbatim contents of the Agent 1 prompt above (fill in `[source document path]` and `[target path]` with the values identified in Step 1)
+- `approval_policy`: `"never"`
+
+Codex operates independently to surface any claims the Sonnet agent misses.
 
 ### Step 3: Reconcile findings
 
-Once both agents return:
+Once both agents return (the Task tool returns Agent 1's output as its result; `mcp__codex__codex` returns Agent 2's output inline as its tool result):
 
 1. **Merge claim lists:** combine all claims both agents identified.
 2. **Resolve conflicts:** where agents disagree on a claim's status, check the file/symbol directly to determine ground truth.
