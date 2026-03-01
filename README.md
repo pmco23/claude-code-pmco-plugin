@@ -13,6 +13,7 @@ idea
  ├─ /init                    # project boilerplate — README, CHANGELOG, CONTRIBUTING, PR template
  ├─ /status                  # inspect current pipeline phase — always available
  ├─ /pack [path]             # Repomix snapshot — run before /qa for token efficiency
+ ├─ /grafana <task>          # Grafana SRE toolbox — dashboards, metrics, logs, alerts, Sift
  │
  └─ /brief      → .pipeline/brief.md
      └─ /design → .pipeline/design.md
@@ -48,6 +49,7 @@ Each arrow is a quality gate. You cannot run `/design` without a brief. You cann
 | Python LSP | Type inference for Python projects | `/plugin install python-lsp@claude-plugins-official` |
 | C# LSP | Symbol resolution for .NET projects | `/plugin install csharp-lsp@claude-plugins-official` |
 | Repomix MCP | Token-efficient codebase packing for `/pack`, `/qa`, `/plan`, `/brief` | See [Repomix MCP setup](#repomix-mcp-setup) |
+| Grafana MCP | Grafana observability access for `/grafana` | See [Grafana MCP setup](#grafana-mcp-setup) |
 
 LSP tools degrade gracefully — absent means reduced precision, not failure.
 
@@ -94,6 +96,46 @@ which repomix
 # Edit ~/.claude/settings.json — replace "command": "repomix" with the absolute path
 # under the mcpServers entry for your plugin installation path
 ```
+
+---
+
+## Grafana MCP Setup
+
+MCP registration is handled automatically by the plugin. You need to install `uv` (which provides `uvx`) and export two environment variables.
+
+### Install uv
+
+```bash
+# macOS / Linux
+brew install uv
+# or
+pip install uv
+```
+
+### Set environment variables
+
+Add these to your shell profile (`.bashrc`, `.zshrc`, etc.):
+
+```bash
+export GRAFANA_URL=http://localhost:3000
+export GRAFANA_SERVICE_ACCOUNT_TOKEN=<your-token>
+```
+
+Restart Claude Code after setting the variables so the MCP server picks them up.
+
+### Troubleshooting — Grafana server not connecting
+
+If `uvx` is not on PATH in non-interactive shells, fix by using the absolute path:
+
+```bash
+# Find the path
+which uvx
+
+# Edit ~/.claude/settings.json — replace "command": "uvx" with the absolute path
+# under the mcpServers entry for your plugin installation path
+```
+
+If the MCP server starts but tools return auth errors, verify `GRAFANA_SERVICE_ACCOUNT_TOKEN` is exported (not just set) and that the token has the required Grafana permissions.
 
 ---
 
@@ -437,6 +479,25 @@ Packs the local codebase using Repomix MCP and stores the outputId in `.pipeline
 ```
 
 If Repomix MCP is not installed, this skill will fail. Other skills (`/qa`, `/plan`, `/brief`) fall back to native file tools when no pack is available.
+
+---
+
+### /grafana — Grafana SRE Toolbox
+
+**Gate:** None (always available — requires Grafana MCP)
+**Writes:** nothing
+**Model:** inherits from calling context
+
+Accepts a free-text observability task and works through it using a ReAct loop (Reason → Act → Observe → Decide). Knows its full tool catalogue upfront: dashboards, Prometheus/Loki querying, alerting, Sift investigations, log search, deeplink generation, and panel rendering. Handles both single-step queries and multi-hop investigations.
+
+```
+/grafana what alerts are currently firing?
+/grafana show me the p99 latency for service checkout over the last hour
+/grafana find dashboards related to postgres and render the connections panel
+/grafana search for error patterns in logs for the auth service
+```
+
+Requires `GRAFANA_URL` and `GRAFANA_SERVICE_ACCOUNT_TOKEN` to be exported in the shell environment. See [Grafana MCP setup](#grafana-mcp-setup).
 
 ---
 
