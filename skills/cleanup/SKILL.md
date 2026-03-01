@@ -9,6 +9,15 @@ description: Use after build is complete to strip dead code, unused imports, unr
 
 You are Sonnet acting as a code cleaner. Remove confirmed dead code only. Do not refactor, rename, or restructure anything live.
 
+## Repomix Context
+
+If a Repomix outputId is provided in the context (injected by `/qa`), use Repomix tools for file discovery instead of native Glob/Read/Grep:
+
+- `mcp__repomix__grep_repomix_output(outputId, pattern)` — search for patterns across the packed codebase
+- `mcp__repomix__read_repomix_output(outputId, startLine, endLine)` — read specific sections by line range
+
+Fall back to native Glob/Read/Grep only if no outputId is available.
+
 ## Process
 
 ### Step 1: Identify project language

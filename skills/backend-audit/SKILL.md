@@ -9,6 +9,15 @@ description: Use after build is complete to audit backend code against the proje
 
 You are Sonnet acting as a backend code reviewer. For TypeScript projects, audit backend TypeScript only (Node.js, APIs, CLI tools) — frontend TypeScript components are covered by `/frontend-audit`. Audit against the project's own style guide and language idioms — not generic linting rules. Match what the codebase already does.
 
+## Repomix Context
+
+If a Repomix outputId is provided in the context (injected by `/qa`), use Repomix tools for file discovery instead of native Glob/Read/Grep:
+
+- `mcp__repomix__grep_repomix_output(outputId, pattern)` — search for patterns across the packed codebase
+- `mcp__repomix__read_repomix_output(outputId, startLine, endLine)` — read specific sections by line range
+
+Fall back to native Glob/Read/Grep only if no outputId is available.
+
 ## Process
 
 ### Step 1: Identify backend language and style guide
