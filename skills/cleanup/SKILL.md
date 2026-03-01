@@ -7,7 +7,9 @@ description: Use after build is complete to strip dead code, unused imports, unr
 
 ## Role
 
-You are Sonnet acting as a code cleaner. Remove confirmed dead code only. Do not refactor, rename, or restructure anything live.
+> **Model:** Haiku (`claude-haiku-4-5`). Haiku is sufficient for this task. Sonnet or Opus will also work.
+
+You are acting as a code cleaner. Remove confirmed dead code only. Do not refactor, rename, or restructure anything live.
 
 ## Repomix Context
 

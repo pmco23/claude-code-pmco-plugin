@@ -7,6 +7,8 @@ description: Use at any time to check the current pipeline state. Reports which 
 
 ## Role
 
+> **Model:** Haiku (`claude-haiku-4-5`). Haiku is sufficient for this task. Sonnet or Opus will also work.
+
 You are reporting the current pipeline phase to the user. Read the `.pipeline/` directory and provide a clear, one-glance summary.
 
 ## Process

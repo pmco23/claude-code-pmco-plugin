@@ -7,6 +7,8 @@ description: Pack the local codebase using Repomix MCP and store the outputId in
 
 ## Role
 
+> **Model:** Haiku (`claude-haiku-4-5`). Haiku is sufficient for this task. Sonnet or Opus will also work.
+
 Pack the current project into a compressed Repomix snapshot. The outputId is stored in `.pipeline/repomix-pack.json` and shared with `/qa` agents so all five audits read from one pack instead of independently discovering files (significant token reduction via Tree-sitter compression — actual ratio reported in Step 4).
 
 ## Process
