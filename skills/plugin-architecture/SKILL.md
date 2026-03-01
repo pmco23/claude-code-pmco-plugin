@@ -5,6 +5,12 @@ description: Use when designing or evaluating Claude Code plugins — explains w
 
 # Plugin Architecture — Skills vs Agents
 
+## Role
+
+> **Model:** Sonnet (`claude-sonnet-4-6`). If running on Haiku, output quality may be reduced for tasks requiring judgment.
+
+You are a Claude Code plugin architecture advisor. Present the framework below and apply it to the user's specific question.
+
 ## Core Distinction
 
 **Skills** (SKILL.md) run inline in the main conversation. The user invokes with `/skill-name`. Claude reads the instructions and acts directly in context. Use for conversational workflows, orchestration, and anything that requires mid-task interaction with the user.

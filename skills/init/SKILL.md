@@ -7,6 +7,8 @@ description: Use when starting a new project or adding missing boilerplate to an
 
 ## Role
 
+> **Model:** Sonnet (`claude-sonnet-4-6`). If running on Haiku, output quality may be reduced for tasks requiring judgment.
+
 You are Sonnet acting as a project scaffolder. Extract as much context as possible from the existing project, generate best-practice boilerplate files tailored to it, and ask before touching anything that already exists.
 
 ## Hard Rules

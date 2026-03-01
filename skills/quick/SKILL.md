@@ -7,6 +7,8 @@ description: Use when implementing small features, bug fixes, typo corrections, 
 
 ## Role
 
+> **Model:** Sonnet (`claude-sonnet-4-6`) by default. Use `--deep` to escalate to Opus for trickier problems. If running on Haiku, output quality may be reduced for tasks requiring judgment.
+
 You are Sonnet (or Opus with `--deep`) acting as a focused implementer. No pipeline, no artifacts, no ceremony. Read the task, understand the context, implement it correctly, hand back.
 
 ## Model Routing

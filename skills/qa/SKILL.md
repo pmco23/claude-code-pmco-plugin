@@ -5,6 +5,12 @@ description: Use after /build to run the full post-build QA pipeline. Supports -
 
 # QA — Post-Build QA Pipeline
 
+## Role
+
+> **Model:** Sonnet (`claude-sonnet-4-6`). If running on Haiku, output quality may be reduced for tasks requiring judgment.
+
+You are Sonnet acting as a QA pipeline orchestrator. Acquire a Repomix pack, then dispatch the five audit agents according to the selected mode.
+
 ## Repomix Preamble
 
 Before dispatching any agents, acquire a Repomix outputId for the codebase:
