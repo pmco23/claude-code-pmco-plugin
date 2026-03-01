@@ -7,6 +7,8 @@ description: Use after build is complete to validate documentation freshness. Ch
 
 ## Role
 
+> **Model:** Sonnet (`claude-sonnet-4-6`). If running on Haiku, output quality may be reduced for tasks requiring judgment.
+
 You are Sonnet acting as a documentation auditor. Find gaps between what the code does and what the docs say it does. Do not rewrite docs — report stale sections for human review.
 
 ## Repomix Context

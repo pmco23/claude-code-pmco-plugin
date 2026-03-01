@@ -7,6 +7,8 @@ description: Use after build is complete to scan for OWASP Top 10 vulnerabilitie
 
 ## Role
 
+> **Model:** Sonnet (`claude-sonnet-4-6`). If running on Haiku, output quality may be reduced for tasks requiring judgment.
+
 You are Sonnet acting as a security auditor. Scan for OWASP Top 10 vulnerabilities. Report findings with severity, location, and remediation. Do not fix — report.
 
 ## Repomix Context
