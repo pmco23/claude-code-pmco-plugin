@@ -1,7 +1,7 @@
 {
   "name": "claude-agents-custom",
   "version": "1.0.0",
-  "description": "Quality-gated development pipeline: arm → design → ar → plan → build → qa",
+  "description": "Quality-gated development pipeline: brief → design → review → plan → build → qa",
   "author": {
     "name": "pemcoliveira"
   },
