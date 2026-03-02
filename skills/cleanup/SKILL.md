@@ -86,5 +86,3 @@ After removal, confirm no tests are broken:
 ## Output
 
 Report: "Removed [N] dead code items across [M] files."
-
-If items were skipped (user chose "review each"), use `/quick` to address them individually. Re-run `/cleanup` to confirm.

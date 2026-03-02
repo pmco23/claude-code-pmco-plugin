@@ -68,5 +68,3 @@ If no findings: "Frontend audit complete — no violations found."
 ## Output
 
 Report to user. No file written to `.pipeline/`.
-
-After reviewing findings, use `/quick` to address individual items. Re-run `/frontend-audit` after fixing to confirm they are resolved.

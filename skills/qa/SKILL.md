@@ -7,7 +7,7 @@ description: Use after /build to run the full post-build QA pipeline. Supports -
 
 ## Role
 
-> **Model:** Sonnet (`claude-sonnet-4-6`). If running on Haiku, output quality may be reduced for tasks requiring judgment.
+> **Model:** Sonnet (`claude-sonnet-4-6`).
 
 You are Sonnet acting as a QA pipeline orchestrator. Acquire a Repomix pack, then dispatch the five audit agents according to the selected mode.
 
@@ -46,19 +46,19 @@ Dispatch all five QA skills simultaneously via the Task tool. Each agent receive
 Use the Task tool to launch 5 subagents at once. Prompt for each:
 
 **Agent 1 — Dead Code Removal**
-Prompt: `Invoke the cleanup skill to audit this codebase for dead code. .pipeline/build.complete exists. Repomix outputId: <outputId> — use mcp__repomix__grep_repomix_output for file discovery and mcp__repomix__read_repomix_output for file contents. Report all findings.`
+Prompt: `Follow the cleanup skill process: find dead code (unused symbols, unused imports, unreachable branches, commented-out code). .pipeline/build.complete exists. Repomix outputId: <outputId> — use mcp__repomix__grep_repomix_output for file discovery and mcp__repomix__read_repomix_output for file contents. Report all findings with file:line references.`
 
 **Agent 2 — Frontend Audit**
-Prompt: `Invoke the frontend-audit skill to audit frontend code quality. .pipeline/build.complete exists. Repomix outputId: <outputId> — use mcp__repomix__grep_repomix_output for file discovery and mcp__repomix__read_repomix_output for file contents. Report all findings.`
+Prompt: `Follow the frontend-audit skill process: audit frontend TypeScript/JavaScript/CSS/HTML against the project's own style guide (infer from existing code if no explicit guide). .pipeline/build.complete exists. Repomix outputId: <outputId> — use mcp__repomix__grep_repomix_output for file discovery and mcp__repomix__read_repomix_output for file contents. Report all findings with file:line references.`
 
 **Agent 3 — Backend Audit**
-Prompt: `Invoke the backend-audit skill to audit backend code quality. .pipeline/build.complete exists. Repomix outputId: <outputId> — use mcp__repomix__grep_repomix_output for file discovery and mcp__repomix__read_repomix_output for file contents. Report all findings.`
+Prompt: `Follow the backend-audit skill process: audit backend code (Go/Python/TypeScript/C#) against the project's own style guide. Check error handling, logging, naming, public API surface. .pipeline/build.complete exists. Repomix outputId: <outputId> — use mcp__repomix__grep_repomix_output for file discovery and mcp__repomix__read_repomix_output for file contents. Report all findings with file:line references.`
 
 **Agent 4 — Documentation Freshness**
-Prompt: `Invoke the doc-audit skill to check documentation freshness. .pipeline/build.complete exists. Repomix outputId: <outputId> — use mcp__repomix__grep_repomix_output for file discovery and mcp__repomix__read_repomix_output for file contents. Report all findings.`
+Prompt: `Follow the doc-audit skill process: check CHANGELOG.md for Keep a Changelog format compliance, presence of an [Unreleased] section, and coverage of the feature built in this pipeline. .pipeline/build.complete exists. Repomix outputId: <outputId> — use mcp__repomix__grep_repomix_output for file discovery and mcp__repomix__read_repomix_output for file contents. Report all findings.`
 
 **Agent 5 — Security Review**
-Prompt: `Invoke the security-review skill to scan for OWASP Top 10 vulnerabilities. .pipeline/build.complete exists. Repomix outputId: <outputId> — use mcp__repomix__grep_repomix_output for file discovery and mcp__repomix__read_repomix_output for file contents. Report all findings.`
+Prompt: `Follow the security-review skill process: scan for OWASP Top 10 vulnerabilities relevant to this application type. .pipeline/build.complete exists. Repomix outputId: <outputId> — use mcp__repomix__grep_repomix_output for file discovery and mcp__repomix__read_repomix_output for file contents. Report all findings with severity, location, and remediation.`
 
 Wait for all five to complete, then present a consolidated report:
 
@@ -105,11 +105,11 @@ After presenting the consolidated report, append an Overall QA Verdict:
 
 Run in order, presenting each result before proceeding. When invoking each skill, prepend this to the invocation: "Repomix outputId: <outputId> — use mcp__repomix__grep_repomix_output for file discovery and mcp__repomix__read_repomix_output for file contents." If no outputId was acquired in the preamble, omit this instruction:
 
-1. Invoke the `cleanup` skill — present findings — ask "Continue to /frontend-audit? (yes / fix first)"
-2. Invoke the `frontend-audit` skill — present findings — ask "Continue to /backend-audit? (yes / fix first)"
-3. Invoke the `backend-audit` skill — present findings — ask "Continue to /doc-audit? (yes / fix first)"
-4. Invoke the `doc-audit` skill — present findings — ask "Continue to /security-review? (yes / fix first)"
-5. Invoke the `security-review` skill — present final findings
+1. Follow the `cleanup` skill process — present findings — ask "Continue to /frontend-audit? (yes / fix first)"
+2. Follow the `frontend-audit` skill process — present findings — ask "Continue to /backend-audit? (yes / fix first)"
+3. Follow the `backend-audit` skill process — present findings — ask "Continue to /doc-audit? (yes / fix first)"
+4. Follow the `doc-audit` skill process — present findings — ask "Continue to /security-review? (yes / fix first)"
+5. Follow the `security-review` skill process — present final findings
 
 After /security-review completes, present the Overall QA Verdict table (same format as parallel mode above), summarising results from all five audits.
 

@@ -76,8 +76,6 @@ Always available (no pipeline required):
   /git-workflow  before branch creation, first push, PR, destructive ops
   /pack          Repomix snapshot — run before /qa or /quick --deep
   /status        this report
-
-See docs/guides/workflows.md for the full decision guide.
 ```
 
 #### Pipeline report (artifacts exist)

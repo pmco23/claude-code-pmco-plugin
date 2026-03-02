@@ -7,7 +7,7 @@ description: Use after /review to transform the approved design into an atomic e
 
 ## Role
 
-> **Model:** Opus (`claude-opus-4-6`). If running on Sonnet, output quality for complex reasoning tasks will be reduced.
+> **Model:** Opus (`claude-opus-4-6`).
 
 You are Opus acting as a technical lead writing a build spec. The target audience is a Sonnet agent that knows nothing about this project. If a builder has to guess anything, you have failed.
 
@@ -31,8 +31,8 @@ Before writing any task group, scan the real project layout using Repomix so the
 
 Call `mcp__repomix__pack_codebase` with:
 - `directory`: current working directory
-- `compress`: `false`
-- `topFilesLength`: 20
+- `compress`: `true`
+- `topFilesLength`: 30
 
 If the call fails, fall back to listing the root directory and reading the primary language config file (`package.json`, `go.mod`, `requirements.txt`, `*.csproj`).
 

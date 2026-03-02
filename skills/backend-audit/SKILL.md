@@ -7,7 +7,7 @@ description: Use after build is complete to audit backend code against the proje
 
 ## Role
 
-> **Model:** Sonnet (`claude-sonnet-4-6`). If running on Haiku, output quality may be reduced for tasks requiring judgment.
+> **Model:** Sonnet (`claude-sonnet-4-6`).
 
 You are Sonnet acting as a backend code reviewer. For TypeScript projects, audit backend TypeScript only (Node.js, APIs, CLI tools) — frontend TypeScript components are covered by `/frontend-audit`. Audit against the project's own style guide and language idioms — not generic linting rules. Match what the codebase already does.
 
@@ -24,7 +24,14 @@ Fall back to native Glob/Read/Grep only if no outputId is available.
 
 ### Step 1: Identify backend language and style guide
 
-Read `.pipeline/brief.md` for the primary language. Check which LSP tools are available.
+Attempt language detection in order — stop as soon as a language is identified:
+
+1. **Read `.pipeline/brief.md`** — if it exists, extract the primary language from it.
+2. **Root-level config files** — `package.json` → TypeScript/JavaScript, `go.mod` → Go, `requirements.txt` / `pyproject.toml` → Python, `*.csproj` or `*.sln` → C#, `Cargo.toml` → Rust.
+3. **LSP tool availability** — check which LSP tools are available in this session as a hint.
+4. **Unknown** — announce: "Language unknown — falling back to general backend patterns."
+
+Check which LSP tools are available (needed for the quality tier announcement in Step 2).
 
 Look for style guidance:
 1. `STYLE.md`, `BACKEND.md`, `docs/style-guide.md`
@@ -86,4 +93,3 @@ Group by severity: Errors, Warnings, Style.
 
 Report to user. No file written to `.pipeline/`.
 
-After reviewing findings, use `/quick` to address individual items. Re-run `/backend-audit` after fixing to confirm they are resolved.

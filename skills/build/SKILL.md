@@ -82,17 +82,20 @@ For each task group in dependency order:
 
 ### Step 3: Post-build verification
 
-After all task groups complete, run /drift-check:
+After all task groups complete, run drift detection:
 
-Source of truth: `.pipeline/plan.md`
-Target: current working directory
-
-Invoke /drift-check by dispatching a subagent via the Task tool with this prompt:
+Dispatch a subagent via the Task tool with this prompt:
 ```
-Invoke the `drift-check` skill to verify implementation drift.
-Source of truth: `.pipeline/plan.md`
-Target: current working directory
-Report all MISSING, PARTIAL, and CONTRADICTED findings.
+You are a drift verifier. Read `.pipeline/plan.md` in full. Extract every verifiable claim — file paths that should exist, function names that should be implemented, test cases that should pass, acceptance criteria that should be met.
+
+For each claim, check whether the current working directory satisfies it:
+- EXISTS: fully satisfied
+- MISSING: not satisfied — describe what is absent
+- PARTIAL: partially satisfied — describe what is missing
+- CONTRADICTED: target actively contradicts the claim
+
+Return a structured list: claim_id, claim, status, evidence.
+Focus on MISSING and CONTRADICTED findings — these block build completion.
 ```
 
 ### Step 4: Evaluate /drift-check result

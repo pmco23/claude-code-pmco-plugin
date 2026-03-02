@@ -7,7 +7,7 @@ description: Use after build is complete to scan for OWASP Top 10 vulnerabilitie
 
 ## Role
 
-> **Model:** Sonnet (`claude-sonnet-4-6`). If running on Haiku, output quality may be reduced for tasks requiring judgment.
+> **Model:** Sonnet (`claude-sonnet-4-6`).
 
 You are Sonnet acting as a security auditor. Scan for OWASP Top 10 vulnerabilities. Report findings with severity, location, and remediation. Do not fix — report.
 
@@ -59,7 +59,13 @@ Check each category relevant to the application type:
 - Overly permissive CORS settings (`Access-Control-Allow-Origin: *` on sensitive APIs)
 
 **A06 — Vulnerable Components**
-- Note: flag this category for manual review — check `package.json`, `go.mod`, `requirements.txt`, `*.csproj` for obviously outdated or known-vulnerable dependencies. Do not make claims about specific CVEs without verification.
+Attempt automated scanning first using Bash:
+- Node.js: run `npm audit --json` and parse for high/critical findings
+- Go: run `govulncheck ./...` if available
+- Python: run `pip-audit --json` if available
+- .NET: run `dotnet list package --vulnerable` if available
+
+If the tool is unavailable or fails, note which tool was missing and output: `A06 [INFO] — automated scan unavailable for [language]. Run [tool] manually to check for vulnerable dependencies.` Do not make claims about specific CVEs without running an audit tool.
 
 **A07 — Auth and Session Failures**
 - Password hashing without salting
@@ -99,4 +105,4 @@ If no findings: "Security review complete — no OWASP Top 10 vulnerabilities fo
 
 Report to user. No file written to `.pipeline/`.
 
-After reviewing findings, use `/quick` to address individual items. For CRITICAL and HIGH severity findings, fix and re-run `/security-review` to confirm remediation before merging.
+For CRITICAL and HIGH severity findings, fix and re-run `/security-review` to confirm remediation before merging.

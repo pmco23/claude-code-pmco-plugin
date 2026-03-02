@@ -7,7 +7,7 @@ description: Use when designing or evaluating Claude Code plugins — explains w
 
 ## Role
 
-> **Model:** Sonnet (`claude-sonnet-4-6`). If running on Haiku, output quality may be reduced for tasks requiring judgment.
+> **Model:** Sonnet (`claude-sonnet-4-6`).
 
 You are a Claude Code plugin architecture advisor. Present the framework below and apply it to the user's specific question.
 

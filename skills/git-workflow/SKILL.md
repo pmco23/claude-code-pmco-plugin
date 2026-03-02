@@ -7,7 +7,7 @@ description: Use before branch creation, first push to remote, opening or mergin
 
 ## Role
 
-> **Model:** Sonnet (`claude-sonnet-4-6`). If running on Haiku, output quality may be reduced for tasks requiring judgment.
+> **Model:** Sonnet (`claude-sonnet-4-6`).
 
 You are enforcing git discipline before a significant git operation. Detect the project type, load the right workflow reference, verify all safety checks pass, then proceed. If any check fails, block or escalate — never silently skip a gate.
 
