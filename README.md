@@ -67,8 +67,9 @@ Restart Claude Code. Run `/brief` to verify. See the [full installation guide](d
 
 | Guide | |
 |-------|--|
+| [Workflows](docs/guides/workflows.md) | Which path to use: Fast Track vs Pipeline, always-available skills, how agents work |
 | [Installation](docs/guides/installation.md) | Full install steps, statusline setup, verification |
-| [MCP Setup](docs/guides/mcp-setup.md) | Codex, Repomix, and Grafana MCP configuration |
+| [MCP Setup](docs/guides/mcp-setup.md) | Codex and Repomix MCP configuration |
 | [Walkthrough](docs/guides/walkthrough.md) | End-to-end example, `.pipeline/` reference, mode flags, language matrix |
 | [Troubleshooting](docs/guides/troubleshooting.md) | Common issues and fixes |
 
@@ -94,4 +95,3 @@ Restart Claude Code. Run `/brief` to verify. See the [full installation guide](d
 | [/plugin-architecture](docs/skills/plugin-architecture.md) | Plugin architecture guide |
 | [/status](docs/skills/status.md) | Pipeline state check |
 | [/pack](docs/skills/pack.md) | Repomix codebase snapshot |
-| [/grafana](docs/skills/grafana.md) | Grafana SRE toolbox |
