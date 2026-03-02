@@ -47,7 +47,7 @@ If a task fails any test, keep it as a skill.
 
 ---
 
-## Evaluating This Plugin's 16 Skills
+## Evaluating This Plugin's 18 Skills
 
 The following table applies the fitness criterion to every skill in this plugin. It documents the reasoning so future decisions can follow the same logic rather than re-litigating from scratch.
 
@@ -63,6 +63,8 @@ The following table applies the fitness criterion to every skill in this plugin.
 | `/git-workflow` | **Skill** | Conversational — asks about PR title, branch naming, commit scope |
 | `/qa` | **Skill** | Orchestrator — coordinates five audits; interaction in sequential mode |
 | `/status` | **Skill** | Lightweight report from `.pipeline/` files; no verbose output |
+| `/pack` | **Skill** | Single-command Repomix wrapper; non-interactive, but output is used by the user immediately — no isolation benefit |
+| `/plugin-architecture` | **Skill** | Reference guide invoked interactively; user reads inline output |
 | `/drift-check` | **Borderline** | Asks user for source/target when run standalone (fails criterion 1); auto when called from `/build`. Could be split — agent for the verification phase, skill for the source/target prompt. Not worth splitting until the current approach causes a real problem. |
 | `/cleanup` | **Borderline** | Finds dead code (read-only) then asks user to confirm before removing (interactive). Could be split — agent for the scanning phase, skill for the confirmation and removal. Same judgement: don't split until there's a concrete reason. |
 | `/frontend-audit` | **Agent candidate** | Self-contained, read-only, produces structured findings. Passes all three tests. |
@@ -159,5 +161,3 @@ Until one of these signals is present, the current architecture is correct and s
 ## Reference
 
 For an invocable version of this guide, use `/plugin-architecture` — a concise skill (under 80 lines) covering the fitness criterion, patterns, decision tree, and anti-patterns.
-
-For the full design discussion that produced this document, see `docs/plans/2026-03-01-agents-vs-skills-design.md`.
