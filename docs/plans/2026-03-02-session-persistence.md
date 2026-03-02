@@ -26,10 +26,11 @@ Append the following block to `hooks/session_start_check.sh`, after the existing
 ```bash
 # --- Episodic memory: sync last session and inject recent context into MEMORY.md ---
 
-EPISODIC_BIN="$HOME/.claude/plugins/cache/superpowers-marketplace/episodic-memory/1.0.15/cli/episodic-memory.js"
+# Resolve the installed version dynamically (version-agnostic)
+EPISODIC_BIN=$(ls "$HOME/.claude/plugins/cache/superpowers-marketplace/episodic-memory/"*/cli/episodic-memory.js 2>/dev/null | sort -V | tail -1)
 
-if [ ! -f "$EPISODIC_BIN" ]; then
-  echo "⚠ claude-agents-custom: episodic-memory not found at expected path — skipping session context injection" >&2
+if [ -z "$EPISODIC_BIN" ] || [ ! -f "$EPISODIC_BIN" ]; then
+  echo "⚠ claude-agents-custom: episodic-memory not found — skipping session context injection" >&2
 else
   # Sync last session into index (silent)
   node "$EPISODIC_BIN" sync >/dev/null 2>&1
@@ -256,11 +257,11 @@ In `hooks/session_start_check.sh`, the existing `command -v` checks use this pat
 command -v repomix >/dev/null 2>&1 || MISSING+=("repomix — required for /pack and /qa codebase snapshots")
 ```
 
-The episodic-memory plugin is a Node.js script (not a PATH binary), so instead of `command -v`, add a file-existence check after the other MISSING checks:
+The episodic-memory plugin is a Node.js script (not a PATH binary), so instead of `command -v`, add a glob-based existence check after the other MISSING checks:
 
 ```bash
-EPISODIC_CHECK="$HOME/.claude/plugins/cache/superpowers-marketplace/episodic-memory/1.0.15/cli/episodic-memory.js"
-[ -f "$EPISODIC_CHECK" ] || MISSING+=("episodic-memory plugin — required for session context injection (install via superpowers marketplace)")
+EPISODIC_CHECK=$(ls "$HOME/.claude/plugins/cache/superpowers-marketplace/episodic-memory/"*/cli/episodic-memory.js 2>/dev/null | sort -V | tail -1)
+[ -n "$EPISODIC_CHECK" ] && [ -f "$EPISODIC_CHECK" ] || MISSING+=("episodic-memory plugin — required for session context injection (install via superpowers marketplace)")
 ```
 
 **Step 4: Verify bash syntax**
