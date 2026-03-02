@@ -22,18 +22,7 @@ Each pipeline phase writes a state artifact to `.pipeline/` in your project root
 
 Or commit it if you want a paper trail of your pipeline state.
 
-**To reset the pipeline** (start over from a specific phase):
-
-```bash
-# Reset everything — start fresh from /brief
-rm -rf .pipeline/
-
-# Re-open from design phase (keep brief, redo design forward)
-rm .pipeline/design.md .pipeline/design.approved .pipeline/plan.md .pipeline/build.complete
-
-# Re-open from review phase (keep design, redo /review forward)
-rm .pipeline/design.approved .pipeline/plan.md .pipeline/build.complete
-```
+See [Workflows → Resetting to a prior phase](workflows.md#resetting-to-a-prior-phase) for reset commands.
 
 ## End-to-End Walkthrough
 
