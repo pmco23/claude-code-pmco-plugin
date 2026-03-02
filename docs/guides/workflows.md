@@ -14,7 +14,7 @@ Two workflow paths are available. Everything else in the plugin supports one of 
 
 ## Fast Track
 
-```
+```text
 /quick [task description]     Sonnet implements directly — no artifacts
 /quick --deep [task]          Escalate to Opus for trickier problems
 /quick                        Prompts you for task description
@@ -43,7 +43,7 @@ Two workflow paths are available. Everything else in the plugin supports one of 
 
 A quality-gated sequence. Each phase writes an artifact. The gate hook blocks forward progress until the required artifact exists.
 
-```
+```text
 /brief    →  .pipeline/brief.md         requirements crystallization (Opus)
 /design   →  .pipeline/design.md        first-principles design (Opus + Context7)
 /review   →  .pipeline/design.approved  adversarial review (Opus + Codex in parallel)
@@ -90,7 +90,7 @@ These run independently of any pipeline state — no gate, no artifacts required
 
 | Skill | When to use |
 |-------|-------------|
-| `/status` | Any time — shows pipeline state and next step; cold-start shows this workflow guide |
+| `/status` | Any time — shows pipeline state and next step; with no active pipeline, shows available workflow choices |
 | `/init` | New project or missing boilerplate — generates README, CHANGELOG, CONTRIBUTING, .gitignore |
 | `/git-workflow` | Before branch creation, first push, PR open/merge, or destructive git op (force-push, reset --hard) |
 | `/pack` | Before `/qa` or `/quick --deep` to snapshot the codebase |
@@ -102,7 +102,7 @@ These run independently of any pipeline state — no gate, no artifacts required
 
 ## How Agents Work
 
-Three named agents exist in the `agents/` directory: `strategic-critic`, `drift-verifier`, and `task-builder`. You never invoke these directly. Skills dispatch them automatically:
+Three named agents exist in the `agents/` directory: `strategic-critic`, `drift-verifier`, and `task-builder`. Two skills also dispatch Codex MCP (an external MCP tool, not a local agent) for independent parallel analysis. You never invoke agents or Codex MCP directly — skills dispatch them automatically:
 
 - `/review` dispatches `strategic-critic` (Opus) and Codex MCP in parallel
 - `/drift-check` dispatches `drift-verifier` (Sonnet) and Codex MCP in parallel
