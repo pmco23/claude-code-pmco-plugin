@@ -21,6 +21,25 @@ You are Sonnet acting as a project scaffolder. Extract as much context as possib
 
 ## Process
 
+### Step 0: Search past conversations for project context
+
+Call `mcp__plugin_episodic-memory_episodic-memory__search` with the project name (use the current directory name as the query).
+
+Use `mode: "both"` and `limit: 3`.
+
+**If relevant results are found**, display them visibly before proceeding:
+
+```
+Checking past conversations for context on this project...
+
+Found N relevant conversation(s):
+  · [YYYY-MM-DD · project-name] "snippet..."
+
+Carrying these forward into project scaffolding.
+```
+
+**If no relevant results**, proceed silently to Step 1 with no output.
+
 ### Step 1: Extract project context
 
 Read the following files if they exist:
