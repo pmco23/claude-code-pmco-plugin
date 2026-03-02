@@ -14,6 +14,10 @@ Asks before touching any file that already exists: **Overwrite / Skip / Merge**.
 /init
 ```
 
+## Past context
+
+Before scaffolding, `/init` searches past conversations for the project name using `episodic-memory`. Found results are displayed visibly and carried forward.
+
 ## Generated files
 
 | File | Standard |

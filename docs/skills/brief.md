@@ -11,3 +11,7 @@ Extracts requirements, constraints, non-goals, style preferences, and key concep
 ```
 /brief
 ```
+
+## Past context
+
+Before Q&A begins, `/brief` searches past conversations for the stated feature or topic using `episodic-memory`. Found results are displayed visibly and carried forward into requirements extraction.
