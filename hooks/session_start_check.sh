@@ -9,7 +9,6 @@ command -v jq      >/dev/null 2>&1 || MISSING+=("jq      — JSON parsing in hoo
 command -v python3 >/dev/null 2>&1 || MISSING+=("python3 — JSON parsing fallback in hooks")
 command -v repomix >/dev/null 2>&1 || MISSING+=("repomix — required for /pack and /qa codebase snapshots")
 command -v codex   >/dev/null 2>&1 || MISSING+=("codex   — required for Codex MCP server")
-command -v uvx     >/dev/null 2>&1 || MISSING+=("uvx     — required to run mcp-grafana (install via: pip install uv or brew install uv)")
 EPISODIC_CHECK=$(ls "$HOME/.claude/plugins/cache/superpowers-marketplace/episodic-memory/"*/cli/episodic-memory.js 2>/dev/null | sort -V | tail -1)
 [ -n "$EPISODIC_CHECK" ] && [ -f "$EPISODIC_CHECK" ] || MISSING+=("episodic-memory plugin — required for session context injection (install via superpowers marketplace)")
 

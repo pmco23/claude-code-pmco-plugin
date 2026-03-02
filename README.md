@@ -13,7 +13,6 @@ idea
  ├─ /init                    # project boilerplate — README, CHANGELOG, CONTRIBUTING, PR template
  ├─ /status                  # inspect current pipeline phase — always available
  ├─ /pack [path]             # Repomix snapshot — run before /qa for token efficiency
- ├─ /grafana <task>          # Grafana SRE toolbox — dashboards, metrics, logs, alerts, Sift
  │
  └─ /brief      → .pipeline/brief.md
      └─ /design → .pipeline/design.md
@@ -49,7 +48,6 @@ Each arrow is a quality gate. You cannot run `/design` without a brief. You cann
 | Python LSP | Type inference for Python projects | `/plugin install python-lsp@claude-plugins-official` |
 | C# LSP | Symbol resolution for .NET projects | `/plugin install csharp-lsp@claude-plugins-official` |
 | Repomix MCP | Token-efficient codebase packing for `/pack`, `/qa`, `/plan`, `/brief` | [MCP setup →](docs/guides/mcp-setup.md#repomix-mcp) |
-| Grafana MCP | Grafana observability access for `/grafana` | [MCP setup →](docs/guides/mcp-setup.md#grafana-mcp) |
 
 LSP tools degrade gracefully — absent means reduced precision, not failure.
 

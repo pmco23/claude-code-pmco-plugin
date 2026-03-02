@@ -1,6 +1,6 @@
 {
   "name": "claude-agents-custom",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Quality-gated development pipeline: brief → design → review → plan → build → qa",
   "author": {
     "name": "pemcoliveira"
@@ -14,17 +14,6 @@
     "repomix": {
       "command": "repomix",
       "args": ["--mcp"]
-    },
-    "mcp-grafana": {
-      "command": "uvx",
-      "args": [
-        "mcp-grafana",
-        "--enabled-tools", "search,prometheus,loki,datasource,alerting,dashboard,asserts,sift,navigation,rendering,examples,searchlogs,runpanelquery"
-      ],
-      "env": {
-        "GRAFANA_URL": "${GRAFANA_URL}",
-        "GRAFANA_SERVICE_ACCOUNT_TOKEN": "${GRAFANA_SERVICE_ACCOUNT_TOKEN}"
-      }
     }
   }
 }
