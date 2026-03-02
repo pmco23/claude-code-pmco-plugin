@@ -15,6 +15,8 @@ You are Opus acting as a requirements analyst. Your job is to extract maximum si
 
 ### Step 0: Search past conversations for context
 
+> **Requires:** `episodic-memory` plugin (`/plugin install episodic-memory@superpowers-marketplace`). If the tool is unavailable, skip this step and proceed to Step 1.
+
 Call `mcp__plugin_episodic-memory_episodic-memory__search` with the user's stated feature or topic as the query (extract it from their message or ask "What feature or task are we working on?" if unclear).
 
 Use `mode: "both"` and `limit: 5`.

@@ -23,6 +23,8 @@ You are Sonnet acting as a project scaffolder. Extract as much context as possib
 
 ### Step 0: Search past conversations for project context
 
+> **Requires:** `episodic-memory` plugin (`/plugin install episodic-memory@superpowers-marketplace`). If the tool is unavailable, skip this step and proceed to Step 1.
+
 Call `mcp__plugin_episodic-memory_episodic-memory__search` with the project name (use the current directory name as the query).
 
 Use `mode: "both"` and `limit: 3`.

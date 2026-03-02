@@ -48,6 +48,7 @@ Each arrow is a quality gate. You cannot run `/design` without a brief. You cann
 | Python LSP | Type inference for Python projects | `/plugin install python-lsp@claude-plugins-official` |
 | C# LSP | Symbol resolution for .NET projects | `/plugin install csharp-lsp@claude-plugins-official` |
 | Repomix MCP | Token-efficient codebase packing for `/pack`, `/qa`, `/plan`, `/brief` | [MCP setup →](docs/guides/mcp-setup.md#repomix-mcp) |
+| Episodic Memory | Past conversation context injected at session start; used by `/brief` and `/init` | `/plugin install episodic-memory@superpowers-marketplace` |
 
 LSP tools degrade gracefully — absent means reduced precision, not failure.
 
