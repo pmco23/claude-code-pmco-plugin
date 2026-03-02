@@ -67,31 +67,30 @@ Restart Claude Code. Run `/brief` to verify. See the [full installation guide](d
 
 | Guide | |
 |-------|--|
-| [Workflows](docs/guides/workflows.md) | Which path to use: Fast Track vs Pipeline, always-available skills, how agents work |
+| [Workflows](docs/guides/workflows.md) | Decision guide, pipeline reference, mode flags, language support, end-to-end example |
 | [Installation](docs/guides/installation.md) | Full install steps, statusline setup, verification |
 | [MCP Setup](docs/guides/mcp-setup.md) | Codex and Repomix MCP configuration |
-| [Walkthrough](docs/guides/walkthrough.md) | End-to-end example, `.pipeline/` reference, mode flags, language matrix |
 | [Troubleshooting](docs/guides/troubleshooting.md) | Common issues and fixes |
 
 ### Skills
 
 | Skill | Description |
 |-------|-------------|
-| [/brief](docs/skills/brief.md) | Requirements crystallization |
-| [/design](docs/skills/design.md) | First-principles design |
-| [/review](docs/skills/review.md) | Adversarial review |
-| [/plan](docs/skills/plan.md) | Atomic execution planning |
-| [/drift-check](docs/skills/drift-check.md) | Design-to-build drift detection |
-| [/build](docs/skills/build.md) | Parallel build |
-| [/qa](docs/skills/qa.md) | Post-build QA pipeline |
-| [/cleanup](docs/skills/cleanup.md) | Dead code removal |
-| [/frontend-audit](docs/skills/frontend-audit.md) | Frontend style audit |
-| [/backend-audit](docs/skills/backend-audit.md) | Backend style audit |
-| [/doc-audit](docs/skills/doc-audit.md) | Documentation freshness audit |
-| [/security-review](docs/skills/security-review.md) | OWASP vulnerability scan |
-| [/quick](docs/skills/quick.md) | Fast-track implementation |
-| [/init](docs/skills/init.md) | Project boilerplate scaffolding |
-| [/git-workflow](docs/skills/git-workflow.md) | Git discipline |
-| [/plugin-architecture](docs/skills/plugin-architecture.md) | Plugin architecture guide |
-| [/status](docs/skills/status.md) | Pipeline state check |
-| [/pack](docs/skills/pack.md) | Repomix codebase snapshot |
+| `/brief` | Requirements crystallization |
+| `/design` | First-principles design |
+| `/review` | Adversarial review |
+| `/plan` | Atomic execution planning |
+| `/drift-check` | Design-to-build drift detection |
+| `/build` | Parallel build |
+| `/qa` | Post-build QA pipeline |
+| `/cleanup` | Dead code removal |
+| `/frontend-audit` | Frontend style audit |
+| `/backend-audit` | Backend style audit |
+| `/doc-audit` | Documentation freshness audit |
+| `/security-review` | OWASP vulnerability scan |
+| `/quick` | Fast-track implementation |
+| `/init` | Project boilerplate scaffolding |
+| `/git-workflow` | Git discipline |
+| `/plugin-architecture` | Plugin architecture guide |
+| `/status` | Pipeline state check |
+| `/pack` | Repomix codebase snapshot |

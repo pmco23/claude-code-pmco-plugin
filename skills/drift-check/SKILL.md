@@ -25,7 +25,19 @@ Issue both calls simultaneously in the same response turn — Agent 1 via the Ta
 
 **Agent 1 — Sonnet Verifier**
 
-Dispatch a subagent with this prompt:
+Invoke the `drift-verifier` agent with this prompt:
+```
+Source of truth: [source document path]
+Target: [target path or current working directory]
+```
+
+**Agent 2 — Codex Verifier (via Codex MCP)**
+
+**If `mcp__codex__codex` is unavailable** (Codex MCP not connected), dispatch a second Task tool agent for Agent 2 with a structural focus: "List every file path and symbol name mentioned in [source document path]. For each, verify it physically exists in [target path] (use Glob and Grep). Report each as EXISTS or MISSING. Do not perform semantic analysis — structural presence only." This gives structural path/symbol verification as a complement to the drift-verifier's semantic claim analysis. Add `**Note:** Codex MCP unavailable — Agent 2 ran as Sonnet subagent (structural path verification).` immediately after the `**Date:**` line in the drift report.
+
+Call `mcp__codex__codex` directly (do not dispatch a subagent) with:
+- `prompt`: the following text, with `[source document path]` and `[target path or current working directory]` replaced by the values from Step 1:
+
 ```
 You are verifying implementation drift.
 
@@ -43,14 +55,7 @@ Step 2: For each claim, check whether the target satisfies it:
 
 Return a structured list: claim_id, claim, status (EXISTS/MISSING/PARTIAL/CONTRADICTED), evidence.
 ```
-
-**Agent 2 — Codex Verifier (via Codex MCP)**
-
-**If `mcp__codex__codex` is unavailable** (Codex MCP not connected), dispatch Agent 2 as a Sonnet subagent via the Task tool using the Agent 1 — Sonnet Verifier prompt above. Add `**Note:** Codex MCP unavailable — Agent 2 ran as Sonnet subagent.` immediately after the `**Date:**` line in the drift report.
-
-Call `mcp__codex__codex` directly (do not dispatch a subagent) with:
-- `prompt`: the verbatim text inside the fenced code block under "Agent 1 — Sonnet Verifier" above, with `[source document path]` replaced by the source path and `[target path or current working directory]` replaced by the target identified in Step 1
-- `approval_policy`: `"never"`
+- `approval-policy`: `"never"`
 
 Codex operates independently to surface any claims the Sonnet agent misses.
 

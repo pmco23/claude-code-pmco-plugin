@@ -13,7 +13,7 @@ You are Opus acting as a review team lead. You orchestrate two critics — yours
 
 ## Hard Rules
 
-1. **Parallel dispatch.** Opus critique and Codex critique run simultaneously — Agent 1 via the Task tool, Agent 2 via direct `mcp__codex__codex` call. Issue both in the same response turn. Do not run them sequentially. **If `mcp__codex__codex` is unavailable** (Codex MCP not connected), run Agent 1 (Opus Strategic Critic) via the Task tool only, then dispatch a second Task tool agent with `model: opus` using the Agent 2 prompt below. Add `**Note:** Codex MCP unavailable — both critics are Opus instances.` immediately after the `**Design:**` line in the report.
+1. **Parallel dispatch.** Opus critique and Codex critique run simultaneously — Agent 1 via the `strategic-critic` agent, Agent 2 via direct `mcp__codex__codex` call. Issue both in the same response turn. Do not run them sequentially. **If `mcp__codex__codex` is unavailable** (Codex MCP not connected), invoke the `strategic-critic` agent only, then dispatch a second Task tool agent using the Agent 2 code-grounded prompt from Step 2 (different subagent context provides independent codebase traversal). Add `**Note:** Codex MCP unavailable — Agent 2 ran as Sonnet subagent (code-grounded critique).` immediately after the `**Design:**` line in the report.
 2. **Ground before critiquing.** Opus must call Context7 on any library or pattern before criticizing it. No opinions without current docs.
 3. **Cost/benefit on every finding.** A finding with low impact and high mitigation cost is not worth acting on. Be ruthless about this.
 4. **Fact-check against codebase.** Before including a finding in the report, verify it is actually present in the design and relevant to the actual codebase.
@@ -27,42 +27,17 @@ Read `.pipeline/design.md` and `.pipeline/brief.md` in full.
 
 ### Step 2: Dispatch parallel critics
 
-Issue both calls simultaneously in the same response turn — Agent 1 via the Task tool, Agent 2 via direct `mcp__codex__codex` call:
+Issue both calls simultaneously in the same response turn — Agent 1 via the `strategic-critic` agent, Agent 2 via direct `mcp__codex__codex` call:
 
 **Agent 1 — Opus Strategic Critic**
 
-Dispatch a subagent via the Task tool with `model: opus` and this prompt:
-```
-You are reviewing a software design document for strategic flaws.
-
-Read the design at .pipeline/design.md and the brief at .pipeline/brief.md.
-
-Before forming any opinion about a library or pattern:
-1. Call Context7 to get the live docs for that library (resolve_library_id, then get_library_docs)
-2. Verify your critique is based on current docs, not assumptions
-
-Critique the design on:
-- Architectural correctness: does the approach actually solve the stated problem?
-- Constraint violations: does the design violate any hard constraints from the brief?
-- Soft constraints flagged as hard: are any soft constraints being over-constrained?
-- Missing concerns: error handling, observability, scalability, security surface
-- Assumption validity: which assumptions in the design are unverified?
-- Non-goal drift: is the design building anything that was explicitly excluded?
-
-For each finding:
-- Describe the issue
-- Assess impact (HIGH/MEDIUM/LOW)
-- Estimate mitigation cost (HIGH/MEDIUM/LOW)
-- Suggest a specific mitigation
-
-Return a structured list of findings with: id, category, finding, impact, mitigation_cost, mitigation.
-```
+Invoke the `strategic-critic` agent. This agent runs on Opus and grounds all critiques in live Context7 docs before forming opinions.
 
 **Agent 2 — Codex Code-Grounded Critic**
 
 Call `mcp__codex__codex` directly (do not dispatch a subagent) with:
 - `prompt`: the verbatim contents of the code block below
-- `approval_policy`: `"never"`
+- `approval-policy`: `"never"`
 
 ```
 You are reviewing a software design document for code-grounded issues.

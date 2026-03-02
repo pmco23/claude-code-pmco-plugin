@@ -28,14 +28,18 @@ EPISODIC_BIN=$(ls "$HOME/.claude/plugins/cache/superpowers-marketplace/episodic-
 if [ -z "$EPISODIC_BIN" ] || [ ! -f "$EPISODIC_BIN" ]; then
   echo "⚠ claude-developer-toolbox: episodic-memory not found — skipping session context injection" >&2
 else
-  # Sync last session into index (silent)
-  node "$EPISODIC_BIN" sync >/dev/null 2>&1
+  # Sync last session into index (silent, 5s timeout to avoid blocking session start)
+  timeout 5s node "$EPISODIC_BIN" sync >/dev/null 2>&1 || true
 
-  # Search recent activity across all projects (last 7 days)
+  # Search recent activity for this project (last 7 days).
+  # Use the project directory name as the query — more relevant than the generic "recent work".
+  # Positive-filter stdout: keep result summary, header lines (N. [...), and snippet lines (   "...).
+  # This strips CLI progress lines (Loading/Embedding) and file-reference lines automatically,
+  # and is resilient to new verbose output being added to the CLI in future versions.
   AFTER_DATE=$(date -d '7 days ago' +%Y-%m-%d 2>/dev/null || date -v-7d +%Y-%m-%d 2>/dev/null)
-  SEARCH_OUTPUT=$(node "$EPISODIC_BIN" search "recent work" --limit 3 --after "$AFTER_DATE" 2>/dev/null \
-    | grep -v "^Loading\|^Embedding\|^   Lines\|^$" \
-    | sed 's/ - [-0-9]*% match//')
+  SEARCH_OUTPUT=$(node "$EPISODIC_BIN" search "$(basename "$PWD")" --limit 3 --after "$AFTER_DATE" 2>/dev/null \
+    | grep -E '^Found |^[0-9]+\. \[|^   "' \
+    | sed 's/ - [-0-9.]*% match//')
 
   if [ -n "$SEARCH_OUTPUT" ]; then
     # Compute MEMORY.md path from current working directory
@@ -53,19 +57,24 @@ ${SEARCH_OUTPUT}
 <!-- session-context-end -->"
 
     if [ -f "$MEMORY_FILE" ] && grep -q "<!-- session-context-start -->" "$MEMORY_FILE"; then
-      # Replace existing block between sentinels
-      python3 -c "
+      # Replace existing block between sentinels.
+      # Write block to a temp file to avoid shell injection via $NEW_BLOCK content.
+      BLOCK_FILE=$(mktemp)
+      printf '%s' "$NEW_BLOCK" > "$BLOCK_FILE"
+      python3 - "$MEMORY_FILE" "$BLOCK_FILE" <<'PYEOF'
 import sys, re
-content = open('$MEMORY_FILE').read()
-new_block = '''$NEW_BLOCK'''
+mem, blk = sys.argv[1], sys.argv[2]
+content = open(mem).read()
+new_block = open(blk).read()
 result = re.sub(
   r'<!-- session-context-start -->.*?<!-- session-context-end -->',
-  new_block,
+  lambda m: new_block,
   content,
   flags=re.DOTALL
 )
-open('$MEMORY_FILE', 'w').write(result)
-"
+open(mem, 'w').write(result)
+PYEOF
+      rm -f "$BLOCK_FILE"
     elif [ -f "$MEMORY_FILE" ]; then
       # Append to existing file
       printf '\n%s\n' "$NEW_BLOCK" >> "$MEMORY_FILE"

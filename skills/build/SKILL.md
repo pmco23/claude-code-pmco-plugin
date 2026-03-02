@@ -56,25 +56,11 @@ Read `.pipeline/plan.md` in full. Extract:
 
 ### Step 2A: Parallel Mode
 
-For each independent task group (those with no unmet dependencies), dispatch a Sonnet subagent simultaneously via the Task tool. Set `model: sonnet` on each dispatch.
+For each independent task group (those with no unmet dependencies), invoke the `task-builder` agent simultaneously. Issue all invocations in the same response turn.
 
-Agent prompt template for each group:
+Invocation for each group:
 ```
-You are a Sonnet build agent implementing one task group from an execution plan.
-
-Read your task group from .pipeline/plan.md: Task Group [N] — [Name]
-
-Your constraints:
-- Only touch the files listed in your task group's Files section
-- Follow the exact patterns shown in the code examples
-- Implement all named test cases with the specified assertions
-- Do not modify files from other task groups
-- Before committing your work, invoke git-workflow to verify branch naming, commit message format, and safety checks
-
-When complete, report:
-- Files created/modified
-- Tests written and their pass/fail status
-- Any blockers you encountered
+Implement Task Group [N] — [Name]
 ```
 
 Monitor agent outputs. When an agent reports a blocker:
@@ -88,11 +74,11 @@ After all parallel groups complete, run dependent groups in the same way.
 
 For each task group in dependency order:
 
-1. Dispatch one Sonnet subagent with the task group prompt above (set `model: sonnet`)
+1. Invoke the `task-builder` agent with the task group assignment (e.g., "Implement Task Group [N] — [Name]")
 2. Wait for completion
 3. Review the agent's output — did it satisfy the acceptance criteria?
 4. If yes: proceed to next group
-5. If no: provide specific correction guidance and re-dispatch
+5. If no: provide specific correction guidance and re-invoke the `task-builder` agent
 
 ### Step 3: Post-build verification
 
@@ -113,7 +99,7 @@ Report all MISSING, PARTIAL, and CONTRADICTED findings.
 
 If /drift-check finds MISSING or CONTRADICTED claims:
 - Identify which task group is responsible
-- Re-dispatch that task group's Sonnet agent with specific remediation instructions
+- Re-invoke the `task-builder` agent for that group with specific remediation instructions
 - Re-run /drift-check after remediation
 - Repeat until /drift-check passes
 

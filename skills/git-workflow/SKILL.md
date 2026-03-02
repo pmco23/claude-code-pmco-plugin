@@ -15,17 +15,37 @@ You are enforcing git discipline before a significant git operation. Detect the 
 
 ### Step 1: Detect project type
 
-Scan the repo root for the following signals:
+Use a two-tier check. Stop as soon as a tier yields a conclusive answer.
 
-**Infra signals** (any match → three-environment workflow):
-- Files matching `*.tf`, `*.tfvars`
-- Files named `Chart.yaml`, `kustomization.yaml`, `kustomization.yml`
+**Tier 1 — root-level config files (check first, most reliable)**
+
+Look only at the repo root directory (not subdirectories).
+
+Root-level **code config** (any match → code project):
+- `package.json`, `go.mod`, `requirements.txt`, `pyproject.toml`, `setup.py`, `Cargo.toml`, `*.csproj`, `*.sln`, `pom.xml`, `build.gradle`
+
+Root-level **infra config** (any match, and no code config found → infra project):
+- `*.tf` or `*.tfvars` — Terraform root module
+- `Chart.yaml` — Helm chart root
+- `kustomization.yaml` or `kustomization.yml` — Kustomize root
+
+If both code config and infra config exist at root (genuine mixed-root monorepo), skip to the disambiguation question below.
+
+**Tier 2 — repo-wide heuristic (only if Tier 1 found neither)**
+
+Scan the full repo for signals:
+
+Infra signals:
 - Directories named `helm`, `terraform`, `kustomize`, `manifests`
+- Files matching `*.tf`, `*.tfvars` anywhere in the repo
 
-**Code signals** (any match → trunk-based workflow):
+Code signals:
 - Files matching `*.ts`, `*.tsx`, `*.js`, `*.py`, `*.go`, `*.rs`, `*.java`, `*.cs`
 
-**If ambiguous** (both signals present or neither found):
+If only infra signals found → infra project.
+If only code signals found → code project.
+
+**If still ambiguous** (both tiers match both types, or neither tier found anything):
 - Ask the user: "Is this a code project (trunk-based: main only) or an infrastructure project (three-environment: development → preproduction → main)?"
 - Do not proceed until confirmed.
 

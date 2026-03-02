@@ -51,8 +51,6 @@ Before handing back, review your own diff:
 
 If you catch an issue, fix it silently. If you are genuinely uncertain about something, flag it.
 
-Before committing, invoke git-workflow to verify branch naming, commit message format, and safety checks.
-
 ### Step 6: Report and offer audit
 
 Report what was done:
@@ -61,6 +59,7 @@ Report what was done:
 Done. Changed [N] file(s):
 - [file]: [one-line description of what changed]
 
+Before committing: if this involves branch creation, a first push to remote, or opening a PR, run /git-workflow first.
 Want a quick audit of the touched files? (yes / no)
 ```
 

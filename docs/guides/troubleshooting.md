@@ -27,7 +27,7 @@ You tried to run `/plan` without going through `/review`. Run `/review` and iter
 # Full reset
 rm -rf .pipeline/
 
-# Partial reset — see .pipeline/ reference in walkthrough.md
+# Partial reset — see docs/guides/workflows.md#resetting-to-a-prior-phase
 ```
 
 ## Verifying gate logic

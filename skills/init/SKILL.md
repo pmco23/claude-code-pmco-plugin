@@ -82,12 +82,15 @@ For each target file, check if it exists:
 - `CHANGELOG.md`
 - `CONTRIBUTING.md`
 - `.github/pull_request_template.md`
+- `.gitignore`
 
 For each that exists, ask:
 ```
 [filename] already exists. What should I do?
   → overwrite / skip / merge
 ```
+
+For `.gitignore` specifically, "merge" means: append `.pipeline/` if not already present. Do not overwrite existing entries.
 
 Wait for the answer before proceeding to generation.
 
@@ -118,6 +121,10 @@ For each file not skipped, generate content appropriate for the detected project
 
 Generate each file, write it, confirm to the user: "[filename] written."
 
+**`.gitignore`:**
+- If creating new: include `.pipeline/` (pipeline artifacts are session-specific and must not be version-controlled) plus any language-appropriate entries (e.g., `node_modules/`, `*.pyc`, `dist/`, `*.o`)
+- If merging into existing: append `.pipeline/` only if not already present
+
 ### Step 7: Confirm and suggest next step
 
 After all files are written, report:
@@ -128,6 +135,7 @@ Boilerplate generated:
   ✓ CHANGELOG.md
   ✓ CONTRIBUTING.md
   ✓ .github/pull_request_template.md
+  ✓ .gitignore  (.pipeline/ excluded from version control)
   [skipped: list any skipped files]
 
 Placeholders to fill in: [list any [PLACEHOLDER] fields remaining]

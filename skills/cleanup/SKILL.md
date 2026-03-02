@@ -26,7 +26,19 @@ Note: Use Repomix tools for discovery and reading content only. File modificatio
 
 ### Step 1: Identify project language
 
-Read `.pipeline/brief.md` to find the primary language. Check which LSP tools are available as tools in this session.
+Attempt detection in order — stop as soon as a language is identified:
+
+1. **Read `.pipeline/brief.md`** — if it exists, extract the primary language from it.
+2. **Root-level config files** — if `brief.md` is absent, check the repo root:
+   - `package.json` → TypeScript / JavaScript
+   - `go.mod` → Go
+   - `requirements.txt`, `pyproject.toml`, or `setup.py` → Python
+   - `*.csproj` or `*.sln` → C#
+   - `Cargo.toml` → Rust
+3. **LSP tool availability** — if config files are inconclusive, check which LSP tools are available in this session as a hint.
+4. **Unknown** — if none of the above yield a language, announce: "Language unknown — findings will be heuristic and will cover all file types."
+
+Check which LSP tools are available as tools in this session (needed for Step 2 quality tier announcement regardless of detection path).
 
 ### Step 2: Find dead code
 
