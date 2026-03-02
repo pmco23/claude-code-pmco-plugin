@@ -4,115 +4,124 @@
 
 ## Problem
 
-Claude Code has no memory between sessions. Each conversation starts from scratch, with no awareness of what was worked on, what decisions were made, or what state a feature is in.
+Claude Code has no memory between sessions. Each conversation starts from scratch with no awareness of what was worked on, what decisions were made, or what state a feature is in.
+
+## Rejected Approach: `/end-session` skill
+
+An explicit end-of-session skill that writes to MEMORY.md was considered and rejected:
+- Most of what it would capture (commits, decisions, pipeline state) is already persisted elsewhere
+- End-of-session rituals fail — people close their laptop, get interrupted
+- The `episodic-memory` plugin already auto-indexes conversations at session end, making explicit capture redundant
+
+## Chosen Approach: Episodic Memory Integration
+
+The `episodic-memory` plugin (already installed) indexes all Claude Code conversations automatically. The gap is purely on the *retrieval* side — nothing currently surfaces past context at session start or at the beginning of key workflows.
+
+Three lightweight integrations close this gap with zero user discipline required at session end.
 
 ## Goals
 
-Persist three categories of information between sessions:
-1. **Task state** — what's in progress, current pipeline phase, active branch
-2. **Decisions** — architectural choices, patterns adopted, things to avoid
-3. **Work log** — what was shipped/committed each session
-
-Restoration must be:
-- **Automatic (concise)** — a summary always injected into every conversation with no action needed
-- **On-demand (full)** — full history retrievable when needed
-
-## Non-Goals
-
-- No CLAUDE.md modification — it is for project config, not session logs
-- No in-repo session files — keeps git history clean
-- No new `/init` changes — auto-injection already works via MEMORY.md
+- Always-injected context at session start (no action needed)
+- Proactive context surfacing at the start of `/brief` and `/init` workflows
+- Visible to the user (not silent background enrichment)
+- Search across all projects, not just the current one
 
 ## Architecture
 
-Two storage layers inside `~/.claude/projects/<project>/memory/` (Claude Code's auto-managed memory directory, outside the repo):
+### 1. SessionStart Hook — auto-inject recent context into MEMORY.md
 
-```
-memory/
-├── MEMORY.md              ← always injected into every conversation (≤200 lines)
-└── sessions/
-    ├── 2026-03-01.md      ← full session summary (unlimited)
-    ├── 2026-03-02.md
-    └── ...
-```
+**Where:** extend `hooks/session_start_check.sh`
 
-**MEMORY.md** holds a "Last Session" block (≤15 lines) with a pointer to the full file. It is overwritten by `/end-session` at the end of each session.
+**What it does:**
 
-**Session files** hold the full summary for a given day. Multiple sessions in one day are separated by `---` within the same file (append, not overwrite).
+1. Runs `episodic-memory sync` — ensures the last session's conversations are indexed
+2. Runs `episodic-memory search "recent work" --limit 3 --after <7-days-ago>` — fetches recent cross-project activity
+3. Writes a formatted block to `~/.claude/projects/<encoded-cwd>/memory/MEMORY.md`
 
-## New Skill: `/end-session`
-
-### Trigger
-User invokes `/end-session` explicitly at the end of a working session.
-
-### Behavior
-
-1. Read recent git log (~10 commits on current branch) → populate "Shipped"
-2. Read `.pipeline/` state → populate "Pipeline" and current phase
-3. Read active task list → populate "Task state"
-4. Ask user: any decisions worth capturing? any open items / next steps?
-5. Write full summary to `memory/sessions/YYYY-MM-DD.md`
-6. Overwrite the "Last Session" block in `memory/MEMORY.md`
-
-### MEMORY.md Block Format
+**MEMORY.md block format:**
 
 ```markdown
-## Last Session — YYYY-MM-DD
+<!-- session-context-start -->
+## Recent Activity (auto-updated at session start — 2026-03-02)
 
-**Branch:** <branch> | **Pipeline:** <phase>
-**Worked on:** <short description>
-**Shipped:** <list of commits or "nothing committed">
-**Decisions:** <key decisions or "none">
-**Next:** <open items>
-→ Full notes: memory/sessions/YYYY-MM-DD.md
+1. [2026-03-01 · claude-agents-custom] "session persistence design, /end-session skill..."
+2. [2026-03-01 · claude-agents-custom] "plugin audit, skill rename, codex MCP migration..."
+3. [2026-02-28 · dotnet-test] "authentication middleware, JWT validation..."
+<!-- session-context-end -->
 ```
 
-### Full Session File Format
+Claude reads these injected excerpts naturally as part of session context — no skill invocation needed.
 
-```markdown
-# Session — YYYY-MM-DD [HH:MM]
+**MEMORY.md update logic:**
+- If sentinels exist: replace content between them
+- If no sentinels: append block at end
+- If MEMORY.md doesn't exist: create it with only this block
 
-## Task State
-- Branch: <branch>
-- Pipeline phase: <phase>
-- In progress: <description>
-
-## Work Done
-- <commit sha> <message>
-- ...
-
-## Decisions Made
-- <decision and rationale>
-- ...
-
-## Open Items / Next Steps
-- <item>
-- ...
-
-## Notes
-<user-provided notes>
+**Path computation:**
+```bash
+ENCODED=$(echo "$PWD" | sed 's|^/||; s|/|-|g')
+MEMORY_FILE="$HOME/.claude/projects/-${ENCODED}/memory/MEMORY.md"
 ```
 
-### Edge Cases
+**Episodic-memory binary:** invoked via `node` since it is not on `$PATH`:
+```bash
+EPISODIC_BIN="$HOME/.claude/plugins/cache/superpowers-marketplace/episodic-memory/1.0.15/cli/episodic-memory.js"
+node "$EPISODIC_BIN" sync
+node "$EPISODIC_BIN" search "recent work" --limit 3 --after "$(date -d '7 days ago' +%Y-%m-%d)"
+```
 
-| Condition | Behavior |
-|-----------|----------|
-| No git repo | Omit "Shipped" section |
-| No `.pipeline/` directory | Omit pipeline state |
-| Multiple sessions same day | Append new block separated by `---` |
-| `memory/sessions/` doesn't exist | Skill creates it |
-| No existing "Last Session" in MEMORY.md | Skill appends block |
+### 2. `/brief` Step 0 — surface past decisions before requirements Q&A
 
-## Full History Retrieval
+**Where:** `skills/brief/SKILL.md` — add as first step, before existing Step 1
 
-No new skill needed. Session files are plain markdown — Claude or the user can read them directly. They are also indexed by the `episodic-memory:search-conversations` plugin for semantic search.
+**What it does:**
 
-## What Existing Mechanisms Already Cover
+Before asking any questions, call `mcp__plugin_episodic-memory_episodic-memory__search` with the user's stated feature/topic and display results visibly:
 
-| Need | Mechanism |
-|------|-----------|
-| Always-injected context | `memory/MEMORY.md` (auto) |
-| Full session history | `memory/sessions/*.md` |
-| Semantic search over past decisions | `episodic-memory:search-conversations` |
-| Feature lifecycle state | `.pipeline/` artifacts |
-| Decision audit trail | `docs/plans/` design docs |
+```
+Checking past conversations for context on "[topic]"...
+
+Found 2 relevant conversations:
+  · [2026-02-15] Discussed rate limiting approach — chose token bucket over sliding window
+  · [2026-01-30] Auth middleware design — JWT with refresh tokens, no session storage
+
+Carrying these forward. Starting requirements Q&A...
+```
+
+If no relevant results: proceed silently.
+
+### 3. `/init` Step 0 — surface past project context before scaffolding
+
+**Where:** `skills/init/SKILL.md` — add as first step, before existing Step 1
+
+**What it does:**
+
+Before reading config files, call `mcp__plugin_episodic-memory_episodic-memory__search` with the project name and show results visibly:
+
+```
+Checking past conversations for context on this project...
+
+Found 1 relevant conversation:
+  · [2026-02-20] Chose Go modules over workspace; gRPC for internal services
+
+Carrying this forward. Detecting project context...
+```
+
+If no relevant results: proceed silently.
+
+## What This Does Not Change
+
+- No `/end-session` skill — episodic-memory auto-indexes at session end
+- No CLAUDE.md modifications — MEMORY.md is the right channel for injected context
+- No new plugin config — episodic-memory is already installed and MCP-connected
+- No changes to pipeline artifacts or `docs/plans/` — those persist decisions at the feature level
+
+## Files Changed
+
+| File | Change |
+|------|--------|
+| `hooks/session_start_check.sh` | Add sync + search + MEMORY.md write |
+| `skills/brief/SKILL.md` | Add Step 0: episodic memory search |
+| `skills/init/SKILL.md` | Add Step 0: episodic memory search |
+| `docs/skills/brief.md` | Document new Step 0 |
+| `docs/skills/init.md` | Document new Step 0 |
