@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-03-02
+
 ### Added
 
 - `docs/guides/workflows.md` — Fast Track vs Pipeline decision guide; explains named workflow paths, always-available skills (including `/drift-check`), and how agents work (internal, not user-invocable)
