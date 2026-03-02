@@ -1,6 +1,6 @@
 ---
 name: status
-description: Use at any time to check the current pipeline state. Reports which .pipeline/ artifacts exist and what phase the pipeline is in. No gate — always available.
+description: Use at any time to check pipeline state and get next-step guidance. When no pipeline is active, shows available workflow options and paths. No gate — always available.
 ---
 
 # STATUS — Pipeline State Check
@@ -15,7 +15,7 @@ You are reporting the current pipeline phase to the user. Read the `.pipeline/` 
 
 ### Step 1: Find the pipeline directory
 
-Walk up from the current working directory looking for a `.pipeline/` directory. If none found, report "No pipeline active in this directory tree."
+Walk up from the current working directory looking for a `.pipeline/` directory. If none found, OR if found but contains no recognized artifacts (`brief.md`, `design.md`, `design.approved`, `plan.md`, `build.complete`), output the **cold-start report** (see Step 4) and stop — do not proceed to Steps 2–3.
 
 ### Step 2: Check artifacts and ages
 
@@ -43,7 +43,6 @@ Also check `.pipeline/repomix-pack.json`. If it exists, read the `packedAt` fiel
 
 | Condition | Phase | Next step |
 |-----------|-------|-----------|
-| No artifacts | Not started | Run `/brief` |
 | Only `brief.md` | Requirements crystallized | Run `/design` |
 | `brief.md` + `design.md`, no `design.approved` | Design written, pending review | Run `/review` |
 | `design.approved`, no `plan.md` | Design approved | Run `/plan` |
@@ -51,6 +50,37 @@ Also check `.pipeline/repomix-pack.json`. If it exists, read the `packedAt` fiel
 | `build.complete` | Build complete | Run `/qa` |
 
 ### Step 4: Report
+
+### Cold-start report (no pipeline active)
+
+Output exactly:
+
+```
+No pipeline active.
+
+Choose a workflow:
+
+  Fast Track — small features, bug fixes, well-understood changes
+    /quick [--deep]         implement directly, no artifacts
+
+  Pipeline — new features, design-sensitive or complex changes
+    /brief                  crystallize requirements  →  .pipeline/brief.md
+      /design               first-principles design   →  .pipeline/design.md
+        /review             adversarial review        →  .pipeline/design.approved
+          /plan             atomic execution plan     →  .pipeline/plan.md
+            /build          coordinated build         →  .pipeline/build.complete
+              /qa           post-build audits
+
+Always available (no pipeline required):
+  /init          scaffold README, CHANGELOG, CONTRIBUTING, .gitignore
+  /git-workflow  before branch creation, first push, PR, destructive ops
+  /pack          Repomix snapshot — run before /qa for token efficiency
+  /status        this report
+
+See docs/guides/workflows.md for the full decision guide.
+```
+
+### Pipeline report (artifacts exist)
 
 ```
 Pipeline status: [phase name]
