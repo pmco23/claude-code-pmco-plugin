@@ -1,6 +1,6 @@
 ---
 name: plugin-architecture
-description: Use when designing or evaluating Claude Code plugins — explains when to use skills vs agents and how to compose them correctly.
+description: Use when choosing between Skills and Agents for a plugin component, when fitness criteria for a skill-vs-agent decision are unclear, when deciding whether to use the thin-wrapper or split pattern, or when evaluating whether a nested agent pattern is appropriate. Provides the composition rules table and decision tree.
 ---
 
 # Plugin Architecture — Skills vs Agents
