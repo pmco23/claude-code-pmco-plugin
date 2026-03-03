@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-03-03
+
+### Fixed
+
+- `hooks/hooks.json`: wrapped all event handlers under a top-level `hooks` key to match the updated plugin loader schema (`"expected": "record", "path": ["hooks"]`)
+
 ## [2.0.0] - 2026-03-03
 
 ### Added
