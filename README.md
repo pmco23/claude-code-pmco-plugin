@@ -83,6 +83,7 @@ Restart Claude Code. Run `/brief` to verify. See the [full installation guide](d
 | [Hooks](docs/guides/hooks.md) | What each hook does, when it fires, and how it behaves |
 | [MCP Setup](docs/guides/mcp-setup.md) | Repomix MCP configuration |
 | [Troubleshooting](docs/guides/troubleshooting.md) | Common issues and fixes |
+| [Changelog](CHANGELOG.md) | Release history and version notes |
 
 ### Skills
 
