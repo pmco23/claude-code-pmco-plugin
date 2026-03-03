@@ -47,7 +47,7 @@ Each arrow is a quality gate. You cannot run `/design` without a brief. You cann
 | Go LSP | Symbol resolution for Go projects (secondary tier) | `/plugin install gopls-lsp@claude-plugins-official` |
 | Python LSP | Type inference for Python projects (secondary tier) | `/plugin install python-lsp@claude-plugins-official` |
 | C# LSP | Symbol resolution for .NET projects (secondary tier) | `/plugin install csharp-lsp@claude-plugins-official` |
-| Repomix MCP | Token-efficient codebase packing for `/pack`, `/qa`, `/plan`, `/brief` | [MCP setup →](docs/guides/mcp-setup.md#repomix-mcp) |
+| Repomix MCP | Token-efficient codebase packing for `/pack` and `/qa` shared snapshot | [MCP setup →](docs/guides/mcp-setup.md#repomix-mcp) |
 
 Diagnostics degrade gracefully across three tiers: VS Code IDE integration → LSP tool plugin → heuristic grep. Each absent tier reduces precision, not availability.
 

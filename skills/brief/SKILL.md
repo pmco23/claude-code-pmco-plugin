@@ -41,14 +41,10 @@ Record:
 - **LSP tools available**: check which of these are present as tools — `typescript_lsp`, `go_lsp`, `python_lsp`, `csharp_lsp`
 - **Existing patterns**: note dominant architectural patterns visible in the codebase
 
-If the project already contains code (non-empty source directories detected above), call `mcp__repomix__pack_codebase` on the current working directory with `compress: true` and `topFilesLength: 20` to get a structured file tree and top-files overview. Use this to:
+If the project already contains code (non-empty source directories detected above), run `Glob("**/*")` with depth ≤ 3 and read the primary language config file (`package.json`, `go.mod`, `pyproject.toml`, or `*.csproj` — whichever exists at root) to get a file-tree overview. Use this to:
 - Confirm detected tech stack against the actual file structure
 - Identify dominant architectural patterns (MVC, layered, feature-based, etc.)
 - Inform what questions to ask in Step 2 (what already exists, what's missing, where new code would live)
-
-If the call fails, proceed with the information gathered from reading README.md and config files.
-
-> The outputId is not stored — this is a one-off read for brief context only.
 
 ### Step 2: Extract signal through Q&A
 

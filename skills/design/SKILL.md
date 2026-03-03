@@ -28,14 +28,10 @@ Read `.pipeline/brief.md` in full. Extract:
 - Success criteria
 - Non-goals
 
-If the project already contains code (non-empty source directories), call `mcp__repomix__pack_codebase` on the current working directory with `compress: true` and `topFilesLength: 20`. Use this to:
+If the project already contains code (non-empty source directories), run `Glob("**/*")` with depth ≤ 3 and read the primary language config file (`package.json`, `go.mod`, `pyproject.toml`, or `*.csproj` — whichever exists at root) to get a file-tree overview. Use this to:
 - Confirm the tech stack and existing architectural patterns
 - Identify existing interfaces and conventions the design must follow
 - Inform the constraints analysis in Step 2 with what already exists
-
-If the call fails, proceed with the information in the brief and any files read in earlier steps.
-
-> The outputId is not stored — this is a one-off read for design context only.
 
 ### Step 2: Ground constraints and assumptions
 

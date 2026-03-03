@@ -17,14 +17,9 @@ Before dispatching any agents, acquire a Repomix outputId for the codebase:
 
 1. Check if `.pipeline/repomix-pack.json` exists
 2. If it exists, read `packedAt` — if less than 1 hour old, use the stored `outputId`
-3. If missing or stale, call `mcp__repomix__pack_codebase` on the current working directory with `compress: true` and write `.pipeline/repomix-pack.json` with these fields:
-   - `outputId` — the Repomix pack identifier returned by the tool
-   - `source` — current working directory path
-   - `packedAt` — ISO 8601 timestamp of when the pack was created
-   - `fileCount` — number of files included in the pack
-   - `tokensBefore` — token count before compression
-   - `tokensAfter` — token count after compression
-4. If `mcp__repomix__pack_codebase` is unavailable or fails, proceed without an outputId — omit the Repomix instruction from agent prompts and agents will fall back to native Glob/Read/Grep
+3. If missing or stale, invoke the `/pack` skill — it packs the codebase and writes `.pipeline/repomix-pack.json` with the correct schema.
+4. After `/pack` completes, read `outputId` from `.pipeline/repomix-pack.json`.
+5. If `/pack` fails or Repomix is unavailable, proceed without an outputId — omit the Repomix instruction from agent prompts; agents fall back to native Glob/Read/Grep.
 
 Hold the outputId in context for use in the agent prompts below.
 

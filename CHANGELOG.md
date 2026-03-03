@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.9.0] - 2026-03-03
+
 ### Added
 
 - `Stop` event hook in `hooks/hooks.json`: prompt-based hook that asks Claude to update `## Current Focus` in MEMORY.md at meaningful session end; fires for all projects, all users
@@ -17,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `/brief` Step 1: removed one-off `mcp__repomix__pack_codebase` call; replaced with native `Glob("**/*", depth ≤ 3)` + primary config-file read — equivalent project-structure grounding with no MCP dependency; outputId was always discarded
+- `/design` Step 1: same — removed one-off `mcp__repomix__pack_codebase` call; replaced with `Glob` + primary config-file read
+- `/plan` Step 2: removed `mcp__repomix__pack_codebase` call and its fallback clause; the existing fallback (Glob + primary config-file read) is now the sole path — no Repomix dependency for planning
+- `/qa` Repomix Preamble: delegated pack acquisition to the `/pack` skill instead of calling `mcp__repomix__pack_codebase` directly and writing `.pipeline/repomix-pack.json` inline; `/pack` is now the single owner of packing logic and the JSON schema
 - `/review` description and Hard Rule 1: replaced Codex MCP call with `code-critic` agent invocation — "Agent 2 via Codex MCP" → "Agent 2 via the `code-critic` agent"; Codex fallback removed from Hard Rule 1 entirely
 - `/review` Step 2: replaced `mcp__codex__codex` call block with `code-critic` agent invocation
 - `/review` Step 3: "Once both agents return (Task tool returns... `mcp__codex__codex` returns...)" → "Once both agents return their results"
@@ -28,6 +34,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `skills/review/SKILL.md` Role: stale "Codex (code-grounded)" → "code-critic (code-grounded)" — the Role narrative was not updated when the Codex → code-critic migration landed
+- `docs/guides/workflows.md` pipeline table: stale "Opus + Codex in parallel" → "strategic-critic + code-critic in parallel" for the `/review` row
+- `docs/guides/workflows.md` end-to-end example Step 4: stale "# Opus and Codex critique in parallel" → "# strategic-critic (Opus) and code-critic (Sonnet) in parallel"
+- `agents/code-critic.md` and `agents/path-verifier.md`: `model: claude-sonnet-4-6` normalised to `model: sonnet` — aligns with the `sonnet`/`opus` short-alias convention used by the three older agents
 - `hooks/session_start_check.sh`: removed stale `codex` check — Codex was removed in v1.8.0 but the startup warning persisted
 - `hooks/hooks.json` Stop hook prompt: clarified MEMORY.md creation — previous wording ("add it at the bottom") was ambiguous when the file didn't exist yet; now explicit: create the file if missing, add the section if the file exists but lacks it, overwrite the section if it's present
 

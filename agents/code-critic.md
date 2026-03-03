@@ -5,7 +5,7 @@ description: >
   existing codebase to surface interface incompatibilities, pattern violations,
   naming conflicts, dependency gaps, and type mismatches. Returns a structured
   findings table with impact and mitigation estimates.
-model: claude-sonnet-4-6
+model: sonnet
 tools: Read, Grep, Glob
 ---
 

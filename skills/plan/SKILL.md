@@ -27,22 +27,15 @@ Read `.pipeline/design.md` and `.pipeline/brief.md` in full.
 
 ### Step 2: Ground file paths in the actual project structure
 
-Before writing any task group, scan the real project layout using Repomix so the plan's file paths match reality.
+Before writing any task group, scan the real project layout so the plan's file paths match reality.
 
-Call `mcp__repomix__pack_codebase` with:
-- `directory`: current working directory
-- `compress`: `true`
-- `topFilesLength`: 30
+Run `Glob("**/*")` with depth ≤ 3 and read the primary language config file (`package.json`, `go.mod`, `requirements.txt`, `*.csproj` — whichever exists at root).
 
-If the call fails, fall back to listing the root directory and reading the primary language config file (`package.json`, `go.mod`, `requirements.txt`, `*.csproj`).
-
-Use the returned pack content (directory structure and top-files summary) to:
+Use this to:
 - Confirm actual directory names and naming conventions (kebab-case vs snake_case, flat vs nested)
 - Correct any file paths in the design that don't match the real layout
 - Ensure new files are placed in existing directories where possible
 - Flag in the task group if a new directory needs to be created first
-
-> The outputId from this pack is not stored — this is a one-off read for planning context only.
 
 ### Step 3: Decompose into task groups
 

@@ -5,7 +5,7 @@ description: >
   path and symbol name mentioned in a source document and checks whether each
   physically exists in the target directory. Returns EXISTS or MISSING for each
   claim — a structural complement to drift-verifier's semantic claim analysis.
-model: claude-sonnet-4-6
+model: sonnet
 tools: Read, Grep, Glob, Bash
 ---
 
