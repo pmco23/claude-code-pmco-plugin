@@ -24,18 +24,7 @@ You are Sonnet acting as a project scaffolder. Extract as much context as possib
 
 ### Step 0: Check session memory for project context
 
-Review MEMORY.md (automatically loaded from `~/.claude/projects/*/memory/MEMORY.md`). If it contains entries relevant to this project, surface them before proceeding:
-
-```
-Checking session memory for context on this project...
-
-Found relevant prior context:
-  · [brief summary of relevant MEMORY.md entries]
-
-Carrying these forward into project scaffolding.
-```
-
-If no relevant entries are found, proceed silently to Step 1 with no output.
+Review MEMORY.md (auto-loaded). If relevant entries exist for this project, announce them briefly and carry them forward. If none, proceed silently.
 
 ### Step 1: Extract project context
 
@@ -78,72 +67,7 @@ Then proceed to Step 2.
 
 ### Step 1a: Gather context from user (empty project)
 
-Ask three questions in sequence — one per turn via AskUserQuestion.
-
-**Question 1 — Primary language:**
-
-Use AskUserQuestion with:
-  question: "What is the primary language for this project?"
-  header: "Language"
-  options:
-    - label: "TypeScript / Node.js"
-      description: "npm install, tsconfig.json, .js/.ts source files"
-    - label: "Go"
-      description: "go mod init, .go source files"
-    - label: "Python"
-      description: "pip / poetry / uv, .py source files"
-    - label: "Other"
-      description: "Rust, C#, Ruby, Java, or any other — specify in the text field"
-
-**Question 2 — License:**
-
-Use AskUserQuestion with:
-  question: "Which license for this project?"
-  header: "License"
-  options:
-    - label: "MIT"
-      description: "Permissive — use freely, attribution required"
-    - label: "Apache 2.0"
-      description: "Permissive — includes patent grant"
-    - label: "GPL-3.0"
-      description: "Copyleft — derivatives must also be open source"
-    - label: "Other / proprietary"
-      description: "Specify another SPDX identifier, or 'All rights reserved'"
-
-**Question 3 — Project type:**
-
-Use AskUserQuestion with:
-  question: "What kind of project is this?"
-  header: "Project type"
-  options:
-    - label: "CLI tool"
-      description: "Command-line application"
-    - label: "Web API / service"
-      description: "HTTP server, REST or GraphQL API"
-    - label: "Library / package"
-      description: "Reusable module to be published to a registry"
-    - label: "Other / custom"
-      description: "Describe it yourself in the text field"
-
-After all three answers, update the context object:
-- `language` → from Q1 answer (or user's free-form text if "Other")
-- `license` → from Q2 answer (or user's free-form text if "Other")
-- `description` → derived template: `"A [language] [project-type] for [DESCRIPTION]"` — if user selected "Other / custom", use their text verbatim or `[DESCRIPTION]` if blank
-- `project_name` → directory name (already set)
-- `author` → from `git config user.name` if available, otherwise `[AUTHOR]`
-
-Announce the gathered context before proceeding:
-```
-Context gathered:
-  Project:  [directory name]
-  Language: [from Q1]
-  License:  [from Q2]
-  Type:     [from Q3]
-  Author:   [from git config or [AUTHOR]]
-  Placeholders remaining: [description — fill in after generation]
-```
-
-Then proceed to Step 2.
+Read `references/empty-project-questions.md` from this skill's base directory. Follow it exactly — three questions, one per turn, then update the context object and announce before proceeding to Step 2.
 
 ### Step 2: Check existing files
 

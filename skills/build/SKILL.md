@@ -32,6 +32,7 @@ Use AskUserQuestion with:
 1. **Never write implementation code.** If you find yourself about to write code, stop. Describe what the agent needs to do textually instead.
 2. **One job: coordinate and unblock.** Dispatch builders using the Agent or Task tool with the `task-builder` agent. Route information between agents. Resolve blockers. Keep context narrow for each agent.
 3. **Separate contexts.** Each builder gets only the context for their task group. Do not cross-contaminate.
+4. **3-failure escalation.** After 3 consecutive agent failures on the same task group, stop retrying. Escalate to the user: present the failing criteria, the agent's last output, and ask how to proceed before any further attempts.
 
 ## Process
 
@@ -92,9 +93,7 @@ Monitor agent outputs. When an agent reports a blocker:
 
 After each agent reports success and acceptance criteria are verified, call TaskUpdate with status: "completed".
 
-If an agent reports 3 consecutive failures on the same task group without progress, stop retrying. Escalate to the user: present the failing criteria, the agent's last output, and ask how to proceed before making any further attempts.
-
-After all parallel groups complete, run dependent groups in the same way.
+Apply 3-failure escalation rule (Hard Rule #4) if needed. After all parallel groups complete, run dependent groups in the same way.
 
 ### Step 2B: Sequential Mode
 
@@ -107,7 +106,7 @@ For each task group in dependency order:
 5. If yes: call TaskUpdate with status: "completed" and proceed to next group
 6. If no: call TaskUpdate to record the blocker in the task description, provide specific correction guidance, and re-invoke the `task-builder` agent
 
-Keep a retry counter per task group. After 3 consecutive failures on the same acceptance criteria, stop retrying. Escalate to the user: present the failing criteria, the agent's last output, and ask how to proceed before making any further attempts.
+Apply 3-failure escalation rule (Hard Rule #4) if needed.
 
 ### Step 3: Post-build verification
 

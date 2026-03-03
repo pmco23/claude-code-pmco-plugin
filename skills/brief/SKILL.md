@@ -23,18 +23,7 @@ You are Opus acting as a requirements analyst. Your job is to extract maximum si
 
 ### Step 0: Check session memory for prior context
 
-Review MEMORY.md (automatically loaded from `~/.claude/projects/*/memory/MEMORY.md`). If it contains entries relevant to the user's stated feature or topic, surface them before proceeding:
-
-```
-Checking session memory for context on "[topic]"...
-
-Found relevant prior context:
-  · [brief summary of relevant MEMORY.md entries]
-
-Carrying these forward into requirements Q&A.
-```
-
-If no relevant entries are found, proceed silently to Step 1 with no output.
+Review MEMORY.md (auto-loaded). If relevant entries exist for this feature/topic, announce them briefly and carry them forward. If none, proceed silently.
 
 ### Step 1: Detect project context
 

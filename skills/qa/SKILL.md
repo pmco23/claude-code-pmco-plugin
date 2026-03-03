@@ -109,7 +109,7 @@ After presenting the consolidated report, append an Overall QA Verdict:
 **Overall: FAIL** *([N] audits have findings requiring action)*
 ```
 
-**PASS criteria:** zero findings in /cleanup, /frontend-audit, /backend-audit, /doc-audit, AND zero CRITICAL or HIGH findings in /security-review. MEDIUM and LOW security findings do not block PASS.
+Apply PASS Criteria (defined above).
 
 ### Sequential Mode
 
@@ -121,9 +121,7 @@ Run in order, presenting each result before proceeding. When invoking each skill
 4. Follow the `doc-audit` skill process — present findings — ask "Continue to /security-review? (yes / fix first — then re-run /qa to verify before continuing)"
 5. Follow the `security-review` skill process — present final findings
 
-After /security-review completes, present the Overall QA Verdict table (same format as parallel mode above), summarising results from all five audits.
-
-**PASS criteria:** zero findings in /cleanup, /frontend-audit, /backend-audit, /doc-audit, AND zero CRITICAL or HIGH findings in /security-review. MEDIUM and LOW security findings do not block PASS.
+After /security-review completes, present the Overall QA Verdict table (same format as parallel mode above), summarising results from all five audits. Apply PASS Criteria (defined above).
 
 ## Output
 
