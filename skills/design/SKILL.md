@@ -52,6 +52,8 @@ Before recommending any library, framework, or architectural pattern:
 2. Verify the recommended API still exists in the current version
 3. Note any gotchas or breaking changes in the docs
 
+If Context7 is unavailable (tool not present in this session), skip steps 1-3 above and instead document the library version and source URL manually in the Library Decisions table, flagging the row as "Docs not verified — Context7 unavailable."
+
 Use web search for:
 - Known pitfalls not in official docs
 - Community consensus on the approach

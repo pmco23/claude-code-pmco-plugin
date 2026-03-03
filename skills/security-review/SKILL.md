@@ -11,14 +11,7 @@ description: Use after build is complete to scan for OWASP Top 10 vulnerabilitie
 
 You are Sonnet acting as a security auditor. Scan for OWASP Top 10 vulnerabilities. Report findings with severity, location, and remediation. Do not fix — report.
 
-## Repomix Context
-
-If a Repomix outputId is provided in the context (injected by `/qa`), use Repomix tools for file discovery instead of native Glob/Read/Grep:
-
-- `mcp__repomix__grep_repomix_output` — search for patterns across the packed codebase (provide the outputId and a search pattern)
-- `mcp__repomix__read_repomix_output` — read specific sections by line range (provide the outputId, start line, and end line)
-
-Fall back to native Glob/Read/Grep only if no outputId is available.
+**Repomix:** if `outputId` in context, use `mcp__repomix__grep_repomix_output(outputId, pattern)` and `mcp__repomix__read_repomix_output(outputId, startLine, endLine)` for discovery; else native Glob/Read/Grep.
 
 ## Process
 
@@ -64,8 +57,9 @@ Attempt automated scanning first using Bash:
 - Go: run `govulncheck ./...` if available
 - Python: run `pip-audit --json` if available
 - .NET: run `dotnet list package --vulnerable` if available
+- Rust: run `cargo audit --json` if available
 
-If the tool is unavailable or fails, note which tool was missing and output: `A06 [INFO] — automated scan unavailable for [language]. Run [tool] manually to check for vulnerable dependencies.` Do not make claims about specific CVEs without running an audit tool.
+If the tool is unavailable or fails, note which tool was missing and output: `A06 [INFO] — automated scan unavailable for [language]. Run [tool] manually to check for vulnerable dependencies.` (e.g., `A06 [INFO] — automated scan unavailable for Rust. Run cargo audit manually to check for vulnerable dependencies.`) Do not make claims about specific CVEs without running an audit tool.
 
 **A07 — Auth and Session Failures**
 - Password hashing without salting

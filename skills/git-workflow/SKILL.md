@@ -49,12 +49,53 @@ If only code signals found → code project.
 - Ask the user: "Is this a code project (trunk-based: main only) or an infrastructure project (three-environment: development → preproduction → main)?"
 - Do not proceed until confirmed.
 
+### Step 1.5: Identify the operation and gather parameters
+
+Run `git status` and `git branch --show-current` to read the current state.
+
+Determine which operation the user is requesting from their invocation args or context:
+
+| Operation | Parameters needed |
+|-----------|-----------------|
+| Branch creation | Intended branch name |
+| First push to remote | Remote name, branch name |
+| PR open | PR title, target branch |
+| PR merge | PR number or title |
+| Destructive op (force-push, reset --hard, branch -D) | Specific target ref |
+
+If the operation is clear from the invocation: extract parameters silently and proceed.
+If the operation is ambiguous: ask one focused question before continuing.
+
+Record the operation type and parameters — Steps 3–4 apply the safety gate to this specific operation.
+
 ### Step 2: Load the workflow reference
 
-- Code project → read `references/code-path.md`
-- Infra project → read `references/infra-path.md`
+Apply the appropriate reference inline:
 
-Load only one reference per operation. Apply it as the rule source for naming, commit format, PR strategy, and promotion flow.
+---
+
+**Code Path (Trunk-Based)**
+- Branch: `<prefix>/<short-description>` — prefixes: feat/feature/fix/bugfix/hotfix/chore/release; lowercase, hyphens only, max ~50 chars
+- Commit: `<type>[scope][!]: <description>` — types: feat/fix/docs/refactor/test/chore/ci/build/perf; `!` for breaking changes
+- Merge: squash-merge to main; short-lived branches (under 2 days)
+- PR: title conveys intent; description must include verification evidence
+
+*(Spec sources: https://www.conventionalcommits.org/en/v1.0.0/ and https://conventional-branch.github.io/)*
+
+---
+
+**Infra Path (Three-Environment)**
+- Branch: same naming as code path
+- Commit: same format as code path
+- Promotion: development → preproduction → main — never skip; separate PR per environment
+- Hotfix: apply to main → back-merge to preproduction → back-merge to development
+- PR: title clarifies intent and target environment; body includes environment-specific validation evidence
+
+*(Spec sources: same as above)*
+
+---
+
+Load only the matching reference for the detected project type. Apply it as the rule source for Steps 3–4.
 
 ### Step 3: Safety gate
 
@@ -78,5 +119,5 @@ Once all gate checks pass, perform the git operation.
 ## Output
 
 - Detected project type (code / infra / confirmed by user)
-- Workflow reference loaded (`references/code-path.md` or `references/infra-path.md`)
+- Workflow reference applied (Code Path or Infra Path)
 - Gate check results (pass / block / confirmed)

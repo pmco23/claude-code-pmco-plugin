@@ -60,8 +60,16 @@ Done. Changed [N] file(s):
 - [file]: [one-line description of what changed]
 
 Before committing: if this involves branch creation, a first push to remote, or opening a PR, run /git-workflow first.
-Want a quick audit of the touched files? (yes / no)
 ```
+
+Use AskUserQuestion with:
+  question: "Run a quick audit on the touched files?"
+  header: "Audit"
+  options:
+    - label: "Yes"
+      description: "Run LSP diagnostics and security spot-check on modified files"
+    - label: "No"
+      description: "Skip audit — done"
 
 ### Step 7: Optional audit (if yes)
 

@@ -100,6 +100,17 @@ Next: [next step]
 - If `packedAt` is absent or not a valid ISO timestamp: treat as stale and display `⚠ age unknown — run /pack to refresh`
 - If `fileCount` or `tokensAfter` are absent from the JSON: omit that field from the row (e.g. `✓ 23m old — 142 files` if only `tokensAfter` is missing)
 
+After presenting the pipeline report, use AskUserQuestion with:
+  question: "Run [next-step-skill] now?"
+  header: "Next step"
+  options:
+    - label: "Yes, run [/skill-name]"
+      description: "Invoke [/skill-name] immediately in this session"
+    - label: "Not yet"
+      description: "Dismiss — I'll run it when ready"
+
+Replace `[next-step-skill]` and `[/skill-name]` with the next step from the Phase → Next step lookup table in Step 3. If yes: invoke the skill by following its process (e.g., "Follow the design skill process").
+
 ## Output
 
 Nothing written to `.pipeline/`. Report is output only.

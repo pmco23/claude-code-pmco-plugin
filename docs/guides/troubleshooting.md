@@ -38,7 +38,7 @@ Run `hooks/test_gate.sh` to confirm all pipeline gate rules are working correctl
 bash ~/claude-developer-toolbox/hooks/test_gate.sh
 ```
 
-Expected: `Results: 49 passed, 0 failed`
+Expected: `Results: 52 passed, 0 failed`
 
 ## Plugin not loading after changes
 

@@ -15,9 +15,18 @@ You are Opus acting as a verification lead. Two independent agents extract claim
 
 ### Step 1: Identify source and target
 
-Ask the user (or receive from /build context):
-- **Source of truth:** what document contains the claims? (default: `.pipeline/plan.md`)
-- **Target:** what is being verified against? (default: current implementation in the working directory)
+If called from `/build`, receive source and target from the build context — skip the question.
+
+If called standalone, use AskUserQuestion with:
+  question: "What are the drift check inputs?"
+  header: "Drift inputs"
+  options:
+    - label: "Default (plan vs. implementation)"
+      description: "Source: .pipeline/plan.md — Target: current working directory"
+    - label: "Custom"
+      description: "Specify a different source document and/or target path"
+
+If "Custom" is selected, ask the user to provide the source document path and/or target path.
 
 ### Step 2: Dispatch parallel verifiers
 

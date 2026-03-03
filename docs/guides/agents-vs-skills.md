@@ -39,7 +39,7 @@ A task should become an agent only when it satisfies **all three** tests:
 
 **1. Self-contained** — No mid-task questions to the user. All input comes from files or the prompt. The agent runs to completion and returns a result without needing to pause for user input.
 
-**2. Read-only** — No writes, edits, or file creation as part of the core task. If the task both analyses and modifies, it belongs in a skill — or the analysis sub-phase can be an agent and the modification sub-phase stays in the skill (the split pattern, described below).
+**2. Scoped writes** — If the agent writes files, those writes must be confined to a well-defined scope (e.g., one task group's file list). Agents that orchestrate open-ended edits across the full codebase belong as skills, not agents. If the task has both analysis and open-ended modification, use the split pattern.
 
 **3. Verbose output** — The findings are detailed enough that keeping them inline would meaningfully consume the main context. A three-line result doesn't justify the overhead.
 
@@ -47,7 +47,7 @@ If a task fails any test, keep it as a skill.
 
 ---
 
-## Evaluating This Plugin's 18 Skills
+## Evaluating This Plugin's 21 Skills
 
 The following table applies the fitness criterion to every skill in this plugin. It documents the reasoning so future decisions can follow the same logic rather than re-litigating from scratch.
 
@@ -71,6 +71,9 @@ The following table applies the fitness criterion to every skill in this plugin.
 | `/backend-audit` | **Agent candidate** | Same as frontend-audit. |
 | `/doc-audit` | **Agent candidate** | Same pattern — reads docs and code, returns freshness report. |
 | `/security-review` | **Agent candidate** | Same pattern — reads code, returns OWASP findings. |
+| `/test` | **Skill** | Interactive — AskUserQuestion for runner selection when detection fails; offers `/quick` on test failures |
+| `/release` | **Skill** | Fully interactive — version source, release type, and confirmation prompts; multiple decision points |
+| `/rollback` | **Skill** | Requires per-group confirmation before any destructive file removal; interactive confirmation gate |
 
 ### Why the four agent candidates were kept as skills
 
@@ -136,9 +139,9 @@ When a task has an analysis phase (read-only, could be isolated) and an interact
 ```
 User: /cleanup
 Skill: invokes cleanup agent → receives findings list
-       → presents findings: "Remove all? (yes / review each / skip)"
-       → if yes: applies edits using Edit tool
-Agent file: Steps 1-2 only (scan, return findings list) with tools: Read, Grep, Glob, Bash
+       → presents findings via AskUserQuestion: "Remove all / Review each / Skip"
+       → if "Remove all": applies edits using Edit tool
+Agent file: Steps 1-2 only (scan, return findings list — analysis only) with tools: Read, Grep, Glob, Bash
 ```
 
 **Use this pattern only when:** the analysis phase is genuinely expensive or verbose enough that isolating it provides a real benefit.

@@ -17,10 +17,24 @@ Before dispatching any agents, acquire a Repomix outputId for the codebase:
 
 1. Check if `.pipeline/repomix-pack.json` exists
 2. If it exists, read `packedAt` — if less than 1 hour old, use the stored `outputId`
-3. If missing or stale, call `mcp__repomix__pack_codebase` on the current working directory with `compress: true` and write the full `.pipeline/repomix-pack.json` schema (same fields as the `/pack` skill: outputId, source, packedAt, fileCount, tokensBefore, tokensAfter)
+3. If missing or stale, call `mcp__repomix__pack_codebase` on the current working directory with `compress: true` and write `.pipeline/repomix-pack.json` with these fields:
+   - `outputId` — the Repomix pack identifier returned by the tool
+   - `source` — current working directory path
+   - `packedAt` — ISO 8601 timestamp of when the pack was created
+   - `fileCount` — number of files included in the pack
+   - `tokensBefore` — token count before compression
+   - `tokensAfter` — token count after compression
 4. If `mcp__repomix__pack_codebase` is unavailable or fails, proceed without an outputId — omit the Repomix instruction from agent prompts and agents will fall back to native Glob/Read/Grep
 
 Hold the outputId in context for use in the agent prompts below.
+
+## PASS Criteria
+
+An overall PASS requires:
+- Zero findings in /cleanup, /frontend-audit, /backend-audit, and /doc-audit
+- Zero CRITICAL or HIGH findings in /security-review (MEDIUM and LOW do not block PASS)
+
+These criteria apply to both parallel and sequential mode and are shown in the Overall QA Verdict table at the end of each run.
 
 ## Mode Selection
 
@@ -29,13 +43,14 @@ Check the invocation arguments:
 - If `/qa --sequential` was used: sequential mode
 - If no flag: ask the user before proceeding
 
-```
-QA mode:
-  --parallel   All audits run simultaneously (faster, independent concerns)
-  --sequential One audit at a time in order (review each before next)
-
-Which mode? (parallel / sequential)
-```
+Use AskUserQuestion with:
+  question: "Which QA mode?"
+  header: "QA mode"
+  options:
+    - label: "Parallel"
+      description: "All 5 audits run simultaneously — faster, independent concerns"
+    - label: "Sequential"
+      description: "One audit at a time in order — review each result before continuing"
 
 ## Process
 
@@ -105,10 +120,10 @@ After presenting the consolidated report, append an Overall QA Verdict:
 
 Run in order, presenting each result before proceeding. When invoking each skill, prepend this to the invocation: "Repomix outputId: <outputId> — use mcp__repomix__grep_repomix_output for file discovery and mcp__repomix__read_repomix_output for file contents." If no outputId was acquired in the preamble, omit this instruction:
 
-1. Follow the `cleanup` skill process — present findings — ask "Continue to /frontend-audit? (yes / fix first)"
-2. Follow the `frontend-audit` skill process — present findings — ask "Continue to /backend-audit? (yes / fix first)"
-3. Follow the `backend-audit` skill process — present findings — ask "Continue to /doc-audit? (yes / fix first)"
-4. Follow the `doc-audit` skill process — present findings — ask "Continue to /security-review? (yes / fix first)"
+1. Follow the `cleanup` skill process — present findings — ask "Continue to /frontend-audit? (yes / fix first — then re-run /qa to verify before continuing)"
+2. Follow the `frontend-audit` skill process — present findings — ask "Continue to /backend-audit? (yes / fix first — then re-run /qa to verify before continuing)"
+3. Follow the `backend-audit` skill process — present findings — ask "Continue to /doc-audit? (yes / fix first — then re-run /qa to verify before continuing)"
+4. Follow the `doc-audit` skill process — present findings — ask "Continue to /security-review? (yes / fix first — then re-run /qa to verify before continuing)"
 5. Follow the `security-review` skill process — present final findings
 
 After /security-review completes, present the Overall QA Verdict table (same format as parallel mode above), summarising results from all five audits.

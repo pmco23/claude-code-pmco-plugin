@@ -25,7 +25,7 @@ Two workflow paths are available. Everything else in the plugin supports one of 
 2. Reads only the relevant files — not the whole codebase
 3. Implements the change following existing patterns
 4. Self-reviews the diff before handing back
-5. Offers a lightweight audit: LSP diagnostics, security spot-check, test reminder
+5. Offers a structured yes/no prompt to run a lightweight audit: LSP diagnostics, security spot-check, test reminder
 
 **What it does NOT do:**
 - Write `.pipeline/` artifacts — ever
@@ -82,7 +82,7 @@ Or commit it if you want a paper trail of your pipeline state.
 | `/design` | `design.md` | Architecture, component breakdown, library decisions, testing strategy |
 | `/review` | `design.approved` | Adversarial findings addressed; design hardened before any code |
 | `/plan` | `plan.md` | Exact file paths, code patterns, test cases, acceptance criteria per task group |
-| `/build` | `build.complete` | Implementation complete and drift-verified against the plan |
+| `/build` | `build.complete` | Implementation complete and drift-verified against the plan; task groups tracked in the task list — survives context compaction |
 | `/qa` | (none) | Dead code, frontend/backend/doc/security audits — run after `/build` completes; use `--parallel` for speed or `--sequential` for interactive mode |
 
 ### Resetting to a prior phase
@@ -107,6 +107,8 @@ rm .pipeline/build.complete
 ---
 
 ## Mode Flags
+
+`/build` and `/qa` both accept `--parallel` or `--sequential`. If neither flag is provided, a structured selection prompt appears — no typing required, just pick from the options.
 
 ### When to use --parallel
 
@@ -143,8 +145,11 @@ These run independently of any pipeline state — no gate, no artifacts required
 | `/git-workflow` | Before branch creation, first push, PR open/merge, or destructive git op (force-push, reset --hard) |
 | `/pack` | Before `/qa` or `/quick --deep` to snapshot the codebase |
 | `/plugin-architecture` | When deciding whether to use a skill vs agent in a plugin you're building |
-| `/drift-check` | After `/build` — verify implementation matches the approved design; also run standalone at any time |
+| `/drift-check` | After `/build` — verify implementation matches the approved design; also run standalone at any time (standalone shows a structured source/target selection prompt) |
 | `/quick` | Fast-track implementation (see above) |
+| `/test` | Any time — run the project test suite; supports file/pattern scoping; auto-detects jest, vitest, go test, pytest, dotnet test, cargo test; also invoked by `/cleanup` after dead-code removal |
+| `/release` | After `/qa` passes — bump version in config files, rename `[Unreleased]` in CHANGELOG, create commit and tag locally; never pushes |
+| `/rollback` | After a completed build — delete created files, restore modified files, reset `build.complete`; requires `build.complete` |
 
 ---
 
@@ -154,7 +159,7 @@ Three named agents exist in the `agents/` directory: `strategic-critic`, `drift-
 
 - `/review` dispatches `strategic-critic` (Opus) and Codex MCP in parallel
 - `/drift-check` dispatches `drift-verifier` (Sonnet) and Codex MCP in parallel
-- `/build` dispatches `task-builder` (Sonnet) per task group
+- `/build` dispatches `task-builder` (Sonnet) per task group, then `drift-verifier` (Sonnet) post-build
 
 The agents enforce model routing (`model: opus` / `model: sonnet`) at the runtime level rather than by prompt instruction alone. This is an implementation detail — for workflow purposes, just run the skill.
 
@@ -162,16 +167,24 @@ The agents enforce model routing (`model: opus` / `model: sonnet`) at the runtim
 
 ## Language Support
 
-What each optional LSP adds per skill:
+Diagnostics use a three-tier fallback in `/cleanup`, `/frontend-audit`, and `/backend-audit`:
 
-| LSP | /cleanup | /frontend-audit | /backend-audit | /review | /build | /security-review |
-|-----|---------|-----|-----|-----|--------|-----------------|
-| TypeScript | Definitive unused symbols | Type-aware audit | Type errors | Type-grounded critique | Accurate refactoring | Taint analysis |
-| Go | Definitive unused symbols | — | Unused imports, diagnostics | Code-grounded critique | Accurate refactoring | Taint analysis |
-| Python | Definitive unused imports | — | Type annotation gaps | Code-grounded critique | Accurate refactoring | Taint analysis |
-| C# | Definitive unused usings | — | Nullable warnings, naming | Code-grounded critique | Accurate refactoring | Taint analysis |
+1. **VS Code IDE integration** (`mcp__ide__getDiagnostics`) — real-time diagnostics for all open files; authoritative when available
+2. **LSP tool plugin** — language-specific symbol analysis; authoritative for its language
+3. **Heuristic grep** — static pattern matching; always available, least precise
 
-Without LSP: skills fall back to heuristic static analysis — still useful, less precise.
+The table below shows what each tier adds per skill:
+
+| Tier | /cleanup | /frontend-audit | /backend-audit | /review | /build | /security-review |
+|------|---------|-----------------|----------------|---------|--------|-----------------|
+| VS Code IDE | Authoritative errors/warnings | Authoritative errors/warnings | Authoritative errors/warnings | — | — | — |
+| TypeScript LSP | Definitive unused symbols | Type-aware audit | Type errors | Type-grounded critique | Accurate refactoring | Taint analysis |
+| Go LSP | Definitive unused symbols | — | Unused imports, diagnostics | Code-grounded critique | Accurate refactoring | Taint analysis |
+| Python LSP | Definitive unused imports | — | Type annotation gaps | Code-grounded critique | Accurate refactoring | Taint analysis |
+| C# LSP | Definitive unused usings | — | Nullable warnings, naming | Code-grounded critique | Accurate refactoring | Taint analysis |
+| Heuristic | Grep-pattern dead code | Pattern-based violations | Pattern-based violations | — | — | Pattern-based |
+
+Each absent tier reduces precision, not availability.
 
 ---
 
@@ -213,11 +226,22 @@ claude
 # 6. Build it
 /build --parallel
 # Sonnets build in parallel, Opus coordinates
-# /drift-check runs post-build
+# drift-verifier agent runs post-build
 # .pipeline/build.complete written
 
 # 7. Clean and audit
 /qa --parallel
 # All QA skills run simultaneously
 # Review findings, fix what's flagged
+
+# 8. Verify tests pass (optional but recommended before release)
+/test
+# Auto-detects runner; reports pass/fail counts
+# Offers to invoke /quick on failures
+
+# 9. Cut the release
+/release
+# Choose patch / minor / major
+# Shows full preview (version bump, CHANGELOG diff, commit, tag)
+# Confirm → applies locally; then: git push && git push --tags
 ```

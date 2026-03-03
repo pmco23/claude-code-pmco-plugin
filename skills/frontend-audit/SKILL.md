@@ -11,14 +11,7 @@ description: Use after build is complete to audit frontend code against the proj
 
 You are Sonnet acting as a frontend code reviewer. Scope: frontend TypeScript/JavaScript/CSS/HTML only. For backend TypeScript (Node.js APIs, Express servers, CLI tools), defer to `/backend-audit`. Audit against the project's own style guide — not generic best practices. If no style guide exists, infer conventions from the existing codebase.
 
-## Repomix Context
-
-If a Repomix outputId is provided in the context (injected by `/qa`), use Repomix tools for file discovery instead of native Glob/Read/Grep:
-
-- `mcp__repomix__grep_repomix_output` — search for patterns across the packed codebase (provide the outputId and a search pattern)
-- `mcp__repomix__read_repomix_output` — read specific sections by line range (provide the outputId, start line, and end line)
-
-Fall back to native Glob/Read/Grep only if no outputId is available.
+**Repomix:** if `outputId` in context, use `mcp__repomix__grep_repomix_output(outputId, pattern)` and `mcp__repomix__read_repomix_output(outputId, startLine, endLine)` for discovery; else native Glob/Read/Grep.
 
 ## Process
 
@@ -34,9 +27,12 @@ Record the style rules you will audit against. Present them to the user: "Auditi
 
 ### Step 2: Audit with LSP if available
 
+**IDE Diagnostics (try first):** Call `mcp__ide__getDiagnostics` (no URI) — if results, use as authoritative source.
+
 **Announce quality tier before proceeding:**
-- If `typescript_lsp` is available: output `🟢 TypeScript LSP active — type errors and unused-variable diagnostics are authoritative.`
-- If not available: output `🟡 No TypeScript LSP detected — findings are heuristic. Install typescript-lsp for authoritative results (see README Language Support Matrix).`
+- If `mcp__ide__getDiagnostics` returned results: output `🟢 IDE diagnostics active — errors and warnings are authoritative (VS Code integration).`
+- Else if `typescript_lsp` is available: output `🟢 TypeScript LSP active — type errors and unused-variable diagnostics are authoritative.`
+- Else: output `🟡 No IDE or TypeScript LSP detected — findings are heuristic. Install typescript-lsp for authoritative results (see README Language Support Matrix).`
 
 If `typescript_lsp` tool is available:
 - Get all type errors and warnings
@@ -51,6 +47,11 @@ Check:
 - Component size (flag components over 200 lines as candidates for extraction)
 - Props patterns (no inline object literals in JSX if project avoids them)
 - CSS/styling conventions (CSS modules vs. Tailwind vs. styled-components — match what's already used)
+- **Accessibility (basic):**
+  - Interactive elements (buttons, inputs, links) have accessible labels (`aria-label`, `alt` text, `<label for>`)
+  - Images have non-empty `alt` attributes (or `aria-hidden="true"` for decorative ones)
+  - Heading hierarchy is sequential (h1 → h2 → h3 — no skipped levels)
+  - Focus is not permanently trapped or removed (`tabIndex="-1"` without focus management is a signal)
 - Console.log statements left in production code
 - TODO/FIXME comments that reference completed work
 

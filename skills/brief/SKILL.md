@@ -13,27 +13,20 @@ You are Opus acting as a requirements analyst. Your job is to extract maximum si
 
 ## Process
 
-### Step 0: Search past conversations for context
+### Step 0: Check session memory for prior context
 
-> **Requires:** `episodic-memory` plugin (`/plugin install episodic-memory@superpowers-marketplace`). If the tool is unavailable, skip this step and proceed to Step 1.
-
-Call `mcp__plugin_episodic-memory_episodic-memory__search` with the user's stated feature or topic as the query (extract it from their message or ask "What feature or task are we working on?" if unclear).
-
-Use `mode: "both"` and `limit: 5`.
-
-**If relevant results are found**, display them visibly before proceeding:
+Review MEMORY.md (automatically loaded from `~/.claude/projects/*/memory/MEMORY.md`). If it contains entries relevant to the user's stated feature or topic, surface them before proceeding:
 
 ```
-Checking past conversations for context on "[topic]"...
+Checking session memory for context on "[topic]"...
 
-Found N relevant conversation(s):
-  · [YYYY-MM-DD · project-name] "snippet..."
-  · [YYYY-MM-DD · project-name] "snippet..."
+Found relevant prior context:
+  · [brief summary of relevant MEMORY.md entries]
 
 Carrying these forward into requirements Q&A.
 ```
 
-**If no relevant results**, proceed silently to Step 1 with no output.
+If no relevant entries are found, proceed silently to Step 1 with no output.
 
 ### Step 1: Detect project context
 

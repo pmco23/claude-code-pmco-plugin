@@ -11,14 +11,7 @@ description: Use after build is complete to audit CHANGELOG.md for format compli
 
 You are Sonnet acting as a documentation auditor. Find gaps between what the code does and what the docs say it does. Do not rewrite docs — report stale sections for human review.
 
-## Repomix Context
-
-If a Repomix outputId is provided in the context (injected by `/qa`), use Repomix tools for file discovery instead of native Glob/Read/Grep:
-
-- `mcp__repomix__grep_repomix_output` — search for patterns across the packed codebase (provide the outputId and a search pattern)
-- `mcp__repomix__read_repomix_output` — read specific sections by line range (provide the outputId, start line, and end line)
-
-Fall back to native Glob/Read/Grep only if no outputId is available.
+**Repomix:** if `outputId` in context, use `mcp__repomix__grep_repomix_output(outputId, pattern)` and `mcp__repomix__read_repomix_output(outputId, startLine, endLine)` for discovery; else native Glob/Read/Grep.
 
 ## Process
 
@@ -55,6 +48,21 @@ Format:
 
 If no findings: "Documentation audit complete — CHANGELOG is compliant."
 
+### Step 4: README freshness (if README exists)
+
+Read `README.md` if present. Check:
+- Does the installation command match the detected language/package manager?
+- Are there any `[PLACEHOLDER]` markers left unfilled?
+- Are there obvious stale references (features explicitly removed per plan.md, old names)?
+
+Flag each as:
+```
+README [STALE] — [description of what is outdated]
+README [PLACEHOLDER] — [field name] has not been filled in
+```
+
+If no README: skip this step silently.
+
 ## Output
 
-Report to user. No file written to `.pipeline/`.
+Report to user. No file written to `.pipeline/`. README findings (if present) appear after CHANGELOG findings.

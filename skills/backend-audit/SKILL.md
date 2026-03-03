@@ -11,26 +11,13 @@ description: Use after build is complete to audit backend code against the proje
 
 You are Sonnet acting as a backend code reviewer. For TypeScript projects, audit backend TypeScript only (Node.js, APIs, CLI tools) — frontend TypeScript components are covered by `/frontend-audit`. Audit against the project's own style guide and language idioms — not generic linting rules. Match what the codebase already does.
 
-## Repomix Context
-
-If a Repomix outputId is provided in the context (injected by `/qa`), use Repomix tools for file discovery instead of native Glob/Read/Grep:
-
-- `mcp__repomix__grep_repomix_output` — search for patterns across the packed codebase (provide the outputId and a search pattern)
-- `mcp__repomix__read_repomix_output` — read specific sections by line range (provide the outputId, start line, and end line)
-
-Fall back to native Glob/Read/Grep only if no outputId is available.
+**Repomix:** if `outputId` in context, use `mcp__repomix__grep_repomix_output(outputId, pattern)` and `mcp__repomix__read_repomix_output(outputId, startLine, endLine)` for discovery; else native Glob/Read/Grep.
 
 ## Process
 
 ### Step 1: Identify backend language and style guide
 
-Attempt language detection in order — stop as soon as a language is identified:
-
-1. **Read `.pipeline/brief.md`** — if it exists, extract the primary language from it.
-2. **Root-level config files** — `package.json` → TypeScript/JavaScript, `go.mod` → Go, `requirements.txt` / `pyproject.toml` → Python, `*.csproj` or `*.sln` → C#, `Cargo.toml` → Rust.
-3. **LSP tool availability** — check which LSP tools are available in this session as a hint.
-4. **Unknown** — announce: "Language unknown — falling back to general backend patterns."
-
+**Detect language:** `brief.md` first; else root config (`package.json`→TS/JS, `go.mod`→Go, `requirements.txt`/`pyproject.toml`→Python, `*.csproj`/`*.sln`→C#, `Cargo.toml`→Rust); else LSP availability hint; else announce: "Language unknown — falling back to general backend patterns."
 Check which LSP tools are available (needed for the quality tier announcement in Step 2).
 
 Look for style guidance:
@@ -43,12 +30,16 @@ Present the rules you will audit against before starting.
 
 ### Step 2: Language-specific LSP audit
 
-**Announce quality tier before proceeding.** Check which LSP tools are available for the detected language:
-- Go + `go_lsp`: output `🟢 Go LSP active — unused import and diagnostic findings are authoritative.`
-- Python + `python_lsp`: output `🟢 Python LSP active — unused import findings are authoritative.`
-- TypeScript + `typescript_lsp`: output `🟢 TypeScript LSP active — type error findings are authoritative.`
-- C# + `csharp_lsp`: output `🟢 C# LSP active — nullable and unused-using findings are authoritative.`
-- No LSP for detected language: output `🟡 No LSP detected for [language] — findings are heuristic. Install the language LSP for authoritative results (see README Language Support Matrix).`
+**IDE Diagnostics (try first):** Call `mcp__ide__getDiagnostics` (no URI) — if results, use as authoritative source.
+
+**Announce quality tier before proceeding.** Check which tools are available for the detected language:
+- If `mcp__ide__getDiagnostics` returned results: output `🟢 IDE diagnostics active — errors and warnings are authoritative (VS Code integration).`
+- Else if Go + `go_lsp`: output `🟢 Go LSP active — unused import and diagnostic findings are authoritative.`
+- Else if Python + `python_lsp`: output `🟢 Python LSP active — unused import findings are authoritative.`
+- Else if TypeScript + `typescript_lsp`: output `🟢 TypeScript LSP active — type error findings are authoritative.`
+- Else if C# + `csharp_lsp`: output `🟢 C# LSP active — nullable and unused-using findings are authoritative.`
+- Else if Rust + `rust_lsp`: output `🟢 Rust LSP active — unused variable and dead code findings are authoritative.`
+- Else: output `🟡 No IDE or LSP diagnostics available for [language] — findings are heuristic. Install the language LSP for authoritative results (see README Language Support Matrix).`
 
 
 **Go (if go_lsp available):**

@@ -43,14 +43,14 @@ Each arrow is a quality gate. You cannot run `/design` without a brief. You cann
 
 | Tool | Purpose | Install |
 |------|---------|---------|
-| TypeScript LSP | Type-aware audits for TS/JS projects | `/plugin install typescript-lsp@claude-plugins-official` |
-| Go LSP | Symbol resolution for Go projects | `/plugin install gopls-lsp@claude-plugins-official` |
-| Python LSP | Type inference for Python projects | `/plugin install python-lsp@claude-plugins-official` |
-| C# LSP | Symbol resolution for .NET projects | `/plugin install csharp-lsp@claude-plugins-official` |
+| VS Code IDE Integration | Primary diagnostics tier for `/cleanup`, `/frontend-audit`, `/backend-audit` — tried before LSP tools | Built-in when running Claude Code inside VS Code |
+| TypeScript LSP | Type-aware audits for TS/JS projects (secondary tier) | `/plugin install typescript-lsp@claude-plugins-official` |
+| Go LSP | Symbol resolution for Go projects (secondary tier) | `/plugin install gopls-lsp@claude-plugins-official` |
+| Python LSP | Type inference for Python projects (secondary tier) | `/plugin install python-lsp@claude-plugins-official` |
+| C# LSP | Symbol resolution for .NET projects (secondary tier) | `/plugin install csharp-lsp@claude-plugins-official` |
 | Repomix MCP | Token-efficient codebase packing for `/pack`, `/qa`, `/plan`, `/brief` | [MCP setup →](docs/guides/mcp-setup.md#repomix-mcp) |
-| Episodic Memory | Past conversation context injected at session start; used by `/brief` and `/init` | `/plugin install episodic-memory@superpowers-marketplace` |
 
-LSP tools degrade gracefully — absent means reduced precision, not failure.
+Diagnostics degrade gracefully across three tiers: VS Code IDE integration → LSP tool plugin → heuristic grep. Each absent tier reduces precision, not availability.
 
 ## Quick Install
 
@@ -95,3 +95,6 @@ Restart Claude Code. Run `/brief` to verify. See the [full installation guide](d
 | `/plugin-architecture` | Plugin architecture guide |
 | `/status` | Pipeline state check |
 | `/pack` | Repomix codebase snapshot |
+| `/test` | Run the project test suite |
+| `/release` | Cut a new release (version bump, CHANGELOG, tag) |
+| `/rollback` | Undo a completed build |

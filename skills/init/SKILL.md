@@ -21,26 +21,20 @@ You are Sonnet acting as a project scaffolder. Extract as much context as possib
 
 ## Process
 
-### Step 0: Search past conversations for project context
+### Step 0: Check session memory for project context
 
-> **Requires:** `episodic-memory` plugin (`/plugin install episodic-memory@superpowers-marketplace`). If the tool is unavailable, skip this step and proceed to Step 1.
-
-Call `mcp__plugin_episodic-memory_episodic-memory__search` with the project name (use the current directory name as the query).
-
-Use `mode: "both"` and `limit: 3`.
-
-**If relevant results are found**, display them visibly before proceeding:
+Review MEMORY.md (automatically loaded from `~/.claude/projects/*/memory/MEMORY.md`). If it contains entries relevant to this project, surface them before proceeding:
 
 ```
-Checking past conversations for context on this project...
+Checking session memory for context on this project...
 
-Found N relevant conversation(s):
-  · [YYYY-MM-DD · project-name] "snippet..."
+Found relevant prior context:
+  · [brief summary of relevant MEMORY.md entries]
 
 Carrying these forward into project scaffolding.
 ```
 
-**If no relevant results**, proceed silently to Step 1 with no output.
+If no relevant entries are found, proceed silently to Step 1 with no output.
 
 ### Step 1: Extract project context
 
@@ -86,11 +80,16 @@ For each target file, check if it exists:
 - `.github/pull_request_template.md`
 - `.gitignore`
 
-For each that exists, ask:
-```
-[filename] already exists. What should I do?
-  → overwrite / skip / merge
-```
+For each that exists, use AskUserQuestion with:
+  question: "[filename] already exists. What should I do?"
+  header: "File conflict"
+  options:
+    - label: "Skip"
+      description: "Leave the existing file unchanged"
+    - label: "Overwrite"
+      description: "Replace the entire file with generated content"
+    - label: "Merge"
+      description: "Show a diff of what would change and confirm before writing"
 
 For `.gitignore` specifically, "merge" means: append `.pipeline/` if not already present. Do not overwrite existing entries.
 

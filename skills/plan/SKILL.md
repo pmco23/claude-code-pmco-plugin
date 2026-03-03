@@ -121,7 +121,15 @@ Named test cases:
 
 ### Step 6: Cross-check for conflicts
 
-Before finalizing: verify no two parallel task groups modify the same file. If they do, either make them sequential or split the shared file modification into its own task group that runs first.
+1. Collect every file path listed under "Modify" or "Create" in each task group's `### Files` section.
+2. Build a map: `file path → [list of task groups that touch it]`.
+3. For each file that appears in two or more task groups, check whether those groups are marked parallel-safe with each other.
+4. If a file is shared between two parallel-safe groups, resolve using one of:
+   - **Make sequential:** remove the parallel-safe relationship and add a `Must run after` dependency.
+   - **Split the shared edit:** extract the modification into a new task group that runs before both.
+5. After resolving all conflicts, verify the map again — no file should appear in two groups that are still marked parallel-safe.
+
+Document any conflicts found and how they were resolved in a `## Conflict Resolution` section at the end of `.pipeline/plan.md`.
 
 ## Output
 

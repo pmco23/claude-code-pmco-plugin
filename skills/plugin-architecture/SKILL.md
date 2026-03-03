@@ -22,7 +22,7 @@ You are a Claude Code plugin architecture advisor. Present the framework below a
 Convert a skill to an agent only when it satisfies **all three**:
 
 1. **Self-contained** — no mid-task questions to the user; all input comes from files or the prompt
-2. **Read-only** — no writes, edits, or file creation as part of its core task
+2. **Scoped writes** — if the agent writes files, those writes are confined to a well-defined scope (e.g., one task group's file list). Agents that need to orchestrate open-ended edits across the full codebase belong as skills, not agents.
 3. **Verbose output** — produces findings that would pollute the main context if kept inline
 
 If any criterion fails, keep it as a skill. If criteria 1 and 3 pass but 2 fails, use the split pattern.
@@ -66,7 +66,7 @@ Return the agent's findings verbatim.
 
 When a task has an interactive phase and an analysis phase:
 
-- **Agent:** analysis only — reads files, returns a findings list
+- **Agent:** analysis only (or scoped writes)
 - **Skill:** interaction — shows findings, asks user to confirm, then acts
 
 Example: a dead-code remover. The agent scans and reports. The skill asks "remove all?" and then edits.

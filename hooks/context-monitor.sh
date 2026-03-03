@@ -53,3 +53,5 @@ elif (( USED_PCT >= 81 )); then
 elif (( USED_PCT >= 63 )); then
   echo "⚠ Context at ${USED_PCT}% — consider /compact soon"
 fi
+
+exit 0

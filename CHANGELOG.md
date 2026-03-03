@@ -7,6 +7,76 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-03-03
+
+### Added
+
+- `docs/guides/workflows.md`: Always-Available Skills table expanded with `/test`, `/release`, `/rollback`; End-to-End Example extended with steps 8 (`/test`) and 9 (`/release`); How Agents Work updated to show `/build` dispatches `drift-verifier` post-build; stale `# /drift-check runs post-build` comment corrected; Mode Flags section notes that omitting flags triggers a structured selection prompt; Language Support table expanded with VS Code IDE and Heuristic rows
+- `docs/guides/agents-vs-skills.md`: skill count updated from 18 to 21; `/test`, `/release`, `/rollback` rows added to fitness-criterion evaluation table; Fitness Criterion #2 updated from "Read-only" to "Scoped writes" to match `plugin-architecture` SKILL.md; Pattern 4 example annotation updated accordingly
+- `docs/guides/troubleshooting.md`: expected test gate count updated from 49 to 52
+- `/test` skill — runs the project test suite; auto-detects jest, vitest, go test, pytest, dotnet test, cargo test; supports file/pattern scoping; offers to invoke `/quick` on failures
+- `/release` skill — cuts a new release: bumps version in config files, renames `## [Unreleased]` to `## [X.Y.Z]` in CHANGELOG.md, creates a release commit and git tag locally; shows full preview before writing; never pushes
+- `/rollback` skill — undoes a completed build by deleting created files and restoring modified files via `git checkout --`; requires per-group confirmation; removes `.pipeline/build.complete`; never removes planning artifacts
+- `agents/strategic-critic.md`: `tools:` field added — restricts to `Read, Grep, Glob, WebSearch` and Context7 tools; prevents unintended write access
+- `agents/drift-verifier.md`: `tools:` field added — restricts to `Read, Grep, Glob, Bash`; read-only verification scope enforced
+- `/git-workflow` Step 1.5: new step between project-type detection and workflow-reference load — reads current git state, identifies the requested operation (branch creation, push, PR open, PR merge, destructive op), and gathers required parameters before applying safety gates
+- `hooks/compact-prep.sh`: new PreCompact hook — outputs current `.pipeline/` stage and artifact list before `/compact` so pipeline state is preserved in the compacted summary; registered in `hooks.json` under `PreCompact`
+- `README.md`: VS Code IDE Integration added to Optional prerequisites table as primary diagnostics tier; three-tier fallback description (VS Code IDE → LSP → heuristic grep) replaces single-line LSP footnote
+- `AskUserQuestion` structured prompts at all 7 decision points: `/build` mode selection, `/build` partial-build resume, `/qa` mode selection, `/cleanup` confirmation, `/review` action, `/quick` audit offer, `/drift-check` source/target selection — replaces freetext prompts with radio-button UI
+- `TaskCreate`/`TaskUpdate`/`TaskList` integration in `/build`: one task per task group created at Step 1, `TaskList` checked before file-based detection in Step 0, tasks marked `in_progress`/`completed` as groups are dispatched and verified in Steps 2A and 2B
+- `mcp__ide__getDiagnostics` as the primary diagnostics tier in `/cleanup`, `/frontend-audit`, and `/backend-audit` — tried before LSP tool plugins; quality tier announcement updated to three levels: IDE active → LSP active → heuristic
+
+### Changed
+
+- `/cleanup`: added `## Hard Rules` section (frontmatter → Role → **Hard Rules** → Process); constraints previously buried in Role and Process steps are now declared before the steps that enforce them
+- `/cleanup` Step 5: renamed to "Verify no regressions"; delegated runner detection and execution to the `/test` skill process — removes inline runner commands (`npm test`, `go test ./...`, etc.); `/test`'s fallback AskUserQuestion and failure handling are inherited automatically
+- `/build`: `## Lead Rules` section moved before `## Process` and renamed `## Hard Rules` — constraints now declared before the steps that enforce them; Hard Rule 2 expanded to name the dispatch tool (`task-builder` agent)
+- `/build` H1 title: changed from `# BUILD — Parallel Build` to `# BUILD` — was incorrect for sequential mode users
+- `/build` Step 1: TaskCreate is now conditional — calls `TaskList` first and only creates tasks for groups without an existing `Task Group [N]` entry; prevents duplicate task creation on resume
+- `/build` Step 2A (parallel mode): added retry/escalation path — after 3 consecutive failures on the same task group, escalate to the user instead of looping; mirrors the existing Step 2B sequential-mode behavior
+- `/build` Step 2B: retry limit added — after 3 consecutive failures on the same acceptance criteria, escalates to user instead of looping indefinitely
+- `/build` Step 3: inline drift-check prompt replaced with `drift-verifier` agent invocation; eliminates prompt duplication and ensures the step benefits from future agent improvements
+- `/build` Step 4: added retry limit to drift remediation loop — after 2 consecutive drift-verifier failures on the same claim, escalate to user; previously the loop had no exit condition other than pass
+- `/build` Step 4 and description: replaced `/drift-check` (skill name) with `drift-verifier` (agent name) — three inconsistent names for the same mechanism unified; Step 5 updated to match
+- `/review` Step 2: removed duplicated Codex fallback statement — fallback is canonical in Hard Rule 1; Step 2 now references Hard Rule 1 instead of re-stating it with slightly different semantics
+- `/review` Hard Rule #1 and Step 2: Note placement instruction (`**Note:** Codex MCP unavailable...`) removed from dispatch step; moved to Step 3 with a conditional insertion instruction after the `**Design:**` line in the report template
+- `/review` Hard Rule 5: replaced "no remaining findings warrant mitigation" with "all MUST FIX findings are resolved — SHOULD FIX findings may be accepted via Override" — aligns with the cost/benefit matrix thresholds
+- `/review` Step 3: added "Context7 ground" sub-step — lead now calls `resolve_library_id` + `query_docs` for any library cited in a finding before accepting it; satisfies Hard Rule 2's grounding requirement in the Process
+- `/review` Step 3 Fact-check: added codebase-relevance check — for findings claiming naming conflicts or pattern inconsistency, lead uses Grep/Glob to verify before accepting; satisfies Hard Rule 4's "relevant to the actual codebase" clause
+- `/review` Step 4 Override path: replaced ambiguous "re-evaluate" with explicit routing — re-presents updated report; if all MUST FIX resolved, proceeds to Approve; otherwise awaits further action
+- `/review` Step 4 Approve path: updated description to match revised Hard Rule 5 exit condition
+- `/doc-audit`: added Step 4 README freshness check — flags stale installation commands, unfilled `[PLACEHOLDER]` markers, and references to removed features; skips silently if no README exists; output section updated to note README findings
+- `/frontend-audit` Step 3: accessibility checklist added — checks interactive element labels, image `alt` attributes, heading hierarchy, and focus trap patterns
+- `/backend-audit` Step 2: Rust LSP tier added to quality tier announcement — `🟢 Rust LSP active` branch inserted before the heuristic fallback
+- `/init` Step 2: file-conflict prompts converted from freetext to `AskUserQuestion` (Skip / Overwrite / Merge)
+- `/plugin-architecture` fitness criterion #2: changed from "Read-only" to "Scoped writes" — corrects the incorrect rule that blocked `task-builder` (which writes files within a defined scope); Split Pattern description updated to "Agent: analysis only (or scoped writes)"
+- `/quick` Step 6: `AskUserQuestion` block moved outside the report template code fence — was being read as literal text to print instead of as a tool call instruction
+- `/security-review` A06: `cargo audit --json` added to the automated scanning block for Rust projects; unavailability message example added for Rust
+- `/status`: pipeline report section now ends with `AskUserQuestion` to launch the next pipeline step directly from the status report
+
+### Fixed
+
+- `README.md`: added `/test`, `/release`, `/rollback` to the Skills table — three newly added skills were missing from the table
+- `hooks/test_gate.sh`: added `expect_allow` coverage for `/test`, `/release`, `/rollback` — gate regression suite now runs 52 scenarios (up from 49)
+- `hooks/context-monitor.sh`: added explicit `exit 0` at end of script — best practice for hook scripts under `set -euo pipefail`
+- `skills/git-workflow/references/`: removed stale directory — `code-path.md` and `infra-path.md` were already inlined into `SKILL.md` and unreachable at runtime; eliminates maintenance trap
+- `/git-workflow` Step 2 referenced `references/code-path.md` and `references/infra-path.md` relative to CWD — both files are unreachable in user projects; content inlined directly into `SKILL.md` (Code Path trunk-based rules and Infra Path three-environment rules); `## Output` section updated to remove stale file path references
+- `hooks/hooks.json` structural issue — events were nested under a `"hooks"` wrapper key instead of at the top level; commands now use `${CLAUDE_PLUGIN_ROOT}` with correct quoting
+- `/design` Step 3: Context7 fallback not implemented — Hard Rule #1 stated the fallback but Step 3 had no fallback branch; inserted paragraph directing the model to skip the Context7 call sequence and flag the Library Decisions row as "Docs not verified — Context7 unavailable"
+- `/review` Step 2: Codex unavailability fallback was only in Hard Rules, not at the dispatch step — moved fallback instruction block to the top of Step 2 so a reader following the process encounters it before dispatching
+- `/review` Step 4 `update design` bullet: confirmation prompt was vague ("wait for user to confirm each change") — replaced with explicit `"Apply this change? (yes / skip)"` prompt and added instruction to return to Step 2 after all confirmed changes are applied
+- `/qa` PASS criteria defined only at end of each mode section — inserted `## PASS Criteria` section before `## Mode Selection` so the success bar is visible before mode is chosen
+- `/qa` Repomix Preamble schema reference was an indirect cross-reference ("same fields as the `/pack` skill") with no inline definition — replaced parenthetical with a 6-field inline bullet list (`outputId`, `source`, `packedAt`, `fileCount`, `tokensBefore`, `tokensAfter`)
+- `/qa` sequential-mode "fix first" prompts were ambiguous — appended `— then re-run /qa to verify before continuing` to all 4 sequential-mode continuation prompts
+- `/plan` Step 6 cross-file conflict check was aspirational with no procedure — replaced single-sentence body with a 5-step numbered procedure (collect file paths → build conflict map → check parallel-safe status → resolve with sequential or split → re-verify map); named `## Conflict Resolution` as a required output section in `.pipeline/plan.md`
+
+### Removed
+
+- `episodic-memory` plugin dependency removed entirely — session context is now handled by native Claude Code MEMORY.md (auto-loaded each session); no external plugin required
+- `hooks/session_start_check.sh`: episodic-memory binary check, `sync` call, project-scoped search, and MEMORY.md sentinel-block injection removed
+- `docs/guides/mcp-setup.md`: Episodic Memory Plugin section removed
+- `README.md`: Episodic Memory row removed from Optional prerequisites table
+
 ## [1.7.1] - 2026-03-02
 
 ### Fixed
@@ -51,9 +121,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `/build` parallel and sequential modes: replaced Task tool builder dispatch with `task-builder` agent invocations
 - `/status` cold-start output: when no pipeline is active, now shows named workflow paths (Fast Track / Pipeline), always-available skills, and a link to `workflows.md` — replaces bare "No pipeline active in this directory tree" message
 - `/status` frontmatter description updated to reflect the new cold-start guidance behavior
-- `docs/skills/status.md`: description updated; two example blocks added (cold-start and mid-task)
-- `README.md`: Workflows guide added as first entry in the Guides table
-- `docs/guides/workflows.md` expanded to include all walkthrough content: `.pipeline/` directory reference, mode flags (`--parallel`/`--sequential`), language support matrix, and end-to-end example
 - `README.md` skills table: links to `docs/skills/` removed; skill names now plain text
 - `README.md` guides table: Walkthrough entry removed; Workflows description updated to reflect merged content
 - `README.md` pipeline diagram: `/git-workflow` comment corrected — no longer claims it is invoked by `/build` or `/quick`
@@ -73,10 +140,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README stale `/grafana` skill reference removed (skill was moved to `claude-sre-custom` in v1.6.0)
 - README MCP Setup guide description updated from "Codex, Repomix, and Grafana MCP configuration" to "Codex and Repomix MCP configuration"
 - `docs/guides/mcp-setup.md` stale Grafana MCP section removed; opening line updated from "all three servers" to "both servers"
-- `docs/skills/git-workflow.md` stale "referenced in /build and /quick" note replaced — neither skill invokes /git-workflow automatically any more; note now accurately describes the manual invocation trigger points
-- `docs/skills/init.md` updated — `.gitignore` added to Writes list and Generated files table
-- `docs/skills/design.md` Tools used updated — Repomix added (pack_codebase call added in this release)
-- `docs/guides/agents-vs-skills.md` skill count updated from 16 to 18; `/pack` and `/plugin-architecture` rows added to the evaluation table
 
 ## [1.6.0] - 2026-03-02
 

@@ -11,40 +11,29 @@ description: Use after build is complete to strip dead code, unused imports, unr
 
 You are acting as a code cleaner. Remove confirmed dead code only. Do not refactor, rename, or restructure anything live.
 
-## Repomix Context
+**Repomix:** if `outputId` in context, use `mcp__repomix__grep_repomix_output(outputId, pattern)` and `mcp__repomix__read_repomix_output(outputId, startLine, endLine)` for discovery; else native Glob/Read/Grep. Modifications (Step 4) use native Edit/Write only — never Repomix.
 
-If a Repomix outputId is provided in the context (injected by `/qa`), use Repomix tools for file discovery instead of native Glob/Read/Grep:
+## Hard Rules
 
-- `mcp__repomix__grep_repomix_output` — search for patterns across the packed codebase (provide the outputId and a search pattern)
-- `mcp__repomix__read_repomix_output` — read specific sections by line range (provide the outputId, start line, and end line)
-
-Fall back to native Glob/Read/Grep only if no outputId is available.
-
-Note: Use Repomix tools for discovery and reading content only. File modifications (Step 4) must use native Edit/Write tools on the live files.
+1. Remove dead code only — do not refactor, rename, or restructure live code.
+2. Never remove a symbol without presenting it to the user first (Step 3 confirmation gate).
+3. If tests fail after removal: report — do not attempt to fix.
 
 ## Process
 
 ### Step 1: Identify project language
 
-Attempt detection in order — stop as soon as a language is identified:
-
-1. **Read `.pipeline/brief.md`** — if it exists, extract the primary language from it.
-2. **Root-level config files** — if `brief.md` is absent, check the repo root:
-   - `package.json` → TypeScript / JavaScript
-   - `go.mod` → Go
-   - `requirements.txt`, `pyproject.toml`, or `setup.py` → Python
-   - `*.csproj` or `*.sln` → C#
-   - `Cargo.toml` → Rust
-3. **LSP tool availability** — if config files are inconclusive, check which LSP tools are available in this session as a hint.
-4. **Unknown** — if none of the above yield a language, announce: "Language unknown — findings will be heuristic and will cover all file types."
-
-Check which LSP tools are available as tools in this session (needed for Step 2 quality tier announcement regardless of detection path).
+**Detect language:** `brief.md` first; else root config (`package.json`→TS/JS, `go.mod`→Go, `requirements.txt`/`pyproject.toml`/`setup.py`→Python, `*.csproj`/`*.sln`→C#, `Cargo.toml`→Rust); else LSP availability hint; else announce: "Language unknown — findings will be heuristic and will cover all file types."
+Also check which LSP tools are in session (needed for Step 2 quality tier regardless of detection path).
 
 ### Step 2: Find dead code
 
+**IDE Diagnostics (try first):** Call `mcp__ide__getDiagnostics` (no URI) — if results, use as authoritative source.
+
 **Announce quality tier before proceeding:**
-- If LSP is available: output `🟢 LSP active — dead code findings are authoritative.`
-- If LSP is not available: output `🟡 No LSP detected — findings are heuristic (grep-pattern). Install the language LSP for authoritative results (see README Language Support Matrix).`
+- If `mcp__ide__getDiagnostics` returned results: output `🟢 IDE diagnostics active — errors and warnings are authoritative (VS Code integration).`
+- Else if LSP is available: output `🟢 LSP active — dead code findings are authoritative.`
+- Else: output `🟡 No IDE or LSP diagnostics available — findings are heuristic (grep-pattern). Install the language LSP for authoritative results (see README Language Support Matrix).`
 
 **If LSP is available** for the project language, use it:
 - Request all unused symbol diagnostics
@@ -68,7 +57,16 @@ Dead code found:
 - [file:line] — [symbol/description] — [reason: unused/unreachable/no callers]
 ```
 
-Ask: "Remove all of these? (yes / review each / skip)"
+Use AskUserQuestion with:
+  question: "Found [N] dead code items. How should I proceed?"
+  header: "Cleanup action"
+  options:
+    - label: "Remove all"
+      description: "Remove every item in the list without further prompting"
+    - label: "Review each"
+      description: "Confirm each removal individually"
+    - label: "Skip"
+      description: "Report findings only — make no changes"
 
 ### Step 4: Remove confirmed dead code
 
@@ -77,11 +75,23 @@ For each confirmed item:
 - Remove any imports that become unused as a result
 - Do not touch surrounding code
 
-### Step 5: Verify
+### Step 5: Verify no regressions
 
-After removal, confirm no tests are broken:
-- Check if there are test files (look for test/, tests/, *_test.go, *.test.ts, etc.)
-- If tests exist, remind the user to run them: "Run your test suite to confirm no regressions."
+Check for test files (`test/`, `tests/`, `*_test.go`, `*.test.ts`, `spec/`, etc.).
+
+If no test files found: skip this step silently.
+
+If test files found, use AskUserQuestion with:
+  question: "Run test suite to confirm no regressions from dead code removal?"
+  header: "Regression check"
+  options:
+    - label: "Run now"
+      description: "Execute the project test suite via /test"
+    - label: "Skip"
+      description: "Skip — run tests manually before committing"
+
+If "Run now": follow the `/test` skill process to detect the runner, execute the suite,
+and report results. Do not attempt to fix failures — report them.
 
 ## Output
 
