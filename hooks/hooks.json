@@ -46,7 +46,7 @@
       "hooks": [
         {
           "type": "prompt",
-          "prompt": "If you are ending a meaningful work session (code written, architectural decisions made, design resolved, key findings identified): update the ## Current Focus section of MEMORY.md now. Overwrite it with 2–3 sentences: what's in flight, the next concrete step, and any key pending decision. If MEMORY.md has no ## Current Focus section, add it at the bottom. Skip if this was a trivial session (read-only exploration, Q&A only, no substantive changes made)."
+          "prompt": "If you are ending a meaningful work session (code written, architectural decisions made, design resolved, key findings identified): update the ## Current Focus section of MEMORY.md now. Overwrite it with 2–3 sentences: what's in flight, the next concrete step, and any key pending decision. If MEMORY.md does not exist, create it. If it exists but has no ## Current Focus section, add it at the bottom. Skip if this was a trivial session (read-only exploration, Q&A only, no substantive changes made)."
         }
       ]
     }
