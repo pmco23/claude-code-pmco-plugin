@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `skills/brief/SKILL.md`: updated Hard Rule 5 and Step 2 Q&A area list to use `multiSelect: true` for Q2–Q8 (users/consumers, hard constraints, soft constraints, non-goals, success criteria, style preferences, key concepts) — these areas naturally yield multiple valid answers; Q1 (core purpose) remains single-select
+
 ## [2.0.2] - 2026-03-03
 
 ### Added
