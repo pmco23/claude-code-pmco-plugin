@@ -1,6 +1,6 @@
 ---
 name: quick
-description: Use when implementing small features, bug fixes, typo corrections, config tweaks, or any well-understood change that does not require the full pipeline. Completely independent of the brief/design/review/plan/build/qa flow. Supports --deep flag to escalate from Sonnet to Opus for trickier problems.
+description: Use when implementing small features, bug fixes, typo corrections, config tweaks, or any well-understood change that does not require the full pipeline. Completely independent of the brief/design/review/plan/build/qa flow. Use --deep to escalate to Opus for trickier problems.
 ---
 
 # QUICK — Fast Implementation
