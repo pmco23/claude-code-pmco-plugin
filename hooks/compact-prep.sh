@@ -31,7 +31,15 @@ fi
 
 # Repomix pack (may expire — note for Claude)
 if [ -f "$PIPELINE_DIR/repomix-pack.json" ]; then
-  outputId=$(python3 -c "import json,sys; d=json.load(open('$PIPELINE_DIR/repomix-pack.json')); print(d.get('outputId',''))" 2>/dev/null)
+  outputId=$(python3 - "$PIPELINE_DIR/repomix-pack.json" <<'PYEOF' 2>/dev/null
+import json, sys
+try:
+    d = json.load(open(sys.argv[1]))
+    print(d.get("outputId", ""))
+except Exception:
+    pass
+PYEOF
+)
   [ -n "$outputId" ] && echo "Repomix outputId: $outputId (verify age before reuse)"
 fi
 

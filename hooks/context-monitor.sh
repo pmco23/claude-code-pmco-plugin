@@ -21,7 +21,15 @@ _json_file_field() {
   if command -v jq >/dev/null 2>&1; then
     jq -r ".${field} // ${default}" "$file" 2>/dev/null || echo "$default"
   elif command -v python3 >/dev/null 2>&1; then
-    python3 -c "import json; d=json.load(open('${file}')); print(d.get('${field}',${default}))" 2>/dev/null || echo "$default"
+    python3 - "$file" "$field" "$default" <<'PYEOF' 2>/dev/null || echo "$default"
+import json, sys
+file, field, default = sys.argv[1], sys.argv[2], sys.argv[3]
+try:
+    d = json.load(open(file))
+    print(d.get(field, default))
+except Exception:
+    print(default)
+PYEOF
   else
     echo "$default"
   fi
