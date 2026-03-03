@@ -37,7 +37,6 @@ Each arrow is a quality gate. You cannot run `/design` without a brief. You cann
 |------|---------|---------|
 | Claude Code | Runtime | [docs.claude.ai](https://docs.claude.ai) |
 | Context7 | Live library docs grounding | `/plugin install context7@claude-plugins-official` |
-| Codex CLI | Adversarial review and code validation | [MCP setup →](docs/guides/mcp-setup.md#codex-mcp) |
 
 ### Optional
 
@@ -70,7 +69,7 @@ Restart Claude Code. Run `/brief` to verify. See the [full installation guide](d
 |-------|--|
 | [Workflows](docs/guides/workflows.md) | Decision guide, pipeline reference, mode flags, language support, end-to-end example |
 | [Installation](docs/guides/installation.md) | Full install steps, statusline setup, verification |
-| [MCP Setup](docs/guides/mcp-setup.md) | Codex and Repomix MCP configuration |
+| [MCP Setup](docs/guides/mcp-setup.md) | Repomix MCP configuration |
 | [Troubleshooting](docs/guides/troubleshooting.md) | Common issues and fixes |
 
 ### Skills

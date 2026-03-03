@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `agents/code-critic.md` — new Sonnet agent for `/review` Agent 2; reads the existing codebase to surface interface incompatibilities, pattern violations, naming conflicts, dependency gaps, and type mismatches; tools restricted to `Read, Grep, Glob`
+- `agents/path-verifier.md` — new Sonnet agent for `/drift-check` Agent 2; mechanically verifies that every file path and symbol name mentioned in the source document physically exists (EXISTS/MISSING only, no semantic analysis); tools: `Read, Grep, Glob, Bash`
+
+### Changed
+
+- `/review` description and Hard Rule 1: replaced Codex MCP call with `code-critic` agent invocation — "Agent 2 via Codex MCP" → "Agent 2 via the `code-critic` agent"; Codex fallback removed from Hard Rule 1 entirely
+- `/review` Step 2: replaced `mcp__codex__codex` call block with `code-critic` agent invocation
+- `/review` Step 3: "Once both agents return (Task tool returns... `mcp__codex__codex` returns...)" → "Once both agents return their results"
+- `/drift-check` description: "Dispatches Sonnet and Codex in parallel" → "Dispatches drift-verifier (Sonnet) and path-verifier (Sonnet) in parallel"
+- `/drift-check` Step 2: replaced `mcp__codex__codex` call block and inline prompt with `path-verifier` agent invocation; added explanation of the complementary roles (drift-verifier: semantic claims; path-verifier: structural existence)
+- `/drift-check` Step 3: "Once both agents return (Task tool... `mcp__codex__codex`...)" → "Once both agents return their results"
+- `docs/guides/workflows.md` How Agents Work: "Three named agents" → "Five named agents"; updated dispatch list to include `code-critic` and `path-verifier`; all Codex MCP references removed
+- `plugin.json`: removed `codex` from `mcpServers` — Repomix is the only remaining MCP server
+
+### Removed
+
+- Codex MCP dependency removed entirely — replaced by Claude Sonnet subagents (`code-critic`, `path-verifier`); eliminates OpenAI API key requirement, npm install step, and PATH resolution issues
+- `docs/guides/mcp-setup.md`: Codex MCP setup section removed — only Repomix MCP documentation remains
+- `README.md`: Codex CLI removed from Required prerequisites table; MCP Setup guide description updated to reflect Repomix-only scope
+- `docs/guides/troubleshooting.md`: "Codex MCP not connecting" troubleshooting section removed
+
 ## [1.8.0] - 2026-03-03
 
 ### Added

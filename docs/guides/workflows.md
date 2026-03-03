@@ -155,10 +155,10 @@ These run independently of any pipeline state — no gate, no artifacts required
 
 ## How Agents Work
 
-Three named agents exist in the `agents/` directory: `strategic-critic`, `drift-verifier`, and `task-builder`. Two skills also dispatch Codex MCP (an external MCP tool, not a local agent) for independent parallel analysis. You never invoke agents or Codex MCP directly — skills dispatch them automatically:
+Five named agents exist in the `agents/` directory: `strategic-critic`, `drift-verifier`, `task-builder`, `code-critic`, and `path-verifier`. No external MCP tools are required for adversarial review — all critics run as Claude subagents. You never invoke agents directly — skills dispatch them automatically:
 
-- `/review` dispatches `strategic-critic` (Opus) and Codex MCP in parallel
-- `/drift-check` dispatches `drift-verifier` (Sonnet) and Codex MCP in parallel
+- `/review` dispatches `strategic-critic` (Opus) and `code-critic` (Sonnet) in parallel
+- `/drift-check` dispatches `drift-verifier` (Sonnet) and `path-verifier` (Sonnet) in parallel
 - `/build` dispatches `task-builder` (Sonnet) per task group, then `drift-verifier` (Sonnet) post-build
 
 The agents enforce model routing (`model: opus` / `model: sonnet`) at the runtime level rather than by prompt instruction alone. This is an implementation detail — for workflow purposes, just run the skill.

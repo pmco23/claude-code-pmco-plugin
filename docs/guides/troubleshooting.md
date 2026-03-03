@@ -15,12 +15,6 @@ You tried to run `/plan` without going through `/review`. Run `/review` and iter
 3. Check that `hooks/pipeline_gate.sh` is executable: `ls -la ~/claude-developer-toolbox/hooks/`
 4. Check `hooks/hooks.json` is valid: `python3 -m json.tool ~/claude-developer-toolbox/hooks/hooks.json`
 
-## Codex MCP not connecting
-
-1. Run `which codex` — if not found, install with `npm install -g @openai/codex`.
-2. Run `claude` and check the startup output for MCP connection errors.
-3. If installed via nvm, replace `"command": "codex"` with the absolute path in `~/.claude/settings.json` (see [Codex MCP setup](mcp-setup.md#codex-mcp)).
-
 ## Resetting pipeline state
 
 ```bash

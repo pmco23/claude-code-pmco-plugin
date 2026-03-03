@@ -1,6 +1,6 @@
 ---
 name: drift-check
-description: Use to detect drift between a source-of-truth document and a target document or implementation. Dispatches Sonnet and Codex in parallel for independent claim extraction and verification. Requires .pipeline/plan.md. Used internally by /build and available standalone.
+description: Use to detect drift between a source-of-truth document and a target document or implementation. Dispatches drift-verifier (Sonnet) and path-verifier (Sonnet) in parallel — semantic claim analysis and structural path/symbol verification. Requires .pipeline/plan.md. Used internally by /build and available standalone.
 ---
 
 # PMATCH — Drift Detection
@@ -30,9 +30,9 @@ If "Custom" is selected, ask the user to provide the source document path and/or
 
 ### Step 2: Dispatch parallel verifiers
 
-Issue both calls simultaneously in the same response turn — Agent 1 via the Task tool, Agent 2 via direct `mcp__codex__codex` call:
+Issue both calls simultaneously in the same response turn — Agent 1 via the `drift-verifier` agent, Agent 2 via the `path-verifier` agent:
 
-**Agent 1 — Sonnet Verifier**
+**Agent 1 — Sonnet Semantic Verifier**
 
 Invoke the `drift-verifier` agent with this prompt:
 ```
@@ -40,37 +40,19 @@ Source of truth: [source document path]
 Target: [target path or current working directory]
 ```
 
-**Agent 2 — Codex Verifier (via Codex MCP)**
+**Agent 2 — Sonnet Structural Verifier**
 
-**If `mcp__codex__codex` is unavailable** (Codex MCP not connected), dispatch a second Task tool agent for Agent 2 with a structural focus: "List every file path and symbol name mentioned in [source document path]. For each, verify it physically exists in [target path] (use Glob and Grep). Report each as EXISTS or MISSING. Do not perform semantic analysis — structural presence only." This gives structural path/symbol verification as a complement to the drift-verifier's semantic claim analysis. Add `**Note:** Codex MCP unavailable — Agent 2 ran as Sonnet subagent (structural path verification).` immediately after the `**Date:**` line in the drift report.
-
-Call `mcp__codex__codex` directly (do not dispatch a subagent) with:
-- `prompt`: the following text, with `[source document path]` and `[target path or current working directory]` replaced by the values from Step 1:
-
+Invoke the `path-verifier` agent with this prompt:
 ```
-You are verifying implementation drift.
-
 Source of truth: [source document path]
 Target: [target path or current working directory]
-
-Step 1: Extract all verifiable claims from the source document.
-A verifiable claim is a specific, checkable assertion: file paths that should exist, function names that should be implemented, test cases that should pass, acceptance criteria that should be met.
-
-Step 2: For each claim, check whether the target satisfies it:
-- EXISTS: the claim is satisfied
-- MISSING: the claim is not satisfied — describe what's absent
-- PARTIAL: partially satisfied — describe what's missing
-- CONTRADICTED: the target actively contradicts the claim
-
-Return a structured list: claim_id, claim, status (EXISTS/MISSING/PARTIAL/CONTRADICTED), evidence.
 ```
-- `approval-policy`: `"never"`
 
-Codex operates independently to surface any claims the Sonnet agent misses.
+The two agents are complementary: `drift-verifier` extracts and evaluates semantic claims (EXISTS/MISSING/PARTIAL/CONTRADICTED); `path-verifier` mechanically checks that every mentioned file path and symbol name physically exists (EXISTS/MISSING only).
 
 ### Step 3: Reconcile findings
 
-Once both agents return (the Task tool returns Agent 1's output as its result; `mcp__codex__codex` returns Agent 2's output inline as its tool result):
+Once both agents return their results:
 
 1. **Merge claim lists:** combine all claims both agents identified.
 2. **Resolve conflicts:** where agents disagree on a claim's status, check the file/symbol directly to determine ground truth.

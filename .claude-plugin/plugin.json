@@ -7,10 +7,6 @@
   },
   "keywords": ["pipeline", "quality-gates", "tdd", "adversarial-review"],
   "mcpServers": {
-    "codex": {
-      "command": "codex",
-      "args": ["mcp-server"]
-    },
     "repomix": {
       "command": "repomix",
       "args": ["--mcp"]
