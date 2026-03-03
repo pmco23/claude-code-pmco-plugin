@@ -23,7 +23,7 @@
     ],
     "PostToolUse": [
       {
-        "matcher": "Bash|Agent|Task",
+        "matcher": "Agent|Task",
         "hooks": [
           {
             "type": "command",
@@ -51,7 +51,7 @@
           },
           {
             "type": "prompt",
-            "prompt": "Review the session and update the ## Current Focus section of MEMORY.md. If meaningful work occurred (code written, architectural decisions made, design resolved, key findings identified): overwrite ## Current Focus with 2–3 sentences covering what's in flight, the next concrete step, and any key pending decision. If MEMORY.md does not exist, create it. If it exists but has no ## Current Focus section, add it at the bottom. If the session was trivial (read-only exploration, Q&A only, no substantive changes), write a single sentence under ## Current Focus noting that no changes were made and why. Always complete this task and respond with 'Memory updated.' when done."
+            "prompt": "Update ## Current Focus in MEMORY.md: 2–3 sentences covering what's in flight, next step, and any key pending decision. If the session was trivial (read-only, Q&A only), write one sentence noting that. Create the file or section if missing. Respond with 'Memory updated.' when done."
           }
         ]
       }

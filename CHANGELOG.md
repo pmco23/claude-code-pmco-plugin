@@ -7,19 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.2] - 2026-03-03
+
 ### Added
 
 - `hooks/session_end_pack.sh` — new SessionEnd hook; runs `repomix --compress` at session end to keep `.pipeline/repomix-output.xml` fresh for the next session; updates `packedAt` in `repomix-pack.json`; skips silently if repomix is absent or `.pipeline/` does not exist
+- `skills/design/references/design-template.md` — extracted design output template from `design/SKILL.md` for progressive disclosure
+- `skills/git-workflow/references/code-path.md` — extracted trunk-based workflow rules from `git-workflow/SKILL.md`
+- `skills/git-workflow/references/infra-path.md` — extracted three-environment infra rules from `git-workflow/SKILL.md`
+- `skills/plan/references/task-group-template.md` — extracted Task Group / Task N.1/N.2/N.3 template from `plan/SKILL.md`
+- `docs/guides/workflows.md`: added "Between-Phase Context Management" tip — documents `/compact` usage between pipeline phases and fresh-session-per-phase pattern
 
 ### Changed
 
-- `hooks/hooks.json`: added `session_end_pack.sh` command hook as first entry in the `SessionEnd` hooks array (runs before the MEMORY.md prompt hook)
+- `hooks/hooks.json`: added `session_end_pack.sh` command hook as first entry in the `SessionEnd` hooks array (runs before the MEMORY.md prompt hook); trimmed SessionEnd MEMORY.md prompt to reduce token cost; removed `Bash` from PostToolUse matcher (now `Agent|Task` only)
 - `hooks/session_start_check.sh`: added `ln -sf` to maintain `~/.claude/statusline.js` symlink pointing to `${CLAUDE_PLUGIN_ROOT}/hooks/statusline.js`; symlink self-heals if plugin is moved or reinstalled
 - `docs/guides/installation.md`: updated Statusline Setup section — path changed to stable `~/.claude/statusline.js` symlink; bootstrap command documented; symlink auto-maintenance behaviour explained
-- `skills/design/SKILL.md`: added Hard Rule 5 (AskUserQuestion mandatory, one question per turn); updated Step 6 to use full `AskUserQuestion` block for design alignment check
-- `skills/git-workflow/SKILL.md`: added `## Hard Rules` section (4 rules); updated Steps 1 and 1.5 ambiguity-resolution paths to use explicit `AskUserQuestion` blocks
+- `skills/design/SKILL.md`: added Hard Rule 5 (AskUserQuestion mandatory, one question per turn); updated Step 6 to use full `AskUserQuestion` block for design alignment check; large template block extracted to `references/design-template.md`
+- `skills/git-workflow/SKILL.md`: added `## Hard Rules` section (4 rules); updated Steps 1 and 1.5 ambiguity-resolution paths to use explicit `AskUserQuestion` blocks; workflow rule blocks extracted to `references/code-path.md` and `references/infra-path.md`
 - `skills/init/SKILL.md`: added Hard Rule 6 ("Empty projects get asked, not assumed"); added Step 1a — 3-question AskUserQuestion flow (language, license, project type) for empty-project initialization
+- `skills/plan/SKILL.md`: task group template extracted to `references/task-group-template.md`; skill now uses a Read directive for the template
 - `skills/quick/SKILL.md`: renamed `## Rules` → `## Hard Rules`; updated Step 2 to mandate `AskUserQuestion` with derived options
+- `agents/task-builder.md`: condensed TDD cycle steps and trimmed Iron Law from Hard Constraints (already enforced by plan header directive) to reduce token footprint
 
 ### Fixed
 

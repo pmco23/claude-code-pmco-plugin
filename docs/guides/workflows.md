@@ -104,6 +104,16 @@ rm .pipeline/plan.md .pipeline/build.complete
 rm .pipeline/build.complete
 ```
 
+### Between-Phase Context Management
+
+> **Tip:** After each pipeline phase completes, run `/compact` before starting the next.
+> The PreCompact hook saves all `.pipeline/` state, so nothing is lost — `/compact` only trims
+> the conversation context, not your artifacts.
+>
+> For large codebases or long sessions, starting a **fresh Claude Code session** per phase is
+> equally valid. Because `.pipeline/` artifacts persist on disk, the gate hook reads them on the
+> next session start and the pipeline picks up exactly where you left off.
+
 ---
 
 ## Mode Flags

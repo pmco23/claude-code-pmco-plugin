@@ -97,32 +97,8 @@ Record the operation type and parameters — Steps 3–4 apply the safety gate t
 
 ### Step 2: Load the workflow reference
 
-Apply the appropriate reference inline:
-
----
-
-**Code Path (Trunk-Based)**
-- Branch: `<prefix>/<short-description>` — prefixes: feat/feature/fix/bugfix/hotfix/chore/release; lowercase, hyphens only, max ~50 chars
-- Commit: `<type>[scope][!]: <description>` — types: feat/fix/docs/refactor/test/chore/ci/build/perf; `!` for breaking changes
-- Merge: squash-merge to main; short-lived branches (under 2 days)
-- PR: title conveys intent; description must include verification evidence
-
-*(Spec sources: https://www.conventionalcommits.org/en/v1.0.0/ and https://conventional-branch.github.io/)*
-
----
-
-**Infra Path (Three-Environment)**
-- Branch: same naming as code path
-- Commit: same format as code path
-- Promotion: development → preproduction → main — never skip; separate PR per environment
-- Hotfix: apply to main → back-merge to preproduction → back-merge to development
-- PR: title clarifies intent and target environment; body includes environment-specific validation evidence
-
-*(Spec sources: same as above)*
-
----
-
-Load only the matching reference for the detected project type. Apply it as the rule source for Steps 3–4.
+Read the appropriate path rules from this skill's base directory:
+`references/code-path.md` (code) or `references/infra-path.md` (infra). Apply those rules when executing the operation.
 
 ### Step 3: Safety gate
 
