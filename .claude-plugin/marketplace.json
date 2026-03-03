@@ -1,5 +1,8 @@
 {
   "name": "local-dev",
+  "owner": {
+    "name": "pemcoliveira"
+  },
   "plugins": [
     {
       "name": "claude-developer-toolbox",
