@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `Stop` event hook in `hooks/hooks.json`: prompt-based hook that asks Claude to update `## Current Focus` in MEMORY.md at meaningful session end; fires for all projects, all users
+- `## Current Focus` MEMORY.md convention: 2–3 sentence overwrite-each-session section for current in-flight state, next step, pending decision; section is created by Claude on first use
 - `agents/code-critic.md` — new Sonnet agent for `/review` Agent 2; reads the existing codebase to surface interface incompatibilities, pattern violations, naming conflicts, dependency gaps, and type mismatches; tools restricted to `Read, Grep, Glob`
 - `agents/path-verifier.md` — new Sonnet agent for `/drift-check` Agent 2; mechanically verifies that every file path and symbol name mentioned in the source document physically exists (EXISTS/MISSING only, no semantic analysis); tools: `Read, Grep, Glob, Bash`
 
@@ -22,6 +24,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `/drift-check` Step 3: "Once both agents return (Task tool... `mcp__codex__codex`...)" → "Once both agents return their results"
 - `docs/guides/workflows.md` How Agents Work: "Three named agents" → "Five named agents"; updated dispatch list to include `code-critic` and `path-verifier`; all Codex MCP references removed
 - `plugin.json`: removed `codex` from `mcpServers` — Repomix is the only remaining MCP server
+
+### Fixed
+
+- `hooks/session_start_check.sh`: removed stale `codex` check — Codex was removed in v1.8.0 but the startup warning persisted
 
 ### Removed
 
