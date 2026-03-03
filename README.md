@@ -69,6 +69,7 @@ Restart Claude Code. Run `/brief` to verify. See the [full installation guide](d
 |-------|--|
 | [Workflows](docs/guides/workflows.md) | Decision guide, pipeline reference, mode flags, language support, end-to-end example |
 | [Installation](docs/guides/installation.md) | Full install steps, statusline setup, verification |
+| [Hooks](docs/guides/hooks.md) | What each hook does, when it fires, and how it behaves |
 | [MCP Setup](docs/guides/mcp-setup.md) | Repomix MCP configuration |
 | [Troubleshooting](docs/guides/troubleshooting.md) | Common issues and fixes |
 

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `Stop` event hook in `hooks/hooks.json`: prompt-based hook that asks Claude to update `## Current Focus` in MEMORY.md at meaningful session end; fires for all projects, all users
 - `## Current Focus` MEMORY.md convention: 2–3 sentence overwrite-each-session section for current in-flight state, next step, pending decision; section is created by Claude on first use
+- `docs/guides/hooks.md`: new reference guide — describes all five hooks (SessionStart, PreToolUse, PostToolUse, PreCompact, Stop), when each fires, what it does, and its behaviour at the edges (fail-open, silent exit, thresholds)
 - `agents/code-critic.md` — new Sonnet agent for `/review` Agent 2; reads the existing codebase to surface interface incompatibilities, pattern violations, naming conflicts, dependency gaps, and type mismatches; tools restricted to `Read, Grep, Glob`
 - `agents/path-verifier.md` — new Sonnet agent for `/drift-check` Agent 2; mechanically verifies that every file path and symbol name mentioned in the source document physically exists (EXISTS/MISSING only, no semantic analysis); tools: `Read, Grep, Glob, Bash`
 
