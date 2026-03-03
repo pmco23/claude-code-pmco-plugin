@@ -54,12 +54,23 @@ Diagnostics degrade gracefully across three tiers: VS Code IDE integration → L
 ## Quick Install
 
 ```bash
-claude
+# 1. Clone the plugin
+git clone <repo-url> ~/claude-developer-toolbox
+
+# 2. Install Context7 (required — live library docs for /design and /review)
+# Run inside a Claude Code session:
+/plugin install context7@claude-plugins-official
+
+# 3. Install repomix (recommended — required for /pack and /qa)
+npm install -g repomix
+
+# 4. Register the plugin
+# Run inside a Claude Code session:
 /plugin marketplace add ~/claude-developer-toolbox
 /plugin install claude-developer-toolbox@local-dev
 ```
 
-Restart Claude Code. Run `/brief` to verify. See the [full installation guide](docs/guides/installation.md) for statusline setup and verification steps.
+Restart Claude Code. Run `/brief` to verify. See the [full installation guide](docs/guides/installation.md) for statusline setup, optional LSP tools, and verification steps.
 
 ## Documentation
 
@@ -96,5 +107,6 @@ Restart Claude Code. Run `/brief` to verify. See the [full installation guide](d
 | `/status` | Pipeline state check |
 | `/pack` | Repomix codebase snapshot |
 | `/test` | Run the project test suite |
+| `/tdd` | Test-driven development — Iron Law, Red-Green-Refactor cycle, valid exceptions |
 | `/release` | Cut a new release (version bump, CHANGELOG, tag) |
 | `/rollback` | Undo a completed build |

@@ -18,12 +18,22 @@ You are Opus acting as a technical lead writing a build spec. The target audienc
 3. **Named test cases with assertions.** Define what to test and what the assertion is, not just "write tests".
 4. **Non-negotiable acceptance criteria.** Each task either passes its criteria or does not. No ambiguity.
 5. **Flag parallelism.** Explicitly mark which task groups can run in parallel and which must be sequential.
+6. **TDD task ordering.** Every task group lists tests before implementation: Task N.1 =
+   named test cases with assertions, Task N.2 = minimal production code to pass them,
+   Task N.3 = verify green + refactor. Never list implementation before tests.
+   **Exception:** if `tdd: disabled` is found in the project's `CLAUDE.md`, task ordering
+   reverts to implementation-first (Task N.1 = implement, Task N.2 = write tests) and the
+   plan header must declare `**TDD:** disabled`.
 
 ## Process
 
 ### Step 1: Read design and brief
 
 Read `.pipeline/design.md` and `.pipeline/brief.md` in full.
+
+Check the project's `CLAUDE.md` for the line `tdd: disabled`. If found, Hard Rule 6
+is waived for this plan run — use implementation-first task ordering (Task N.1 = implement,
+Task N.2 = write tests). Record the result: TDD mode is **enabled** (default) or **disabled**.
 
 ### Step 2: Ground file paths in the actual project structure
 
@@ -69,6 +79,7 @@ Write `.pipeline/plan.md` with this structure:
 **Date:** [YYYY-MM-DD]
 **Design:** `.pipeline/design.md`
 **Parallelism:** [summary of which groups are parallel-safe]
+**TDD:** [enabled | disabled]
 
 ---
 
@@ -86,18 +97,7 @@ Write `.pipeline/plan.md` with this structure:
 ### Context for agent
 [2-3 sentences of context the agent needs. What does this code connect to? What pattern does it follow?]
 
-### Task [N.1]: [Action]
-
-[Exact code to write]
-
-```typescript
-// Complete implementation — not pseudocode
-export function doThing(input: InputType): OutputType {
-  // actual implementation
-}
-```
-
-### Task [N.2]: Write tests
+### Task [N.1]: Write tests
 
 Named test cases:
 
@@ -106,11 +106,40 @@ Named test cases:
 | `test_doThing_with_valid_input` | `input = { ... }` | `result === expected_value` |
 | `test_doThing_with_null_input` | `input = null` | `throws TypeError` |
 
+> These tests must FAIL before Task N.2 begins. A test that passes immediately is invalid.
+
+### Task [N.2]: Implement
+
+[Exact minimal code to make all Task N.1 tests pass — no over-engineering]
+
+```typescript
+// Complete implementation — not pseudocode
+export function doThing(input: InputType): OutputType {
+  // actual implementation
+}
+```
+
+### Task [N.3]: Verify and refactor
+
+- Run all Task N.1 tests — all must pass
+- Refactor for clarity; tests must remain green
+
 ### Acceptance Criteria (non-negotiable)
 - [ ] All named test cases pass
 - [ ] No TypeScript errors on compile
 - [ ] [specific criterion from design]
 ```
+
+> **TDD disabled mode** — if `tdd: disabled` was found in CLAUDE.md, use this ordering instead:
+>
+> ### Task [N.1]: [Action/implement]
+> [Exact code to write]
+>
+> ### Task [N.2]: Write tests
+> Named test cases: [table as before]
+>
+> ### Task [N.3]: Verify
+> - Run all tests — all must pass
 
 ### Step 6: Cross-check for conflicts
 

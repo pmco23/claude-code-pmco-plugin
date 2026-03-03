@@ -134,6 +134,47 @@ Use `/qa --sequential` when:
 
 ---
 
+## TDD
+
+TDD enforcement is built into the pipeline. When you run `/plan`, every task group is structured test-first by default:
+
+- **Task N.1** — named test cases with assertions (must fail before N.2 begins)
+- **Task N.2** — minimal production code to make the tests pass
+- **Task N.3** — verify all tests green, then refactor
+
+When `/build` dispatches `task-builder`, the agent enforces the **Iron Law**: no production code for a behaviour until a failing test for that behaviour has been written and run. Each named test case goes through the full Red-Green-Refactor cycle before the next one starts.
+
+### Opting out per project
+
+Some projects legitimately cannot follow TDD — a legacy codebase with no test harness, a config-only repository, or a throwaway spike. Add one line to the project's `CLAUDE.md`:
+
+```
+tdd: disabled
+```
+
+**What changes:**
+
+| | TDD enabled (default) | TDD disabled |
+|---|---|---|
+| `/plan` task ordering | N.1 = write tests, N.2 = implement, N.3 = verify+refactor | N.1 = implement, N.2 = write tests, N.3 = verify |
+| Plan header | `**TDD:** enabled` | `**TDD:** disabled` |
+| `task-builder` Step 3 | Red-Green-Refactor cycle per test case | Implement directly, then write tests |
+| Iron Law | Enforced — blocker if test runner unavailable | Suspended |
+| Tests required | Yes — all named test cases must pass | Yes — all named test cases must pass |
+
+Tests are always required to pass at the end of a task group, regardless of TDD mode. Disabling TDD changes *when* tests are written (after implementation instead of before), not *whether* they are written.
+
+**Best practice:** document the reason alongside the flag in `CLAUDE.md`:
+
+```
+tdd: disabled
+# Reason: no test harness yet; tracked in issue #42
+```
+
+Remove the line to re-enable TDD enforcement for that project. The setting is per-project — other projects are unaffected.
+
+---
+
 ## Always-Available Skills
 
 These run independently of any pipeline state — no gate, no artifacts required.

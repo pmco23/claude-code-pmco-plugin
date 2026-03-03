@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-03-03
+
+### Added
+
+- Per-project TDD opt-out: add `tdd: disabled` to the project's `CLAUDE.md` to disable
+  TDD enforcement pipeline-wide; `/plan` switches to implementation-first task ordering and
+  writes `**TDD:** disabled` in the plan header; `task-builder` skips the Iron Law and
+  Red-Green-Refactor cycle; documented in `skills/tdd/SKILL.md` Valid Exceptions
+- `skills/tdd/SKILL.md` — standalone TDD skill: Iron Law ("write the test, watch it fail, write minimal code to pass"), Red-Green-Refactor cycle with numbered steps, when TDD applies (new features, bug fixes, refactoring, behaviour changes), valid exceptions (throwaway prototypes, generated code, config files, pure UI layout); references `testing-anti-patterns.md`
+- `skills/tdd/references/testing-anti-patterns.md` — five TDD anti-patterns ported from obra/superpowers: testing mock behaviour instead of real behaviour, test-only methods polluting production code, mocking without understanding the dependency chain, incomplete mocks with missing fields, integration tests added after implementation
+
+### Changed
+
+- `agents/task-builder.md`: added "Apply the TDD skill process for all implementation work" directive at top of agent body; added IRON LAW as first Hard Constraint ("do not write production code for a behaviour until you have written a failing test for that behaviour and run it and seen it fail; if the test runner is unavailable, document as a blocker"); Step 3 restructured to enforce Red-Green-Refactor with explicit Bash test runs — 3a RED (write test), 3b RUN (confirm FAIL), 3c GREEN (write minimal code), 3d RUN (confirm PASS), 3e REFACTOR (improve structure, tests stay green), 3f (repeat per named test case)
+- `skills/plan/SKILL.md`: added Hard Rule 6 ("TDD task ordering — every task group lists tests before implementation: Task N.1 = named test cases with assertions, Task N.2 = minimal production code to pass them, Task N.3 = verify green + refactor; never list implementation before tests"); task group template in Step 5 reordered so Task N.1 = write tests (with named test cases table and RED gate note), Task N.2 = implement (minimal code), Task N.3 = verify and refactor; Hard Rule 6 and Step 5 template updated with `tdd: disabled` conditional branches; Step 1 extended to check `CLAUDE.md` for `tdd: disabled`; plan header template gains `**TDD:** [enabled | disabled]` field
+- `agents/task-builder.md`: TDD directive conditioned on plan header (`unless **TDD:** disabled`); Step 1 extended to note the `**TDD:**` field; Step 3 split into enabled branch (Red-Green-Refactor cycle) and disabled branch (implement directly, write tests after); Iron Law constraint conditioned with `(unless the plan header declares TDD: disabled)`
+- `docs/guides/workflows.md`: added `## TDD` section documenting default test-first task ordering, the Iron Law, the `tdd: disabled` opt-out, a comparison table of what changes vs stays constant between modes, and best-practice guidance for documenting the reason in `CLAUDE.md`
+- `docs/guides/installation.md`: added `## Prerequisites` section (Context7 required; repomix, jq recommended with install commands; SessionStart hook warning note); added `## Step 0` for cloning the plugin directory before the marketplace commands
+- `README.md`: Quick Install updated to show full sequence (clone → Context7 → repomix → register plugin); `/tdd` added to the Skills table
+
 ## [1.9.0] - 2026-03-03
 
 ### Added

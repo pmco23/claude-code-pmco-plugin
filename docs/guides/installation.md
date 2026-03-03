@@ -1,5 +1,51 @@
 # Installation
 
+## Prerequisites
+
+### Required
+
+**Context7** — provides live library documentation grounding used by `/design` and `/review`. Install once globally:
+
+```
+/plugin install context7@claude-plugins-official
+```
+
+### Recommended
+
+**`repomix`** — required for `/pack` and `/qa` codebase snapshots. Install via npm:
+
+```bash
+npm install -g repomix
+```
+
+**`jq`** — used by the gate hook and context monitor for JSON parsing. Falls back to `python3` if absent, but `jq` is faster and more reliable:
+
+```bash
+# macOS
+brew install jq
+
+# Debian/Ubuntu
+apt install jq
+```
+
+`python3` — fallback if `jq` is absent. Almost universally available; no install step needed.
+
+> The plugin's SessionStart hook will warn at startup about any missing tools it detects. Missing tools degrade specific features — they do not break the pipeline.
+
+---
+
+## Step 0: Get the plugin directory
+
+Clone or copy the plugin to a local directory. The install commands below assume `~/claude-developer-toolbox`:
+
+```bash
+git clone <repo-url> ~/claude-developer-toolbox
+```
+
+Replace `<repo-url>` with the actual repository URL. If you already have the directory somewhere else, substitute that path in the steps below.
+
+---
+
 ## Step 1: Add the development marketplace
 
 ```bash
