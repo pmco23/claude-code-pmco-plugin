@@ -64,7 +64,6 @@ The following table applies the fitness criterion to every skill in this plugin.
 | `/qa` | **Skill** | Orchestrator — coordinates five audits; interaction in sequential mode |
 | `/status` | **Skill** | Lightweight report from `.pipeline/` files; no verbose output |
 | `/pack` | **Skill** | Single-command Repomix wrapper; non-interactive, but output is used by the user immediately — no isolation benefit |
-| `/plugin-architecture` | **Skill** | Reference guide invoked interactively; user reads inline output |
 | `/drift-check` | **Borderline** | Asks user for source/target when run standalone (fails criterion 1); auto when called from `/build`. Could be split — agent for the verification phase, skill for the source/target prompt. Not worth splitting until the current approach causes a real problem. |
 | `/cleanup` | **Borderline** | Finds dead code (read-only) then asks user to confirm before removing (interactive). Could be split — agent for the scanning phase, skill for the confirmation and removal. Same judgement: don't split until there's a concrete reason. |
 | `/frontend-audit` | **Agent candidate** | Self-contained, read-only, produces structured findings. Passes all three tests. |
@@ -163,4 +162,4 @@ Until one of these signals is present, the current architecture is correct and s
 
 ## Reference
 
-For an invocable version of this guide, use `/plugin-architecture` — a concise skill (under 80 lines) covering the fitness criterion, patterns, decision tree, and anti-patterns.
+This guide covers the fitness criterion, patterns, decision tree, and anti-patterns for choosing between skills and agents.

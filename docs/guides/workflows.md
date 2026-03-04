@@ -195,7 +195,6 @@ These run independently of any pipeline state — no gate, no artifacts required
 | `/init` | New project or missing boilerplate — generates README, CHANGELOG, CONTRIBUTING, .gitignore |
 | `/git-workflow` | Before branch creation, first push, PR open/merge, or destructive git op (force-push, reset --hard) |
 | `/pack` | Before `/qa` or `/quick --deep` to snapshot the codebase |
-| `/plugin-architecture` | When deciding whether to use a skill vs agent in a plugin you're building |
 | `/drift-check` | After `/build` — verify implementation matches the approved design; also run standalone at any time (standalone shows a structured source/target selection prompt) |
 | `/quick` | Fast-track implementation (see above) |
 | `/test` | Any time — run the project test suite; supports file/pattern scoping; auto-detects jest, vitest, go test, pytest, dotnet test, cargo test; also invoked by `/cleanup` after dead-code removal |

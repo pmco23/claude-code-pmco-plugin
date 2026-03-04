@@ -116,7 +116,6 @@ Restart Claude Code. Run `/brief` to verify. See the [full installation guide](d
 | `/quick` | Fast-track implementation |
 | `/init` | Project boilerplate scaffolding (CLAUDE.md, README, CHANGELOG, CONTRIBUTING, PR template, .gitignore) |
 | `/git-workflow` | Git discipline |
-| `/plugin-architecture` | Plugin architecture guide |
 | `/status` | Pipeline state check |
 | `/pack` | Repomix codebase snapshot |
 | `/test` | Run the project test suite |
