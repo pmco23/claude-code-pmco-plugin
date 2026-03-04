@@ -4,6 +4,50 @@ For each file not skipped in Step 2, generate content appropriate for the detect
 
 ---
 
+## CLAUDE.md
+
+Project-level instruction file for Claude Code. Two sections:
+
+### Section 1: Project Conventions
+
+Extract from detected context. Use `[PLACEHOLDER]` for anything not determinable.
+
+```markdown
+# Project Conventions
+
+Language: [detected language/stack]
+Test command: [detected or [TEST_COMMAND]]
+Lint command: [detected or [LINT_COMMAND]]
+Build command: [detected or [BUILD_COMMAND]]
+```
+
+Detection rules for commands:
+- **Node/TS:** `npm test` / `npm run lint` / `npm run build` (check `scripts` in `package.json`)
+- **Go:** `go test ./...` / `golangci-lint run` / `go build ./...`
+- **Python:** `pytest` / `ruff check .` or `flake8` / (none by default)
+- **C#/.NET:** `dotnet test` / `dotnet format --verify-no-changes` / `dotnet build`
+- **Rust:** `cargo test` / `cargo clippy` / `cargo build`
+- If a `Makefile` exists, prefer `make test` / `make lint` / `make build` if those targets are defined
+
+If the project has additional conventions visible in existing config files (e.g., `.eslintrc`, `tsconfig.json`, `rustfmt.toml`), add a brief note: `Style config: [filename]`.
+
+### Section 2: Plugin Configuration
+
+Always include this section with flags commented out:
+
+```markdown
+# Plugin Configuration (claude-developer-toolbox)
+# Uncomment a flag to enable it.
+# tdd: disabled
+# session-end-pack: disabled
+```
+
+### Merge behavior
+
+If CLAUDE.md already exists and user chose "Merge": append only the **Plugin Configuration** section if not already present. Do not modify existing content.
+
+---
+
 ## README.md
 
 - Sections: project name, description, installation (language-appropriate command), usage, contributing, license
@@ -42,6 +86,7 @@ After all files are written, output:
 
 ```
 Boilerplate generated:
+  ✓ CLAUDE.md   (project conventions + plugin config flags)
   ✓ README.md
   ✓ CHANGELOG.md
   ✓ CONTRIBUTING.md

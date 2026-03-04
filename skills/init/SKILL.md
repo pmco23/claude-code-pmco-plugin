@@ -1,6 +1,6 @@
 ---
 name: init
-description: Use when starting a new project or adding missing boilerplate to an existing one. Generates README.md, CHANGELOG.md, CONTRIBUTING.md, and .github/pull_request_template.md adapted to the project's language, stack, and context. Asks before overwriting any existing file.
+description: Use when starting a new project or adding missing boilerplate to an existing one. Generates CLAUDE.md, README.md, CHANGELOG.md, CONTRIBUTING.md, and .github/pull_request_template.md adapted to the project's language, stack, and context. Asks before overwriting any existing file.
 ---
 
 # INIT — Project Boilerplate
@@ -72,6 +72,7 @@ Read `references/empty-project-questions.md` from this skill's base directory. F
 ### Step 2: Check existing files
 
 For each target file, check if it exists:
+- `CLAUDE.md`
 - `README.md`
 - `CHANGELOG.md`
 - `CONTRIBUTING.md`
