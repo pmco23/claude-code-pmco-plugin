@@ -38,6 +38,11 @@ Record:
 - **LSP tools available**: check which of these are present as tools — `typescript_lsp`, `go_lsp`, `python_lsp`, `csharp_lsp`
 - **Existing patterns**: note dominant architectural patterns visible in the codebase
 
+**Boilerplate check:** If any of `CLAUDE.md`, `README.md`, or `.gitignore` are missing, output a single-line suggestion before continuing:
+> Project boilerplate not detected. Consider running `/init` first to set up CLAUDE.md, README, and .gitignore.
+
+Do not block — proceed with the rest of Step 1 regardless.
+
 If the project already contains code (non-empty source directories detected above), run `Glob("**/*")` with depth ≤ 3 and read the primary language config file (`package.json`, `go.mod`, `pyproject.toml`, or `*.csproj` — whichever exists at root) to get a file-tree overview. Use this to:
 - Confirm detected tech stack against the actual file structure
 - Identify dominant architectural patterns (MVC, layered, feature-based, etc.)
