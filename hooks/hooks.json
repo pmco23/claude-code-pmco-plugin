@@ -19,6 +19,15 @@
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/pipeline-gate.sh"
           }
         ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/convention-guard.sh"
+          }
+        ]
       }
     ],
     "PostToolUse": [
