@@ -38,9 +38,18 @@ elif [ -f "$PIPELINE_DIR/design.md" ];       then echo "Stage: review"
 elif [ -f "$PIPELINE_DIR/brief.md" ];        then echo "Stage: design-ready"
 fi
 
-# Repomix snapshot
-if [ -f "$PIPELINE_DIR/repomix-output.xml" ]; then
-  echo "Repomix snapshot: $PIPELINE_DIR/repomix-output.xml (verify age before reuse)"
+# Repomix snapshots
+snap_info=""
+for variant in code docs full; do
+  fpath="$PIPELINE_DIR/repomix-${variant}.xml"
+  if [ -f "$fpath" ]; then
+    fsize=$(wc -c < "$fpath" 2>/dev/null | tr -d ' ')
+    fsize_kb=$(( (fsize + 512) / 1024 ))
+    snap_info="${snap_info:+$snap_info, }${variant} (${fsize_kb}KB)"
+  fi
+done
+if [ -n "$snap_info" ]; then
+  echo "Repomix snapshots: $snap_info (verify age before reuse)"
 fi
 
 exit 0
