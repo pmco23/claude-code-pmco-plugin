@@ -38,7 +38,7 @@ Restart Claude Code after install.
 Run the pipeline gate regression suite before any PR:
 
 ```bash
-bash hooks/test_gate.sh
+bash hooks/test-gate.sh
 ```
 
 Expected: `Results: 52 passed, 0 failed`
@@ -47,7 +47,7 @@ Expected: `Results: 52 passed, 0 failed`
 
 1. Branch from `main`
 2. Make your changes
-3. Run `bash hooks/test_gate.sh` — all 52 scenarios must pass
+3. Run `bash hooks/test-gate.sh` — all 52 scenarios must pass
 4. Update `CHANGELOG.md` under `## [Unreleased]`
 5. Open PR against `main`
 

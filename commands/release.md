@@ -1,6 +1,7 @@
 ---
 allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git commit:*), Bash(git tag:*), Bash(git push:*), Bash(git log:*), Bash(gh release create:*), Read, Edit, Glob
 description: "Cut a release: version bump, changelog, commit, tag, push, GitHub release. Usage: /release patch|minor|major"
+argument-hint: "patch|minor|major"
 ---
 
 ## Context

@@ -6,6 +6,7 @@ description: >
   naming conflicts, dependency gaps, and type mismatches. Returns a structured
   findings table with impact and mitigation estimates.
 model: sonnet
+color: yellow
 tools: Read, Grep, Glob
 ---
 

@@ -3,7 +3,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-GATE="$SCRIPT_DIR/pipeline_gate.sh"
+GATE="$SCRIPT_DIR/pipeline-gate.sh"
 PASS=0
 FAIL=0
 

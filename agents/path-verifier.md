@@ -6,6 +6,7 @@ description: >
   physically exists in the target directory. Returns EXISTS or MISSING for each
   claim — a structural complement to drift-verifier's semantic claim analysis.
 model: sonnet
+color: blue
 tools: Read, Grep, Glob, Bash
 ---
 

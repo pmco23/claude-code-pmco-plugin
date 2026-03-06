@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session_start_check.sh"
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-start-check.sh"
           }
         ]
       }
@@ -16,14 +16,22 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/pipeline_gate.sh"
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/pipeline-gate.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/convention-guard.sh"
           }
         ]
       }
     ],
     "PostToolUse": [
       {
-        "matcher": "Agent|Task",
         "hooks": [
           {
             "type": "command",
@@ -47,7 +55,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session_end_pack.sh"
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-end-pack.sh"
           },
           {
             "type": "prompt",

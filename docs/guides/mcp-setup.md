@@ -72,7 +72,7 @@ When an audit skill runs standalone (outside `/qa`), it checks for snapshots in 
 
 ### Automatic refresh
 
-The `session_end_pack.sh` hook regenerates all three snapshots at the end of every session (unless `session-end-pack: disabled` is set in CLAUDE.md). This ensures the next session starts with fresh snapshots.
+The `session-end-pack.sh` hook regenerates all three snapshots at the end of every session (unless `session-end-pack: disabled` is set in CLAUDE.md). This ensures the next session starts with fresh snapshots.
 
 ---
 

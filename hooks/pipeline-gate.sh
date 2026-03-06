@@ -1,53 +1,23 @@
 #!/usr/bin/env bash
-# pipeline_gate.sh
+# pipeline-gate.sh
 # Enforces quality gates for the development pipeline.
 # Reads PreToolUse JSON from stdin; blocks if required .pipeline/ artifact is missing.
 
 set -euo pipefail
 
+HOOKS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$HOOKS_DIR/lib/find-project.sh"
+source "$HOOKS_DIR/lib/json-helpers.sh"
+
 INPUT=$(cat)
 
-# Extract skill name — prefer jq, fall back to python3
-if command -v jq >/dev/null 2>&1; then
-  SKILL=$(echo "$INPUT" | jq -r '.tool_input.skill // empty' 2>/dev/null || echo "")
-elif command -v python3 >/dev/null 2>&1; then
-  SKILL=$(echo "$INPUT" | python3 -c "
-import sys, json
-try:
-    d = json.load(sys.stdin)
-    skill = d.get('tool_input', {}).get('skill', '')
-    print(skill)
-except Exception:
-    print('')
-" 2>/dev/null || echo "")
-else
-  # Neither jq nor python3 available — fail open with warning
-  echo "pipeline_gate: jq and python3 unavailable, gate disabled" >&2
-  exit 0
-fi
+# Extract skill name from tool_input.skill
+SKILL=$(echo "$INPUT" | _json_stdin_field "tool_input.skill")
 
 # Not a skill invocation or parse failed — allow
 if [ -z "$SKILL" ]; then
   exit 0
 fi
-
-# Walk up from cwd to find .pipeline/ directory
-find_pipeline_dir() {
-  # Allow test override
-  if [ -n "${PIPELINE_TEST_DIR:-}" ]; then
-    echo "${PIPELINE_TEST_DIR}/.pipeline"
-    return 0
-  fi
-  local dir="$PWD"
-  while [ "$dir" != "/" ]; do
-    if [ -d "$dir/.pipeline" ]; then
-      echo "$dir/.pipeline"
-      return 0
-    fi
-    dir=$(dirname "$dir")
-  done
-  echo "$PWD/.pipeline"
-}
 
 PIPELINE_DIR=$(find_pipeline_dir)
 

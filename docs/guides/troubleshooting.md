@@ -12,7 +12,7 @@ You tried to run `/plan` without going through `/review`. Run `/review` and iter
 
 1. Verify the plugin is installed: in Claude Code, run `/plugin list` and confirm `claude-developer-toolbox@pmco23-tools` appears.
 2. Restart Claude Code — hooks are loaded at startup.
-3. Check that `hooks/pipeline_gate.sh` is executable: `ls -la ~/claude-developer-toolbox/hooks/`
+3. Check that `hooks/pipeline-gate.sh` is executable: `ls -la ~/claude-developer-toolbox/hooks/`
 4. Check `hooks/hooks.json` is valid: `python3 -m json.tool ~/claude-developer-toolbox/hooks/hooks.json`
 
 ## Resetting pipeline state
@@ -26,10 +26,10 @@ rm -rf .pipeline/
 
 ## Verifying gate logic
 
-Run `hooks/test_gate.sh` to confirm all pipeline gate rules are working correctly:
+Run `hooks/test-gate.sh` to confirm all pipeline gate rules are working correctly:
 
 ```bash
-bash ~/claude-developer-toolbox/hooks/test_gate.sh
+bash ~/claude-developer-toolbox/hooks/test-gate.sh
 ```
 
 Expected: `Results: 52 passed, 0 failed`

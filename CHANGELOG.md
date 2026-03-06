@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.0.0] - 2026-03-06
+
+### Breaking Changes
+
+- **Hook file renames** — all hook scripts renamed from underscores to hyphens (`pipeline_gate.sh` → `pipeline-gate.sh`, `session_end_pack.sh` → `session-end-pack.sh`, `session_start_check.sh` → `session-start-check.sh`, `test_gate.sh` → `test-gate.sh`). `hooks.json` updated to match — no user action needed if using the plugin as distributed, but custom scripts referencing old filenames must update.
+- **PostToolUse matcher widened** — `context-monitor.sh` now fires after every tool call (was `Agent|Task` only). The hook is lightweight (reads one small JSON file, integer math) so overhead is negligible.
+
+### Added
+
+- `hooks/convention-guard.sh` — new PreToolUse hook on `Write|Edit` enforcing three project conventions: (1) blocks writes to `.claude-plugin/` that are not manifests, (2) reminds about `chmod +x` and `test-gate.sh` when editing hooks, (3) reminds about version sync when editing `plugin.json`
+- `hooks/lib/find-project.sh` — shared walk-up library with `find_pipeline_dir`, `find_pipeline_dir_strict`, `find_project_root`, `find_file_up`; all functions respect `PIPELINE_TEST_DIR` for test compatibility
+- `hooks/lib/json-helpers.sh` — shared JSON parsing library with `_json_stdin_field` and `_json_file_field`; prefers jq, falls back to python3; supports nested fields via dot notation
+- Agent and command `description` frontmatter added to all 5 agents and `release.md` command
+- `marketplace.json`: `metadata.description` field added
+
+### Changed
+
+- All hook scripts refactored to source shared libraries from `hooks/lib/` instead of inlining duplicate walk-up and JSON parsing logic
+- `session-end-pack.sh`: each `repomix` call guarded by 60-second timeout (fail-open if `timeout` command absent)
+- `session-end-pack.sh`: `$NOW` variable moved from global scope into the `jq` branch where it is actually used
+- `session-end-pack.sh`: CLAUDE.md opt-out check uses `find_file_up` instead of inline walk-up
+- `CLAUDE.md`: project structure updated to document `hooks/lib/`
+- `docs/guides/hooks.md`: fully rewritten — documents convention-guard, shared libs, wider PostToolUse matcher, session-end-pack timeout; updated summary table
+
+### Fixed
+
+- `session-start-check.sh`: added missing `set -euo pipefail` after shebang
+- `context-monitor.sh` (`_json_file_field`): jq default quoting used `// ${default}` which breaks on string defaults; fixed to `--arg d "$default" "// $d"` pattern
+- `json-helpers.sh` python3 fallback: supports nested fields (`tool_input.skill`) via path splitting — old inline version only supported top-level keys
+
 ## [3.0.0] - 2026-03-05
 
 ### Breaking Changes

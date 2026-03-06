@@ -2,6 +2,7 @@
 name: strategic-critic
 description: Opus strategic design critic. Reviews software design documents for architectural flaws, constraint violations, missing concerns, and assumption validity. Grounds all critiques in live library docs via Context7 before forming opinions.
 model: opus
+color: red
 tools: Read, Grep, Glob, WebSearch, mcp__plugin_context7_context7__resolve-library-id, mcp__plugin_context7_context7__query-docs
 ---
 

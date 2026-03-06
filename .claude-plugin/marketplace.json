@@ -9,6 +9,7 @@
   "plugins": [
     {
       "name": "claude-developer-toolbox",
+      "version": "4.0.0",
       "description": "Quality-gated development pipeline: brief → design → review → plan → build → qa",
       "source": "./"
     }

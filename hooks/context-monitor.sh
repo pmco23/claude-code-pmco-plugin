@@ -4,44 +4,8 @@
 
 set -euo pipefail
 
-# Portable JSON helpers — prefer jq, fall back to python3
-_json_stdin_field() {
-  local field="$1"
-  if command -v jq >/dev/null 2>&1; then
-    jq -r ".${field} // empty" 2>/dev/null || true
-  elif command -v python3 >/dev/null 2>&1; then
-    python3 -c '
-import json, sys
-field = sys.argv[1]
-try:
-    d = json.load(sys.stdin)
-    print(d.get(field, ""))
-except Exception:
-    print("")
-' "$field" 2>/dev/null || true
-  else
-    echo "context-monitor: jq and python3 unavailable, context monitoring disabled" >&2
-  fi
-}
-
-_json_file_field() {
-  local file="$1" field="$2" default="${3:-0}"
-  if command -v jq >/dev/null 2>&1; then
-    jq -r ".${field} // ${default}" "$file" 2>/dev/null || echo "$default"
-  elif command -v python3 >/dev/null 2>&1; then
-    python3 - "$file" "$field" "$default" <<'PYEOF' 2>/dev/null || echo "$default"
-import json, sys
-file, field, default = sys.argv[1], sys.argv[2], sys.argv[3]
-try:
-    d = json.load(open(file))
-    print(d.get(field, default))
-except Exception:
-    print(default)
-PYEOF
-  else
-    echo "$default"
-  fi
-}
+HOOKS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$HOOKS_DIR/lib/json-helpers.sh"
 
 # Parse session_id from the PostToolUse JSON payload on stdin
 INPUT=$(cat)

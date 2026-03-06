@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# session_start_check.sh
+set -euo pipefail
+# session-start-check.sh
 # SessionStart hook: warns about missing tools this plugin depends on.
 # Missing tools degrade (but do not break) the pipeline — hooks fail open.
 

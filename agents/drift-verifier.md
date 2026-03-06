@@ -2,6 +2,7 @@
 name: drift-verifier
 description: Implementation drift verifier. Extracts all verifiable claims from a source-of-truth document and checks each against a target implementation or directory. Returns a structured claim-by-claim verdict.
 model: sonnet
+color: cyan
 tools: Read, Grep, Glob, Bash
 ---
 

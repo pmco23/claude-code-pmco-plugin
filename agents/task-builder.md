@@ -2,6 +2,7 @@
 name: task-builder
 description: Sonnet build agent for implementing a single task group from an execution plan. Reads the assigned task group from .pipeline/plan.md and implements it exactly as specified — correct files, correct patterns, named test cases with assertions.
 model: sonnet
+color: green
 tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 
