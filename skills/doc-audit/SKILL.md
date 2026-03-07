@@ -1,6 +1,6 @@
 ---
 name: doc-audit
-description: Use after build is complete to audit CHANGELOG.md for format compliance, completeness, and feature coverage. Requires .pipeline/build.complete.
+description: Use after build is complete to audit CHANGELOG.md for format compliance, completeness, and feature coverage, and README.md for obvious stale placeholders or removed-feature drift. Requires .pipeline/build.complete.
 ---
 
 # QD — Documentation Freshness
@@ -46,7 +46,7 @@ Format:
 [file] STYLE — [what style convention was violated]
 ```
 
-If no findings: "Documentation audit complete — CHANGELOG is compliant."
+If no findings: "Documentation audit complete — no CHANGELOG or README freshness issues found."
 
 ### Step 4: README freshness (if README exists)
 

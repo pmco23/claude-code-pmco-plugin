@@ -1,6 +1,7 @@
 ---
 name: reset
 description: Use to reset the pipeline to a specific phase. Removes downstream artifacts while preserving upstream ones. Detects current phase, offers reset targets, confirms before deleting. No gate — always available when a pipeline is active.
+disable-model-invocation: true
 ---
 
 # RESET — Pipeline State Reset
@@ -34,7 +35,7 @@ If none of the five exist: "No pipeline artifacts found — nothing to reset." S
 
 ### Step 2: Offer reset targets
 
-Use AskUserQuestion with:
+Prefer AskUserQuestion with:
   question: "Reset pipeline to which phase?"
   header: "Reset target"
   options: (include only targets that would actually remove something — skip options where the target is the current phase or later)
@@ -46,6 +47,8 @@ Use AskUserQuestion with:
       description: "Remove design.approved, plan.md, build.complete"
     - label: "Back to plan"
       description: "Remove build.complete only"
+
+If structured prompts are unavailable in this runtime, ask the same question in plain text and continue with the user's answer.
 
 ### Step 3: Confirm
 
@@ -59,7 +62,7 @@ Will remove:
   - .pipeline/build.complete
 ```
 
-Use AskUserQuestion with:
+Prefer AskUserQuestion with:
   question: "Proceed with reset?"
   header: "Confirm"
   options:
@@ -67,6 +70,8 @@ Use AskUserQuestion with:
       description: "Remove the listed artifacts"
     - label: "Cancel"
       description: "Abort — make no changes"
+
+If structured prompts are unavailable in this runtime, ask the same confirmation question in plain text and continue with the user's answer.
 
 If "Cancel": "Reset cancelled." Stop.
 

@@ -1,6 +1,7 @@
 ---
 name: quick
 description: Use when implementing small features, bug fixes, typo corrections, config tweaks, or any well-understood change that does not require the full pipeline. Completely independent of the brief/design/review/plan/build/qa flow. Use --deep to escalate to Opus for trickier problems.
+argument-hint: [--deep] [task]
 ---
 
 # QUICK — Fast Implementation
@@ -29,7 +30,7 @@ Proceeding with /quick anyway.
 
 ### Step 2: Clarify if needed (max one question)
 
-If the task description is ambiguous about what to change or where, use AskUserQuestion with options you derive from the task description — 2-4 options covering the plausible interpretations, plus `"Other / let me describe it"` as the last option. If it is clear enough to start, skip this step entirely. Do not ask multiple questions.
+If the task description is ambiguous about what to change or where, prefer AskUserQuestion with options you derive from the task description — 2-4 options covering the plausible interpretations, plus `"Other / let me describe it"` as the last option. If structured prompts are unavailable in this runtime, ask one concise plain-text clarifying question instead. If it is clear enough to start, skip this step entirely. Do not ask multiple questions.
 
 ### Step 3: Read relevant context only
 
@@ -59,10 +60,10 @@ Report what was done:
 Done. Changed [N] file(s):
 - [file]: [one-line description of what changed]
 
-Before committing: if this involves branch creation, a first push to remote, or opening a PR, run /git-workflow first.
+Before committing: if follow-up work will involve a destructive git operation (force-push, reset --hard, branch -D, or rebasing published commits), run /git-workflow first. Routine branch creation, first push, and PR flow use the normal git commands.
 ```
 
-Use AskUserQuestion with:
+Prefer AskUserQuestion with:
   question: "Run a quick audit on the touched files?"
   header: "Audit"
   options:
@@ -70,6 +71,8 @@ Use AskUserQuestion with:
       description: "Run LSP diagnostics and security spot-check on modified files"
     - label: "No"
       description: "Skip audit — done"
+
+If structured prompts are unavailable in this runtime, ask the same yes/no question in plain text.
 
 ### Step 7: Optional audit (if yes)
 
@@ -80,5 +83,5 @@ Read `references/quick-audit.md` from this skill's base directory. Follow the LS
 - No `.pipeline/` artifacts written — ever
 - No full QA skills invoked (`/frontend-audit`, `/backend-audit`, `/doc-audit`, `/security-review`)
 - Touch only the files required for the task
-- One clarifying question maximum, always via AskUserQuestion with options derived from the task description — if still unclear after one answer, make a reasonable assumption and note it
+- One clarifying question maximum. Prefer AskUserQuestion with options derived from the task description; if it is unavailable, ask one concise plain-text question. If still unclear after one answer, make a reasonable assumption and note it
 - Self-review is not optional — always do Step 5

@@ -22,7 +22,7 @@ Choose a workflow:
 
 Always available (no pipeline required):
   /init          scaffold README, CHANGELOG, CONTRIBUTING, .gitignore
-  /git-workflow  before branch creation, first push, PR, destructive ops
+  /git-workflow  before destructive git operations
   /pack          Repomix snapshot — run before /qa or /quick --deep
   /reset         reset pipeline to a specific phase
   /status        this report
@@ -52,7 +52,7 @@ Next: [next step]
 
 ## Next Step Prompt
 
-After presenting the pipeline report, use AskUserQuestion with:
+After presenting the pipeline report, prefer AskUserQuestion with:
   question: "Run [next-step-skill] now?"
   header: "Next step"
   options:
@@ -60,6 +60,8 @@ After presenting the pipeline report, use AskUserQuestion with:
       description: "Invoke [/skill-name] immediately in this session"
     - label: "Not yet"
       description: "Dismiss — I'll run it when ready"
+
+If structured prompts are unavailable in this runtime, ask the same question in plain text and continue with the user's answer.
 
 Replace `[next-step-skill]` and `[/skill-name]` with the next step from the Phase → Next step lookup table in Step 3. If yes: invoke the skill by following its process.
 

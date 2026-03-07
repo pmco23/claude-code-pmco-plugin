@@ -1,6 +1,7 @@
 ---
 name: brief
 description: Use when starting a new feature, project, or task - extracts requirements, constraints, non-goals, style preferences, and key concepts from fuzzy input through conversational Q&A. Output is a structured brief saved to .pipeline/brief.md. Always run this before /design.
+disable-model-invocation: true
 ---
 
 # ARM — Requirements Crystallization
@@ -17,7 +18,7 @@ You are Opus acting as a requirements analyst. Your job is to extract maximum si
 2. **All 8 areas must be explicitly resolved** — either confirmed by the user or explicitly waived by the user ("skip this one"). Claude cannot waive on the user's behalf.
 3. **Never write `.pipeline/brief.md` before the Step 3 checkpoint is fully answered.** No partial briefs.
 4. **Ask exactly one question per turn.** Do not bundle multiple questions in a single response.
-5. **All questions use AskUserQuestion.** Compose 2-4 options from what Step 1 context inferred. If context provides a likely answer, make it the first option (surfaced for confirmation, not silently accepted). The last option is always `"Other / let me describe it"` to allow free-form input. Never ask a plain-text question. For areas where multiple answers are naturally valid (Q2–Q8), set `multiSelect: true` so the user can select more than one option.
+5. **Prefer structured prompts, but fail soft.** Compose 2-4 options from what Step 1 context inferred. If context provides a likely answer, make it the first option (surfaced for confirmation, not silently accepted). The last option is always `"Other / let me describe it"` to allow free-form input. If structured prompts are unavailable in this runtime, ask the same question in plain text with the options listed inline. For areas where multiple answers are naturally valid (Q2–Q8), use `multiSelect: true` when available; otherwise tell the user they may answer with a comma-separated list.
 
 ## Process
 
@@ -50,13 +51,15 @@ If the project already contains code (non-empty source directories detected abov
 
 ### Step 2: Extract signal through Q&A
 
-Ask ONE question at a time via AskUserQuestion. Wait for the answer before asking the next.
+Ask ONE question at a time. Prefer AskUserQuestion; if structured prompts are unavailable in this runtime, ask the same question in plain text and wait for the answer before asking the next.
 
 For each area, compose an AskUserQuestion call where:
 - Options are derived from what Step 1 context suggests (inferred from README, package.json, existing code)
 - If context provides a likely answer, make it the first option — this surfaces it for confirmation, not silent acceptance
 - Include 2-3 additional plausible alternatives based on project type
 - The last option is always `"Other / let me describe it"` for free-form input
+
+If structured prompts are unavailable in this runtime, present the same options as a numbered plain-text list and accept either one option, a comma-separated list for multi-select questions, or a free-form override.
 
 Cover these areas in order (if already clear from context, surface the inferred answer as a pre-filled option for user confirmation — do not skip silently):
 
@@ -71,7 +74,7 @@ Cover these areas in order (if already clear from context, surface the inferred 
 
 ### Step 3: Force remaining decisions
 
-After Q&A, present a single structured checkpoint with any remaining ambiguities as forced-choice questions. No open-ended questions in this checkpoint — every item must have options. Do not proceed until the user has answered all items.
+After Q&A, present a single structured checkpoint with any remaining ambiguities as forced-choice questions. No open-ended questions in this checkpoint — every item must have options. If structured prompts are unavailable in this runtime, present the same checkpoint as a numbered plain-text list of forced choices and do not proceed until the user has answered every item.
 
 Format:
 ```

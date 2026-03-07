@@ -2,7 +2,7 @@
 
 **Question 1 — Primary language:**
 
-Use AskUserQuestion with:
+Prefer AskUserQuestion with:
   question: "What is the primary language for this project?"
   header: "Language"
   options:
@@ -15,9 +15,11 @@ Use AskUserQuestion with:
     - label: "Other"
       description: "Rust, C#, Ruby, Java, or any other — specify in the text field"
 
+If structured prompts are unavailable in this runtime, ask the same question in plain text and include the options inline.
+
 **Question 2 — License:**
 
-Use AskUserQuestion with:
+Prefer AskUserQuestion with:
   question: "Which license for this project?"
   header: "License"
   options:
@@ -30,9 +32,11 @@ Use AskUserQuestion with:
     - label: "Other / proprietary"
       description: "Specify another SPDX identifier, or 'All rights reserved'"
 
+If structured prompts are unavailable in this runtime, ask the same question in plain text and include the options inline.
+
 **Question 3 — Project type:**
 
-Use AskUserQuestion with:
+Prefer AskUserQuestion with:
   question: "What kind of project is this?"
   header: "Project type"
   options:
@@ -44,6 +48,8 @@ Use AskUserQuestion with:
       description: "Reusable module to be published to a registry"
     - label: "Other / custom"
       description: "Describe it yourself in the text field"
+
+If structured prompts are unavailable in this runtime, ask the same question in plain text and include the options inline.
 
 **After all three answers**, update the context object:
 - `language` → from Q1 (or user's free-form text if "Other")

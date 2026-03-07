@@ -1,6 +1,7 @@
 ---
 name: review
 description: Use after /design to adversarially review the design document. Dispatches strategic-critic (Opus) and code-critic (Sonnet) in parallel — Opus for strategic critique grounded in Context7, Sonnet for code-grounded critique against the existing codebase. Lead deduplicates, runs cost/benefit analysis, loops until all MUST FIX findings resolve. Writes .pipeline/design.approved on loop exit.
+disable-model-invocation: true
 ---
 
 # AR — Adversarial Review
@@ -51,7 +52,7 @@ Once both agents return their results:
 
 ### Step 4: Human review
 
-Present the report. Use AskUserQuestion with:
+Present the report. Prefer AskUserQuestion with:
   question: "Review round [N] complete. What next?"
   header: "Review action"
   options:
@@ -61,6 +62,8 @@ Present the report. Use AskUserQuestion with:
       description: "Accept a finding without fixing — remove it from the must-fix list"
     - label: "Approve"
       description: "All MUST FIX resolved — write .pipeline/design.approved and advance"
+
+If structured prompts are unavailable in this runtime, ask the same question in plain text and continue with the user's answer.
 
 - **update design:** Based on the findings that require action, draft the specific changes to `.pipeline/design.md`. Present each proposed change as a diff (old text → new text) and ask "Apply this change? (yes / skip)" before writing each one. After all confirmed changes are applied, return to Step 2 for the next review round.
 - **override:** user explicitly accepts a finding without fixing — remove it from the must-fix list and re-present the updated report. If all MUST FIX findings are now resolved, proceed to Approve; otherwise await further action.

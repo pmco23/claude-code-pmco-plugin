@@ -10,16 +10,17 @@
         ]
       }
     ],
-    "PreToolUse": [
+    "UserPromptSubmit": [
       {
-        "matcher": "Skill",
         "hooks": [
           {
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/pipeline-gate.sh"
           }
         ]
-      },
+      }
+    ],
+    "PreToolUse": [
       {
         "matcher": "Write|Edit",
         "hooks": [
@@ -56,10 +57,6 @@
           {
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-end-pack.sh"
-          },
-          {
-            "type": "prompt",
-            "prompt": "Update ## Current Focus in MEMORY.md: 2–3 sentences covering what's in flight, next step, and any key pending decision. If the session was trivial (read-only, Q&A only), write one sentence noting that. Create the file or section if missing. Respond with 'Memory updated.' when done."
           }
         ]
       }

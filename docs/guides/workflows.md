@@ -10,6 +10,21 @@ Two workflow paths are available. Everything else in the plugin supports one of 
 | New feature, design-sensitive change, anything that warrants a design doc | **Pipeline** (`/brief → /qa`) |
 | Not sure | Start with **Pipeline** — you can abandon it after `/brief` if it turns out to be simple |
 
+## Invocation Behavior
+
+Several stateful workflows are explicit slash-command entrypoints and do not
+auto-load from natural-language prompts. Run these directly when you want them:
+
+`/brief`, `/design`, `/review`, `/plan`, `/build`, `/qa`, `/init`,
+`/git-workflow`, `/reset`, `/rollback`, `/status`
+
+These skills set `disable-model-invocation: true` to avoid accidental phase
+transitions or destructive operations.
+
+Interactive skills prefer structured prompts when the runtime supports them. If
+your runtime does not expose picker-style prompts, the same workflow continues
+with a plain-text question instead.
+
 ---
 
 ## Fast Track
@@ -25,7 +40,7 @@ Two workflow paths are available. Everything else in the plugin supports one of 
 2. Reads only the relevant files — not the whole codebase
 3. Implements the change following existing patterns
 4. Self-reviews the diff before handing back
-5. Offers a structured yes/no prompt to run a lightweight audit: LSP diagnostics, security spot-check, test reminder
+5. Offers a structured yes/no prompt to run a lightweight audit when supported by the runtime, otherwise falls back to a plain-text yes/no question: LSP diagnostics, security spot-check, test reminder
 
 **What it does NOT do:**
 - Write `.pipeline/` artifacts — ever
@@ -118,7 +133,7 @@ rm .pipeline/build.complete
 
 ## Mode Flags
 
-`/build` and `/qa` both accept `--parallel` or `--sequential`. If neither flag is provided, a structured selection prompt appears — no typing required, just pick from the options.
+`/build` and `/qa` both accept `--parallel` or `--sequential`. If neither flag is provided, the skill prefers a structured selection prompt when supported by the runtime; otherwise it falls back to a plain-text mode question.
 
 ### When to use --parallel
 
@@ -193,12 +208,12 @@ These run independently of any pipeline state — no gate, no artifacts required
 |-------|-------------|
 | `/status` | Any time — shows pipeline state and next step; with no active pipeline, shows available workflow choices |
 | `/init` | New project or missing boilerplate — generates CLAUDE.md (with git conventions), README, CHANGELOG, CONTRIBUTING, .gitignore |
-| `/git-workflow` | Before any destructive git operation (force-push, reset --hard, branch -D) — routine commits and branches are governed by CLAUDE.md |
+| `/git-workflow` | Before any destructive git operation (force-push, reset --hard, branch -D, or rebasing published commits) — routine commits and branches are governed by CLAUDE.md |
 | `/pack` | Before `/qa` or `/quick --deep` to snapshot the codebase |
-| `/drift-check` | After `/build` — verify implementation matches the approved design; also run standalone at any time (standalone shows a structured source/target selection prompt) |
+| `/drift-check` | After `/build` — verify implementation matches the approved design; also run standalone at any time (standalone prefers a structured source/target prompt and falls back to plain text if needed) |
 | `/quick` | Fast-track implementation (see above) |
 | `/test` | Any time — run the project test suite; supports file/pattern scoping; auto-detects jest, vitest, go test, pytest, dotnet test, cargo test; also invoked by `/cleanup` after dead-code removal |
-| `/rollback` | After a completed build — delete created files, restore modified files, reset `build.complete`; requires `build.complete` |
+| `/rollback` | After a completed build — validate plan-derived paths, back up selected files, delete created files, restore modified files safely, reset `build.complete`; requires `build.complete` |
 
 ### Git Commands
 

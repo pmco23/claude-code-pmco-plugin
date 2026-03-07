@@ -1,6 +1,7 @@
 ---
 name: git-workflow
 description: Use before any destructive git operation (force-push, reset --hard, branch -D, rebase on published commits). Verifies the target, explains the consequences, and requires explicit confirmation. Not needed for routine commits, branch creation, or PRs — those are governed by CLAUDE.md git conventions.
+disable-model-invocation: true
 ---
 
 # GIT-WORKFLOW — Destructive Operation Safety Gate
@@ -14,7 +15,7 @@ You are enforcing safety before a destructive git operation. Verify the target, 
 ## Hard Rules
 
 1. **Never execute a destructive operation without explicit confirmation in the current turn.** A previous approval in a different context does not carry over.
-2. **All questions use AskUserQuestion.** Never ask a plain-text question.
+2. **Prefer structured prompts, but fail soft.** Use AskUserQuestion when available. If structured prompts are unavailable in this runtime, ask the same confirmation question in plain text.
 3. **Force-push to main/master is always escalated.** Even if the user confirms, warn again that this affects all collaborators.
 
 ## Process
@@ -41,7 +42,7 @@ Present the specific consequences for the identified operation:
 
 ### Step 3: Confirm
 
-Use AskUserQuestion with:
+Prefer AskUserQuestion with:
   question: "This will [specific consequence]. Proceed?"
   header: "Destructive op"
   options:
@@ -54,6 +55,8 @@ If the target is a protected branch (main, master, development, preproduction):
   Add a third option before Cancel:
     - label: "I understand the risk"
       description: "This is a protected branch — confirm you've coordinated with collaborators"
+
+If structured prompts are unavailable in this runtime, ask the same question in plain text and continue with the user's answer.
 
 ### Step 4: Execute or abort
 

@@ -21,23 +21,17 @@ FILE_PATH=$(echo "$INPUT" | _json_stdin_field "tool_input.file_path")
 case "$FILE_PATH" in
   */.claude-plugin/plugin.json|*/.claude-plugin/marketplace.json)
     # Rule 3: version sync reminder
-    cat <<'MSG'
-{"hookSpecificOutput": {"message": "Remember: version is tracked in both plugin.json and marketplace.json — bump both."}}
-MSG
+    _emit_system_message "Remember: version is tracked in both plugin.json and marketplace.json — bump both."
     exit 0
     ;;
   */.claude-plugin/*)
     # Rule 1: block non-manifest writes
-    cat <<'MSG'
-{"hookSpecificOutput": {"decision": "deny", "message": "Only manifests (plugin.json, marketplace.json) belong in .claude-plugin/. Put skills, hooks, and other components in their own directories."}}
-MSG
-    exit 2
+    _emit_pretool_permission "deny" "Only manifests (plugin.json, marketplace.json) belong in .claude-plugin/. Put skills, hooks, and other components in their own directories."
+    exit 0
     ;;
   */hooks/*.sh)
     # Rule 2: chmod and test-gate reminder
-    cat <<'MSG'
-{"hookSpecificOutput": {"message": "Remember: hooks must be executable (chmod +x), have #!/usr/bin/env bash shebang, and pass test-gate.sh."}}
-MSG
+    _emit_system_message "Remember: hooks must be executable (chmod +x), have #!/usr/bin/env bash shebang, and pass test-gate.sh."
     exit 0
     ;;
 esac

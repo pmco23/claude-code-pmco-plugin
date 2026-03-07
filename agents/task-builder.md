@@ -36,7 +36,19 @@ declares `**TDD:** disabled`.
 
 ## Report
 
-When complete, report:
-- Files created or modified (with paths)
-- Tests written and their pass/fail status
-- Any blockers encountered
+Return this exact structure:
+
+```markdown
+STATUS: [complete | blocked]
+
+FILES:
+- [created or modified file path]
+
+TESTS:
+- [test name] — [pass | fail]
+
+BLOCKERS:
+- [blocker detail, or "none"]
+```
+
+Use `STATUS: blocked` if any acceptance criterion is unmet or any scoped test is failing.

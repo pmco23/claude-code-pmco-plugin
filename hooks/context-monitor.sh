@@ -29,11 +29,11 @@ AGE=$(( NOW - TIMESTAMP ))
 (( AGE > 60 )) && exit 0
 
 if (( USED_PCT >= 95 )); then
-  echo "💀 Context critical (${USED_PCT}%) — /compact now"
+  _emit_additional_context "PostToolUse" "Context critical (${USED_PCT}%) — /compact now"
 elif (( USED_PCT >= 81 )); then
-  echo "⚠ Context at ${USED_PCT}% — /compact recommended"
+  _emit_additional_context "PostToolUse" "Context at ${USED_PCT}% — /compact recommended"
 elif (( USED_PCT >= 63 )); then
-  echo "⚠ Context at ${USED_PCT}% — consider /compact soon"
+  _emit_additional_context "PostToolUse" "Context at ${USED_PCT}% — consider /compact soon"
 fi
 
 exit 0

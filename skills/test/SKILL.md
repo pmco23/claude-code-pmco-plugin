@@ -1,6 +1,7 @@
 ---
 name: test
 description: Use to run the project test suite. Supports /test [file-or-pattern] to scope to specific files or test names. Detects jest, vitest, go test, pytest, dotnet test, and cargo test automatically. No pipeline artifacts required — can run at any time.
+argument-hint: [file-or-pattern]
 ---
 
 # TEST — Run Test Suite
@@ -27,7 +28,7 @@ Check for test configuration in this order:
 - `*.csproj` or `*.sln` → .NET → use `dotnet test`
 - `Cargo.toml` → Rust → use `cargo test`
 
-If no runner can be detected, use AskUserQuestion with:
+If no runner can be detected, prefer AskUserQuestion with:
   question: "No test runner detected. Which test command should I run?"
   header: "Test runner"
   options:
@@ -39,6 +40,8 @@ If no runner can be detected, use AskUserQuestion with:
       description: "Python"
     - label: "cargo test"
       description: "Rust"
+
+If structured prompts are unavailable in this runtime, ask the same question in plain text and continue with the answer.
 
 ### Step 3: Build run command
 
@@ -59,7 +62,7 @@ Report:
 
 ### Step 6: Offer fix if failures
 
-If any tests failed, use AskUserQuestion with:
+If any tests failed, prefer AskUserQuestion with:
   question: "Tests failed. What next?"
   header: "Test failures"
   options:
@@ -67,6 +70,8 @@ If any tests failed, use AskUserQuestion with:
       description: "Invoke /quick with the failing test context to attempt a fix"
     - label: "Report only"
       description: "Done — fix manually"
+
+If structured prompts are unavailable in this runtime, ask the same question in plain text and continue with the user's answer.
 
 If "Attempt fix with /quick": follow the /quick skill process, passing the failing test names and error messages as the task description.
 

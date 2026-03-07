@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Supported slash-command metadata for the workflow skills: `argument-hint` on `/build`, `/qa`, `/quick`, `/pack`, and `/test`, plus `disable-model-invocation: true` on the stateful slash-only workflows (`/brief`, `/design`, `/review`, `/plan`, `/build`, `/qa`, `/init`, `/git-workflow`, `/reset`, `/rollback`, `/status`)
+- `hooks/lib/json-helpers.sh` emit helpers for supported hook JSON responses (`_emit_block_decision`, `_emit_system_message`, `_emit_additional_context`, `_emit_pretool_permission`)
+- Rollback path hardening: `/rollback` now requires plan-derived paths to stay inside the repository root before any delete or restore action
+
+### Changed
+
+- Hook bundle aligned to the current Claude Code hook contract: pipeline gating now runs on `UserPromptSubmit`, `SessionEnd` uses a supported command hook, and hook responses use supported JSON output shapes
+- `hooks/test-gate.sh` updated to validate the current hook payloads and response schemas; suite now covers 62 scenarios
+- `/build`, `/qa`, `/quick`, `/test`, and the remaining interactive skills now prefer structured prompts but fall back to plain-text questions when picker-style prompts are unavailable in the runtime
+- Build and QA orchestration language standardized around the Task tool, with graceful fallback when task helpers or parallel task dispatch are unavailable
+- `task-builder` now returns a stable report structure (`STATUS`, `FILES`, `TESTS`, `BLOCKERS`) for callers
+- `/doc-audit` now documents and reports both CHANGELOG compliance and README freshness; `/security-review` now consistently reports findings without mixing in inline remediation instructions
+- README and guides updated to match the current behavior: explicit slash-only workflow entrypoints, prompt fallback behavior, statusline symlink safeguards, hook lifecycle details, and rollback safety checks
+
+### Fixed
+
+- `pipeline-gate.sh`, `convention-guard.sh`, `context-monitor.sh`, and `compact-prep.sh` now emit supported Claude Code hook JSON instead of stale response shapes
+- `/rollback` no longer relies on `git checkout --`; it now creates safety backups, blocks on unrelated dirty worktree changes, and restores modified files with `git restore --source=HEAD --staged --worktree`
+- `/quick` no longer points users to `/git-workflow` for routine branch creation, first push, or PR flow
+- `session-start-check.sh` documentation now matches the actual safeguard: the plugin only refreshes `~/.claude/statusline.js` when it is missing or already managed by this plugin
+
 ## [4.0.0] - 2026-03-06
 
 ### Breaking Changes

@@ -1,6 +1,7 @@
 ---
 name: init
 description: Use when starting a new project or adding missing boilerplate to an existing one. Generates CLAUDE.md, README.md, CHANGELOG.md, CONTRIBUTING.md, and .github/pull_request_template.md adapted to the project's language, stack, and context. Asks before overwriting any existing file.
+disable-model-invocation: true
 ---
 
 # INIT — Project Boilerplate
@@ -79,7 +80,7 @@ For each target file, check if it exists:
 - `.github/pull_request_template.md`
 - `.gitignore`
 
-For each that exists, use AskUserQuestion with:
+For each that exists, prefer AskUserQuestion with:
   question: "[filename] already exists. What should I do?"
   header: "File conflict"
   options:
@@ -89,6 +90,8 @@ For each that exists, use AskUserQuestion with:
       description: "Replace the entire file with generated content"
     - label: "Merge"
       description: "Show a diff of what would change and confirm before writing"
+
+If structured prompts are unavailable in this runtime, ask the same question in plain text and continue with the user's answer.
 
 For `.gitignore` specifically, "merge" means: append `.pipeline/` if not already present. Do not overwrite existing entries.
 

@@ -1,6 +1,8 @@
 ---
 name: qa
 description: Use after /build to run the full post-build QA pipeline. Supports --parallel (all audits simultaneously) or --sequential (denoise → qf → qb → qd → security-review in order). Requires .pipeline/build.complete.
+argument-hint: [--parallel | --sequential]
+disable-model-invocation: true
 ---
 
 # QA — Post-Build QA Pipeline
@@ -9,11 +11,11 @@ description: Use after /build to run the full post-build QA pipeline. Supports -
 
 > **Model:** Sonnet (`claude-sonnet-4-6`).
 
-You are Sonnet acting as a QA pipeline orchestrator. Acquire a Repomix snapshot, then dispatch the five audit agents according to the selected mode.
+You are Sonnet acting as a QA pipeline orchestrator. Acquire a Repomix snapshot, then dispatch the five isolated audit tasks according to the selected mode.
 
 ## Repomix Preamble
 
-Before dispatching any agents, ensure Repomix snapshots are available:
+Before dispatching any audit tasks, ensure Repomix snapshots are available:
 
 1. Check if `.pipeline/repomix-pack.json` exists
 2. If it exists, read `packedAt` — if less than 1 hour old, read the `snapshots` map
@@ -21,7 +23,7 @@ Before dispatching any agents, ensure Repomix snapshots are available:
 4. After `/pack` completes, read the `snapshots` map from `.pipeline/repomix-pack.json`
 5. If `/pack` fails or Repomix is unavailable, proceed without snapshots — agents fall back to native Glob/Read/Grep
 
-Hold the snapshot map in context. Each agent gets its mapped variant:
+Hold the snapshot map in context. Each audit task gets its mapped variant:
 
 | Agent | Snapshot variant |
 |-------|-----------------|
@@ -46,7 +48,7 @@ Check the invocation arguments:
 - If `/qa --sequential` was used: sequential mode
 - If no flag: ask the user before proceeding
 
-Use AskUserQuestion with:
+Prefer AskUserQuestion with:
   question: "Which QA mode?"
   header: "QA mode"
   options:
@@ -55,11 +57,15 @@ Use AskUserQuestion with:
     - label: "Sequential"
       description: "One audit at a time in order — review each result before continuing"
 
+If structured prompts are unavailable in this runtime, ask a single plain-text question instead: "Which QA mode: parallel or sequential?"
+
 ## Process
 
 ### Parallel Mode
 
-Read `references/agent-prompts.md` from this skill's base directory. Dispatch all five agents simultaneously via the Task tool, substituting `<code-snapshot-path>` and `<docs-snapshot-path>` with the appropriate paths from the snapshot map (or omitting the Repomix instruction if unavailable).
+Read `references/agent-prompts.md` from this skill's base directory. Dispatch all five audit tasks simultaneously via the Task tool, substituting `<code-snapshot-path>` and `<docs-snapshot-path>` with the appropriate paths from the snapshot map (or omitting the Repomix instruction if unavailable).
+
+If the Task tool is unavailable in this runtime, announce: "Parallel QA unavailable — Task tool not present. Falling back to sequential mode." Then continue with Sequential Mode instead of stopping.
 
 Wait for all five to complete, then present the consolidated report and Overall QA Verdict using the format in `references/report-template.md`. Apply PASS Criteria (defined above).
 

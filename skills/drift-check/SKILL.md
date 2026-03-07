@@ -17,7 +17,7 @@ You are Opus acting as a verification lead. Two independent agents extract claim
 
 If called from `/build`, receive source and target from the build context — skip the question.
 
-If called standalone, use AskUserQuestion with:
+If called standalone, prefer AskUserQuestion with:
   question: "What are the drift check inputs?"
   header: "Drift inputs"
   options:
@@ -26,7 +26,9 @@ If called standalone, use AskUserQuestion with:
     - label: "Custom"
       description: "Specify a different source document and/or target path"
 
-If "Custom" is selected, ask the user to provide the source document path and/or target path.
+If structured prompts are unavailable in this runtime, ask the same question in plain text and continue with the user's answer.
+
+If "Custom" is selected, ask the user to provide the source document path and/or target path, preferring structured prompts and falling back to one concise plain-text follow-up question if needed.
 
 ### Step 2: Dispatch parallel verifiers
 

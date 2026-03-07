@@ -14,6 +14,11 @@ Understanding which to use — and when a skill should delegate to an agent — 
 
 Skills are loaded into the **main conversation context**. When a user runs `/skill-name`, Claude reads the SKILL.md instructions and executes them inline — the work happens in the same context window the user is looking at.
 
+Skills can also be marked `disable-model-invocation: true` when they are
+stateful or destructive. This plugin uses that for pipeline transitions and
+safety gates so those workflows only run when the user explicitly types the
+slash command.
+
 Skills are the right choice for:
 - Conversational workflows (asking the user clarifying questions, getting approval on sections)
 - Orchestration (dispatching multiple agents, sequencing steps)
@@ -22,7 +27,7 @@ Skills are the right choice for:
 
 ### Agents (`.claude/agents/<name>.md`)
 
-Agents run in an **isolated context window** with their own tool access list. Claude dispatches them via the Agent tool, they do their work independently, and return a result to the parent conversation.
+Agents run in an **isolated context window** with their own tool access list. Claude dispatches them via the Task tool, they do their work independently, and return a result to the parent conversation.
 
 Agents are the right choice for:
 - Self-contained analysis that produces a structured report
@@ -60,7 +65,7 @@ The following table applies the fitness criterion to every skill in this plugin.
 | `/build` | **Skill** | Interactive — writes code and shows progress in real time |
 | `/quick` | **Skill** | Interactive fix workflow — targets specific items the user selects |
 | `/init` | **Skill** | Conversational — asks overwrite/skip/merge for each existing file |
-| `/git-workflow` | **Skill** | Destructive-op safety gate — confirms before force-push, reset --hard, branch -D |
+| `/git-workflow` | **Skill** | Destructive-op safety gate — confirms before force-push, reset --hard, branch -D, or rebasing published commits |
 | `/qa` | **Skill** | Orchestrator — coordinates five audits; interaction in sequential mode |
 | `/status` | **Skill** | Lightweight report from `.pipeline/` files; no verbose output |
 | `/pack` | **Skill** | Single-command Repomix wrapper; non-interactive, but output is used by the user immediately — no isolation benefit |
@@ -70,8 +75,8 @@ The following table applies the fitness criterion to every skill in this plugin.
 | `/backend-audit` | **Agent candidate** | Same as frontend-audit. |
 | `/doc-audit` | **Agent candidate** | Same pattern — reads docs and code, returns freshness report. |
 | `/security-review` | **Agent candidate** | Same pattern — reads code, returns OWASP findings. |
-| `/test` | **Skill** | Interactive — AskUserQuestion for runner selection when detection fails; offers `/quick` on test failures |
-| `/rollback` | **Skill** | Requires per-group confirmation before any destructive file removal; interactive confirmation gate |
+| `/test` | **Skill** | Interactive — prefers structured prompts for runner selection and failure handling, with plain-text fallback when unavailable; offers `/quick` on test failures |
+| `/rollback` | **Skill** | Requires per-group confirmation, safety backups, and repo-root-safe path validation before destructive file removal |
 
 **Note:** `/commit`, `/push`, `/commit-push-pr`, `/sync`, `/clean-branches`, and `/release` are **commands** (not skills or agents). Commands are lightweight one-shot markdown files with injected context — they don't need the skill/agent evaluation.
 
@@ -79,7 +84,7 @@ The following table applies the fitness criterion to every skill in this plugin.
 
 The four strong agent candidates (`/frontend-audit`, `/backend-audit`, `/doc-audit`, `/security-review`) were evaluated for conversion and the decision was **not to convert** them. The reasons:
 
-1. **Context isolation is already achieved.** When `/qa --parallel` dispatches them, it uses the Agent tool, which already runs in an isolated context. The findings are returned as a result, not streamed inline. Converting to `.claude/agents/` files would not change this behaviour.
+1. **Context isolation is already achieved.** When `/qa --parallel` dispatches them, it uses the Task tool, which already runs in an isolated context. The findings are returned as a result, not streamed inline. Converting to `.claude/agents/` files would not change this behaviour.
 
 2. **Tool restrictions address a theoretical risk.** Every audit skill explicitly instructs Claude not to modify files. There is no incident history of an audit skill accidentally writing. Adding hard enforcement adds maintenance cost for a problem that hasn't occurred.
 
@@ -109,16 +114,16 @@ Claude: [reads SKILL.md, executes audit, presents findings inline]
 
 ### Pattern 2: Skill Dispatches Agents (Orchestration)
 
-A skill coordinates multiple agents using the Agent tool. The agents run in isolation; the skill collects and synthesises results.
+A skill coordinates multiple agents using the Task tool. The agents run in isolation; the skill collects and synthesises results.
 
 ```
 User: /qa --parallel
-Skill: dispatches 5 Agent tool calls simultaneously
+Skill: dispatches 5 Task tool calls simultaneously
        ← [each agent runs isolated, returns findings]
 Skill: collects all findings, presents consolidated report
 ```
 
-This is the current pattern in `/qa`. No agent files required — the Agent tool handles isolation.
+This is the current pattern in `/qa`. No agent files required — the Task tool handles isolation.
 
 ### Pattern 3: Thin Wrapper Skill + Agent File
 
@@ -139,7 +144,7 @@ When a task has an analysis phase (read-only, could be isolated) and an interact
 ```
 User: /cleanup
 Skill: invokes cleanup agent → receives findings list
-       → presents findings via AskUserQuestion: "Remove all / Review each / Skip"
+       → presents findings via AskUserQuestion (or plain-text fallback): "Remove all / Review each / Skip"
        → if "Remove all": applies edits using Edit tool
 Agent file: Steps 1-2 only (scan, return findings list — analysis only) with tools: Read, Grep, Glob, Bash
 ```

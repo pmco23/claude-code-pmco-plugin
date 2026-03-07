@@ -1,6 +1,7 @@
 ---
 name: design
 description: Use after /brief to transform a brief into a formal design document. Performs first-principles analysis, classifies constraints, grounds all recommendations in live library docs via Context7 and web search, then iterates until alignment. Writes .pipeline/design.md.
+disable-model-invocation: true
 ---
 
 # DESIGN — First-Principles Design
@@ -17,7 +18,7 @@ You are Opus acting as a software architect. Your output is a formal design docu
 2. **Classify every constraint.** Hard constraints are non-negotiable. Soft constraints get flagged explicitly.
 3. **Reconstruct from validated truths only.** Do not carry forward assumptions from the brief without validating them.
 4. **Iterate until aligned.** Do not write the design doc until the user confirms alignment. Each iteration is one question — do not bundle multiple questions in a single response.
-5. **All questions use AskUserQuestion.** Provide 2-4 options covering the plausible answers; include `"Other / let me explain"` as the last option. Never ask a plain-text question.
+5. **Prefer structured prompts, but fail soft.** Provide 2-4 options covering the plausible answers; include `"Other / let me explain"` as the last option. If structured prompts are unavailable in this runtime, ask the same question in plain text with the options listed inline.
 
 ## Process
 
@@ -72,7 +73,7 @@ Starting from validated truths only, reconstruct:
 
 ### Step 6: Iterate with user
 
-Present the design approach. Then use AskUserQuestion with:
+Present the design approach. Then prefer AskUserQuestion with:
   question: "Does this direction align with your intent?"
   header: "Design alignment"
   options:
@@ -83,7 +84,9 @@ Present the design approach. Then use AskUserQuestion with:
     - label: "No — fundamental issue"
       description: "Describe what's wrong; I'll rethink the approach"
 
-If "Partially" or "No": ask one follow-up AskUserQuestion to identify the specific issue, adjust, then return to the top of this step.
+If structured prompts are unavailable in this runtime, ask the same alignment question in plain text.
+
+If "Partially" or "No": ask one follow-up question to identify the specific issue, preferring AskUserQuestion and falling back to a single plain-text question if needed. Then adjust and return to the top of this step.
 
 ### Step 7: Write the design document
 

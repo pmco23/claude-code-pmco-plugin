@@ -71,6 +71,13 @@ Quit and reopen. The skills will appear in the skill list and the gate hook will
 
 You should see the brief skill start a Q&A session. If the gate hook is active, trying `/design` before running `/brief` will show a block message.
 
+Core workflow and safety skills are explicit slash-command entrypoints. If you
+describe work in natural language and Claude does not auto-enter `/brief`,
+`/build`, or `/qa`, that is expected — run the slash command directly.
+
+If the current runtime does not expose structured picker prompts, interactive
+skills fall back to plain-text questions with the same choices.
+
 ## Statusline Setup
 
 The statusline shows model, current task, pipeline phase, directory, and context usage in the Claude Code status bar.
@@ -84,13 +91,22 @@ Add this to `~/.claude/settings.json` (one-time global setup):
 }
 ```
 
-The `SessionStart` hook automatically creates and maintains a symlink at `~/.claude/statusline.js` pointing to the plugin's script. The symlink is updated on every session start, so it self-heals if the plugin is ever moved or reinstalled.
+The `SessionStart` hook automatically creates and maintains a symlink at
+`~/.claude/statusline.js` pointing to the plugin's script only when:
+- no `~/.claude/statusline.js` exists yet, or
+- the existing file is already a symlink managed by this plugin
+
+This safeguard prevents the plugin from overwriting a custom statusline or
+another plugin's statusline.
 
 To create the symlink immediately without waiting for the first session start, run once:
 
 ```bash
 ln -sf /path/to/plugin/hooks/statusline.js ~/.claude/statusline.js
 ```
+
+If you already have a custom statusline and want this plugin to take over,
+replace it manually with the symlink above.
 
 Restart Claude Code. The statusline will appear immediately.
 

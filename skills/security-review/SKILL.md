@@ -48,4 +48,4 @@ If no findings: "Security review complete — no OWASP Top 10 vulnerabilities fo
 
 Report to user. No file written to `.pipeline/`.
 
-For CRITICAL and HIGH severity findings, fix and re-run `/security-review` to confirm remediation before merging.
+CRITICAL and HIGH severity findings block merge. Remediate them outside this run, then re-run `/security-review` to confirm the fixes before merging.
